@@ -43,7 +43,7 @@ export interface GroomingProcessManager {
 		sessionCustomPath?: string;
 		sessionCustomArgs?: string;
 		sessionCustomEnvVars?: Record<string, string>;
-	}): { pid: number; success?: boolean } | null;
+	}): Promise<{ pid: number; success?: boolean } | null>;
 	on(event: string, handler: (...args: unknown[]) => void): void;
 	off(event: string, handler: (...args: unknown[]) => void): void;
 	kill(sessionId: string): void;
@@ -318,7 +318,7 @@ export async function groomContext(
 		processManager.on('agent-error', onError);
 
 		// Spawn the process in batch mode
-		const spawnResult = processManager.spawn({
+		const spawnResult = await processManager.spawn({
 			sessionId: groomerSessionId,
 			toolType: agentType,
 			cwd: projectRoot,

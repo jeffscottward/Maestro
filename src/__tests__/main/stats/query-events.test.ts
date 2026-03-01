@@ -69,6 +69,19 @@ const mockFsRenameSync = vi.fn();
 const mockFsStatSync = vi.fn(() => ({ size: 1024 }));
 const mockFsReadFileSync = vi.fn(() => '0'); // Default: old timestamp (triggers vacuum check)
 const mockFsWriteFileSync = vi.fn();
+const mockFsAccess = vi.fn((pathArg: string) => {
+		if (mockFsExistsSync(pathArg)) {
+			return Promise.resolve();
+		}
+		return Promise.reject(new Error('ENOENT'));
+	});
+const mockFsMkdir = vi.fn(() => Promise.resolve());
+const mockFsStat = vi.fn(() => Promise.resolve({ size: 1024 }));
+const mockFsCopyFile = vi.fn(() => Promise.resolve());
+const mockFsUnlink = vi.fn(() => Promise.resolve());
+const mockFsRename = vi.fn(() => Promise.resolve());
+const mockFsReaddir = vi.fn(() => Promise.resolve([] as string[]));
+
 
 // Mock fs
 vi.mock('fs', () => ({
@@ -80,7 +93,16 @@ vi.mock('fs', () => ({
 	statSync: (...args: unknown[]) => mockFsStatSync(...args),
 	readFileSync: (...args: unknown[]) => mockFsReadFileSync(...args),
 	writeFileSync: (...args: unknown[]) => mockFsWriteFileSync(...args),
-}));
+		promises: {
+			access: (...args: unknown[]) => mockFsAccess(...args),
+			mkdir: (...args: unknown[]) => mockFsMkdir(...args),
+			stat: (...args: unknown[]) => mockFsStat(...args),
+			copyFile: (...args: unknown[]) => mockFsCopyFile(...args),
+			unlink: (...args: unknown[]) => mockFsUnlink(...args),
+			readdir: (...args: unknown[]) => mockFsReaddir(...args),
+			rename: (...args: unknown[]) => mockFsRename(...args),
+		}
+	}));
 
 // Mock logger
 vi.mock('../../../main/utils/logger', () => ({
@@ -122,7 +144,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getQueryEvents('day');
 
@@ -138,7 +160,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getQueryEvents('week', { agentType: 'claude-code' });
 
@@ -151,7 +173,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getQueryEvents('month', { source: 'auto' });
 
@@ -164,7 +186,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getQueryEvents('year', { projectPath: '/test/project' });
 
@@ -177,7 +199,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getQueryEvents('all', { sessionId: 'session-123' });
 
@@ -190,7 +212,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getQueryEvents('week', {
 				agentType: 'claude-code',
@@ -214,7 +236,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const stats = db.getAggregatedStats('week');
 
@@ -229,7 +251,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const stats = db.getAggregatedStats('day');
 
@@ -257,7 +279,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const csv = db.exportToCsv('week');
 
@@ -273,7 +295,7 @@ describe('Stats aggregation and filtering', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const csv = db.exportToCsv('day');
 
@@ -310,7 +332,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should record query event with source="user" for interactive session', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const startTime = Date.now();
 			const eventId = db.insertQueryEvent({
@@ -343,7 +365,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should record interactive query without optional fields', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const startTime = Date.now();
 			const eventId = db.insertQueryEvent({
@@ -367,7 +389,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should record multiple interactive queries for the same session', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear mocks after initialize() to count only test operations
 			mockStatement.run.mockClear();
@@ -419,7 +441,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should record interactive queries with different agent types', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear mocks after initialize() to count only test operations
 			mockStatement.run.mockClear();
@@ -493,7 +515,7 @@ describe('Query events recorded for interactive sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Filter by source='user' to get only interactive sessions
 			const events = db.getQueryEvents('day', { source: 'user' });
@@ -522,7 +544,7 @@ describe('Query events recorded for interactive sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const events = db.getQueryEvents('week', { sessionId: 'target-session' });
 
@@ -547,7 +569,7 @@ describe('Query events recorded for interactive sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const events = db.getQueryEvents('month', { projectPath: '/specific/project' });
 
@@ -572,7 +594,7 @@ describe('Query events recorded for interactive sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const events = db.getQueryEvents('day');
 
@@ -614,7 +636,7 @@ describe('Query events recorded for interactive sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const stats = db.getAggregatedStats('week');
 
@@ -644,7 +666,7 @@ describe('Query events recorded for interactive sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const stats = db.getAggregatedStats('month');
 
@@ -657,7 +679,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should preserve exact startTime and duration values', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const exactStartTime = 1735344000000; // Specific timestamp
 			const exactDuration = 12345; // Specific duration in ms
@@ -680,7 +702,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should handle zero duration (immediate responses)', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const eventId = db.insertQueryEvent({
 				sessionId: 'zero-duration-session',
@@ -700,7 +722,7 @@ describe('Query events recorded for interactive sessions', () => {
 		it('should handle very long durations', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const longDuration = 10 * 60 * 1000; // 10 minutes in ms
 

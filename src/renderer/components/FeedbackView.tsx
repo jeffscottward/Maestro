@@ -23,7 +23,9 @@ function isRunningSession(session: Session): boolean {
 		return false;
 	}
 
-	return session.state === 'busy' || session.state === 'waiting_input' || session.state === 'connecting';
+	return (
+		session.state === 'busy' || session.state === 'waiting_input' || session.state === 'connecting'
+	);
 }
 
 export function FeedbackView({ theme, sessions, onCancel, onSubmitSuccess }: FeedbackViewProps) {
@@ -106,13 +108,10 @@ export function FeedbackView({ theme, sessions, onCancel, onSubmitSuccess }: Fee
 				return;
 			}
 
-			const result = await window.maestro.feedback.submit(
-				selectedSessionId,
-				feedbackText.trim()
-			);
+			const result = await window.maestro.feedback.submit(selectedSessionId, feedbackText.trim());
 
 			if (!result.success) {
-				setSubmitError(result.error || 'Failed to send feedback.');
+				setSubmitError('The selected agent is no longer running. Please select another agent.');
 				setSubmitting(false);
 				return;
 			}
@@ -120,7 +119,9 @@ export function FeedbackView({ theme, sessions, onCancel, onSubmitSuccess }: Fee
 			onSubmitSuccess(selectedSessionId);
 		} catch (error) {
 			setSubmitError(
-				error instanceof Error ? error.message : 'An unexpected error occurred while sending feedback.'
+				error instanceof Error
+					? error.message
+					: 'An unexpected error occurred while sending feedback.'
 			);
 			setSubmitting(false);
 		}
@@ -139,7 +140,7 @@ export function FeedbackView({ theme, sessions, onCancel, onSubmitSuccess }: Fee
 	if (authState.checking) {
 		return (
 			<div className="flex items-center justify-center py-12">
-				<Loader2 className="w-6 h-6 animate-spin" style={{ color: theme.colors.accent }} />
+				<Loader2 className="w-4 h-4 animate-spin" style={{ color: theme.colors.textDim }} />
 			</div>
 		);
 	}
@@ -153,68 +154,78 @@ export function FeedbackView({ theme, sessions, onCancel, onSubmitSuccess }: Fee
 			)}
 
 			<div className={!authState.authenticated ? 'opacity-40 pointer-events-none' : ''}>
-				<div className="space-y-2">
-					<label className="text-sm font-medium" style={{ color: theme.colors.textMain }}>
-						Target Agent Session
-					</label>
-					<select
-						value={selectedSessionId}
-						onChange={(event) => setSelectedSessionId(event.target.value)}
-						disabled={isSubmittingDisabled}
-						className="w-full rounded border bg-transparent px-2 py-2 text-sm outline-none focus:ring-2"
-						style={{
-							borderColor: theme.colors.border,
-							color: theme.colors.textMain,
-							boxShadow: `0 0 0 2px ${theme.colors.accent}10`,
-						}}
-					>
-						{runningSessions.length > 0 ? (
-							runningSessions.map((session) => (
-								<option key={session.id} value={session.id}>
-									{session.name} ({session.toolType})
-								</option>
-							))
-						) : (
-							<option value="" disabled>
-								No running agents — start one first
-							</option>
-						)}
-					</select>
-				</div>
+				{runningSessions.length === 0 ? (
+					<div className="text-sm" style={{ color: theme.colors.textDim }}>
+						No running agents available. Start an agent first, then try again.
+					</div>
+				) : (
+					<>
+						<div className="space-y-2">
+							<label className="text-sm font-medium" style={{ color: theme.colors.textMain }}>
+								Target Agent Session
+							</label>
+							<select
+								value={selectedSessionId}
+								onChange={(event) => setSelectedSessionId(event.target.value)}
+								disabled={isSubmittingDisabled}
+								className="w-full rounded border bg-transparent px-2 py-2 text-sm outline-none focus:ring-2"
+								style={{
+									borderColor: theme.colors.border,
+									color: theme.colors.textMain,
+									boxShadow: `0 0 0 2px ${theme.colors.accent}10`,
+								}}
+							>
+								{runningSessions.map((session) => (
+									<option key={session.id} value={session.id}>
+										{session.name} ({session.toolType})
+									</option>
+								))}
+							</select>
+						</div>
 
-				<div className="space-y-2">
-					<label className="text-sm font-medium" style={{ color: theme.colors.textMain }}>
-						Feedback
-					</label>
-					<textarea
-						value={feedbackText}
-						onChange={(event) =>
-							setFeedbackText(event.target.value.slice(0, MAX_FEEDBACK_LENGTH))
-						}
-						onKeyDown={handleTextareaKeyDown}
-						disabled={isSubmittingDisabled}
-						placeholder="Describe the bug, feature request, or feedback..."
-						className="w-full rounded border px-2 py-2 text-sm outline-none focus:ring-2 min-h-[120px] resize-y"
-						style={{
-							borderColor: theme.colors.border,
-							color: theme.colors.textMain,
-							backgroundColor: 'transparent',
-							boxShadow: `0 0 0 2px ${theme.colors.accent}10`,
-						}}
-						maxLength={MAX_FEEDBACK_LENGTH}
-					/>
-					{feedbackText.length > CHAR_COUNT_WARNING_THRESHOLD && (
-						<p className="text-xs text-right" style={{ color: theme.colors.textDim }}>
-							{feedbackText.length}/{MAX_FEEDBACK_LENGTH}
-						</p>
-					)}
+						<div className="space-y-2">
+							<label className="text-sm font-medium" style={{ color: theme.colors.textMain }}>
+								Feedback
+							</label>
+							<textarea
+								value={feedbackText}
+								onChange={(event) =>
+									setFeedbackText(event.target.value.slice(0, MAX_FEEDBACK_LENGTH))
+								}
+								onKeyDown={handleTextareaKeyDown}
+								disabled={isSubmittingDisabled}
+								placeholder="Describe the bug, feature request, or feedback..."
+								className="w-full rounded border px-2 py-2 text-sm outline-none focus:ring-2 min-h-[120px] resize-y"
+								style={{
+									borderColor: theme.colors.border,
+									color: theme.colors.textMain,
+									backgroundColor: 'transparent',
+									boxShadow: `0 0 0 2px ${theme.colors.accent}10`,
+								}}
+								maxLength={MAX_FEEDBACK_LENGTH}
+							/>
+							{feedbackText.length > CHAR_COUNT_WARNING_THRESHOLD && (
+								<p
+									className="text-xs text-right"
+									style={{
+										color:
+											feedbackText.length === MAX_FEEDBACK_LENGTH
+												? theme.colors.error
+												: theme.colors.textDim,
+									}}
+								>
+									{feedbackText.length.toLocaleString()}/{MAX_FEEDBACK_LENGTH.toLocaleString()}
+								</p>
+							)}
 
-					{submitError && (
-						<p className="text-sm" style={{ color: theme.colors.error }}>
-							{submitError}
-						</p>
-					)}
-				</div>
+							{submitError && (
+								<p className="text-sm" style={{ color: theme.colors.error }}>
+									{submitError}
+								</p>
+							)}
+						</div>
+					</>
+				)}
 			</div>
 
 			<div className="flex justify-end gap-2">

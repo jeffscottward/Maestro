@@ -154,6 +154,7 @@ export type ModalId =
 	| 'settings'
 	| 'shortcutsHelp'
 	| 'about'
+	| 'feedback'
 	| 'updateCheck'
 	// Instance Management
 	| 'newInstance'
@@ -514,6 +515,10 @@ export function getModalActions() {
 		// About Modal
 		setAboutModalOpen: (open: boolean) => (open ? openModal('about') : closeModal('about')),
 
+		// Feedback Modal
+		setFeedbackModalOpen: (open: boolean) =>
+			open ? openModal('feedback') : closeModal('feedback'),
+
 		// Update Check Modal
 		setUpdateCheckModalOpen: (open: boolean) =>
 			open ? openModal('updateCheck') : closeModal('updateCheck'),
@@ -793,6 +798,7 @@ export function useModalActions() {
 	const quickActionData = useModalStore(selectModalData('quickAction'));
 	const lightboxData = useModalStore(selectModalData('lightbox'));
 	const aboutModalOpen = useModalStore(selectModalOpen('about'));
+	const feedbackModalOpen = useModalStore(selectModalOpen('feedback'));
 	const updateCheckModalOpen = useModalStore(selectModalOpen('updateCheck'));
 	const leaderboardRegistrationOpen = useModalStore(selectModalOpen('leaderboard'));
 	const standingOvationData = useModalStore(selectModalData('standingOvation'));
@@ -881,6 +887,7 @@ export function useModalActions() {
 
 		// About Modal
 		aboutModalOpen,
+		feedbackModalOpen,
 
 		// Update Check Modal
 		updateCheckModalOpen,

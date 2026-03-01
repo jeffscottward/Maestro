@@ -297,6 +297,11 @@ const formatDateTime = (isoString: string): string => {
 	});
 };
 
+const getMatches = (text: string, regex: RegExp | null): RegExpMatchArray[] => {
+	if (!regex) return [];
+	return Array.from(text.matchAll(regex));
+};
+
 // Interface for table of contents entries
 interface TocEntry {
 	level: number; // 1-6 for h1-h6
@@ -571,7 +576,7 @@ function remarkHighlight() {
 	return (tree: any) => {
 		visit(tree, 'text', (node: any, index: number | null | undefined, parent: any) => {
 			const text = node.value;
-			const matches = Array.from(text.matchAll(new RegExp(HIGHLIGHT_TEXT_REGEX.source, HIGHLIGHT_TEXT_REGEX.flags)));
+			const matches = getMatches(text, HIGHLIGHT_TEXT_REGEX);
 
 			if (matches.length === 0) return;
 			if (index === null || index === undefined || !parent) return;
@@ -818,33 +823,61 @@ export const FilePreview = React.memo(
 		// Track if content is truncated for display
 		const isContentTruncated = file?.content && displayContent.length < file.content.length;
 
+		// Cache markdown task regex matches so we only recompute when content changes
+		const markdownTaskMatches = useMemo(() => {
+			if (!file?.content) return null;
+			return {
+				open: file.content.match(MARKDOWN_TASK_OPEN_REGEX),
+				closed: file.content.match(MARKDOWN_TASK_CLOSED_REGEX),
+			};
+		}, [file?.content]);
+
 		// Calculate task counts for markdown files
 		const taskCounts = useMemo(() => {
-			if (!isMarkdown || !file?.content) return null;
-			const openMatches = file.content.match(MARKDOWN_TASK_OPEN_REGEX);
-			const closedMatches = file.content.match(MARKDOWN_TASK_CLOSED_REGEX);
+			if (!isMarkdown || !markdownTaskMatches) return null;
 			const counts = {
-				open: openMatches?.length || 0,
-				closed: closedMatches?.length || 0,
+				open: markdownTaskMatches.open?.length || 0,
+				closed: markdownTaskMatches.closed?.length || 0,
 			};
 			// Only return if there are any tasks
 			if (counts.open === 0 && counts.closed === 0) return null;
 			return counts;
-		}, [isMarkdown, file?.content]);
+		}, [isMarkdown, markdownTaskMatches]);
+
+		const formattedModifiedAt = useMemo(() => {
+			if (!fileStats) return null;
+			return formatDateTime(fileStats.modifiedAt);
+		}, [fileStats?.modifiedAt]);
+
+		const formattedCreatedAt = useMemo(() => {
+			if (!fileStats) return null;
+			return formatDateTime(fileStats.createdAt);
+		}, [fileStats?.createdAt]);
 
 		const formattedFileStats = useMemo(() => {
-			if (!fileStats) return null;
+			if (!fileStats || !formattedModifiedAt || !formattedCreatedAt) return null;
 			return {
-				modifiedAt: formatDateTime(fileStats.modifiedAt),
-				createdAt: formatDateTime(fileStats.createdAt),
+				modifiedAt: formattedModifiedAt,
+				createdAt: formattedCreatedAt,
 			};
-		}, [fileStats?.createdAt, fileStats?.modifiedAt]);
+		}, [fileStats, formattedModifiedAt, formattedCreatedAt]);
 
-		const contentSearchMatchCount = useMemo(() => {
-			if (!searchRegex || !file?.content) return 0;
-			const matches = file.content.match(searchRegex);
-			return matches ? matches.length : 0;
+		const contentSearchMatches = useMemo(() => {
+			return getMatches(file?.content ?? '', searchRegex);
 		}, [searchRegex, file?.content]);
+		const contentSearchMatchCount = contentSearchMatches.length;
+		const searchRegexForCodeSearch = useMemo(() => {
+			if (!searchRegex) return null;
+			return new RegExp(searchRegex.source, searchRegex.flags);
+		}, [searchRegex]);
+		const searchRegexForMarkdownSearch = useMemo(() => {
+			if (!searchRegex) return null;
+			return new RegExp(searchRegex.source, searchRegex.flags);
+		}, [searchRegex]);
+		const searchRegexForEdit = useMemo(() => {
+			if (!searchRegex) return null;
+			return new RegExp(searchRegex.source, searchRegex.flags);
+		}, [searchRegex]);
 
 		// Extract table of contents entries for markdown files
 		const tocEntries = useMemo(() => {
@@ -861,13 +894,12 @@ export const FilePreview = React.memo(
 		}, []);
 
 		const editModeSearchMatches = useMemo(() => {
-			if (!searchRegex || !isEditableText || !markdownEditMode || !editContent) return [];
-			const localSearchRegex = new RegExp(searchRegex.source, searchRegex.flags);
-			return Array.from(editContent.matchAll(localSearchRegex)).map((match) => ({
+			if (!searchRegexForEdit || !isEditableText || !markdownEditMode || !editContent) return [];
+			return getMatches(editContent, searchRegexForEdit).map((match) => ({
 				start: match.index || 0,
 				end: (match.index || 0) + match[0].length,
 			}));
-		}, [searchRegex, isEditableText, markdownEditMode, editContent]);
+		}, [searchRegexForEdit, isEditableText, markdownEditMode, editContent]);
 
 		// Memoize file tree indices to avoid O(n) traversal on every render
 		const fileTreeIndices = useMemo(() => {
@@ -1304,7 +1336,13 @@ export const FilePreview = React.memo(
 
 		// Highlight search matches in syntax-highlighted code
 		useEffect(() => {
-			if (!searchRegex || !codeContainerRef.current || isMarkdown || isImage || isCsv) {
+			if (
+				!searchRegexForCodeSearch ||
+				!codeContainerRef.current ||
+				isMarkdown ||
+				isImage ||
+				isCsv
+			) {
 				setTotalMatches(0);
 				setCurrentMatchIndex(0);
 				matchElementsRef.current = [];
@@ -1326,13 +1364,16 @@ export const FilePreview = React.memo(
 			// Highlight matches using safe DOM methods
 			textNodes.forEach((textNode) => {
 				const text = textNode.textContent || '';
-				const matches = text.match(searchRegex);
+				const textMatches = getMatches(text, searchRegexForCodeSearch);
 
-				if (matches) {
+				if (textMatches.length > 0) {
 					const fragment = document.createDocumentFragment();
 					let lastIndex = 0;
 
-					text.replace(searchRegex, (match, offset) => {
+					for (const match of textMatches) {
+						const matchText = match[0];
+						const offset = match.index || 0;
+
 						// Add text before match
 						if (offset > lastIndex) {
 							fragment.appendChild(document.createTextNode(text.substring(lastIndex, offset)));
@@ -1345,13 +1386,12 @@ export const FilePreview = React.memo(
 						mark.style.padding = '0 2px';
 						mark.style.borderRadius = '2px';
 						mark.className = 'search-match';
-						mark.textContent = match;
+						mark.textContent = matchText;
 						fragment.appendChild(mark);
 						matchElements.push(mark);
 
-						lastIndex = offset + match.length;
-						return match;
-					});
+						lastIndex = offset + matchText.length;
+					}
 
 					// Add remaining text
 					if (lastIndex < text.length) {
@@ -1385,11 +1425,16 @@ export const FilePreview = React.memo(
 				});
 				matchElementsRef.current = [];
 			};
-		}, [searchRegex, file?.content, isMarkdown, isImage, isCsv, theme.colors.accent]);
+		}, [searchRegexForCodeSearch, file?.content, isMarkdown, isImage, isCsv, theme.colors.accent]);
 
 		// Search matches in markdown preview mode - use CSS Custom Highlight API
 		useEffect(() => {
-			if (!isMarkdown || markdownEditMode || !searchRegex || !markdownContainerRef.current) {
+			if (
+				!isMarkdown ||
+				markdownEditMode ||
+				!searchRegexForMarkdownSearch ||
+				!markdownContainerRef.current
+			) {
 				if (isMarkdown && !markdownEditMode) {
 					setTotalMatches(0);
 					setCurrentMatchIndex(0);
@@ -1414,8 +1459,7 @@ export const FilePreview = React.memo(
 				let textNode;
 				while ((textNode = walker.nextNode())) {
 					const text = textNode.textContent || '';
-					const localRegex = new RegExp(searchRegex.source, searchRegex.flags);
-					for (const match of text.matchAll(localRegex)) {
+					for (const match of getMatches(text, searchRegexForMarkdownSearch)) {
 						if (match.index === undefined) continue;
 						const range = document.createRange();
 						range.setStart(textNode, match.index);
@@ -1479,19 +1523,16 @@ export const FilePreview = React.memo(
 					let textNode;
 					while ((textNode = walker.nextNode())) {
 						const text = textNode.textContent || '';
-						const localRegex = new RegExp(searchRegex.source, searchRegex.flags);
-						const nodeMatches = text.match(localRegex);
-						if (nodeMatches) {
-							for (const _ of nodeMatches) {
-								if (matchCount === targetIndex) {
-									const parentElement = (textNode as Text).parentElement;
-									if (parentElement) {
-										parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-									}
-									return;
+						const nodeMatches = getMatches(text, searchRegexForMarkdownSearch);
+						for (const _ of nodeMatches) {
+							if (matchCount === targetIndex) {
+								const parentElement = (textNode as Text).parentElement;
+								if (parentElement) {
+									parentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
 								}
-								matchCount++;
+								return;
 							}
+							matchCount++;
 						}
 					}
 				}
@@ -1499,15 +1540,13 @@ export const FilePreview = React.memo(
 
 			matchElementsRef.current = [];
 		}, [
-			searchRegex,
+			searchRegexForMarkdownSearch,
 			file?.content,
 			contentSearchMatchCount,
 			isMarkdown,
 			markdownEditMode,
 			currentMatchIndex,
-			theme.colors.accent,
 		]);
-
 		const copyPathToClipboard = async () => {
 			if (!file) return;
 			const ok = await safeClipboardWrite(file.path);

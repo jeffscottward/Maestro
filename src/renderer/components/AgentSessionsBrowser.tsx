@@ -1484,8 +1484,7 @@ export function AgentSessionsBrowser({
 									<SessionListItem
 										key={session.sessionId}
 										session={session}
-										index={i}
-										selectedIndex={selectedIndex}
+										isSelected={i === selectedIndex}
 										isStarred={starredSessions.has(session.sessionId)}
 										activeAgentSessionId={activeAgentSessionId}
 										renamingSessionId={renamingSessionId}

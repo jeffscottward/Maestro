@@ -85,8 +85,7 @@ export interface SessionListItemProps {
  */
 export const SessionListItem = memo(function SessionListItem({
 	session,
-	index,
-	selectedIndex,
+	isSelected,
 	isStarred,
 	activeAgentSessionId,
 	renamingSessionId,

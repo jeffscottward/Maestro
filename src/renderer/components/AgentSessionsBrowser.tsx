@@ -547,6 +547,14 @@ export function AgentSessionsBrowser({
 		};
 	}, [aggregateStats]);
 
+	const viewingSessionTimestamp = useMemo(() => {
+		if (!viewingSession?.timestamp) {
+			return '';
+		}
+
+		return new Date(viewingSession.timestamp).toLocaleString();
+	}, [viewingSession?.timestamp]);
+
 	// Keyboard navigation
 	const handleKeyDown = (e: React.KeyboardEvent) => {
 		if (viewingSession) {
@@ -837,7 +845,7 @@ export function AgentSessionsBrowser({
 									<span>•</span>
 									<span
 										className="relative group cursor-default"
-										title={new Date(viewingSession.timestamp).toLocaleString()}
+										title={viewingSessionTimestamp}
 									>
 										{formatRelativeTime(viewingSession.modifiedAt)}
 										<span
@@ -847,7 +855,7 @@ export function AgentSessionsBrowser({
 												color: theme.colors.textMain,
 											}}
 										>
-											{new Date(viewingSession.timestamp).toLocaleString()}
+											{viewingSessionTimestamp}
 										</span>
 									</span>
 								</div>
@@ -1488,7 +1496,7 @@ export function AgentSessionsBrowser({
 										isStarred={starredSessions.has(session.sessionId)}
 										activeAgentSessionId={activeAgentSessionId}
 										renamingSessionId={renamingSessionId}
-										renameValue={renameValue}
+										renameValue={renamingSessionId === session.sessionId ? renameValue : ''}
 										searchMode={searchMode}
 										searchResultInfo={getSearchResultInfo(session.sessionId)}
 										theme={theme}

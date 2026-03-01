@@ -69,6 +69,19 @@ const mockFsRenameSync = vi.fn();
 const mockFsStatSync = vi.fn(() => ({ size: 1024 }));
 const mockFsReadFileSync = vi.fn(() => '0'); // Default: old timestamp (triggers vacuum check)
 const mockFsWriteFileSync = vi.fn();
+const mockFsAccess = vi.fn((pathArg: string) => {
+		if (mockFsExistsSync(pathArg)) {
+			return Promise.resolve();
+		}
+		return Promise.reject(new Error('ENOENT'));
+	});
+const mockFsMkdir = vi.fn(() => Promise.resolve());
+const mockFsStat = vi.fn(() => Promise.resolve({ size: 1024 }));
+const mockFsCopyFile = vi.fn(() => Promise.resolve());
+const mockFsUnlink = vi.fn(() => Promise.resolve());
+const mockFsRename = vi.fn(() => Promise.resolve());
+const mockFsReaddir = vi.fn(() => Promise.resolve([] as string[]));
+
 
 // Mock fs
 vi.mock('fs', () => ({
@@ -80,7 +93,16 @@ vi.mock('fs', () => ({
 	statSync: (...args: unknown[]) => mockFsStatSync(...args),
 	readFileSync: (...args: unknown[]) => mockFsReadFileSync(...args),
 	writeFileSync: (...args: unknown[]) => mockFsWriteFileSync(...args),
-}));
+		promises: {
+			access: (...args: unknown[]) => mockFsAccess(...args),
+			mkdir: (...args: unknown[]) => mockFsMkdir(...args),
+			stat: (...args: unknown[]) => mockFsStat(...args),
+			copyFile: (...args: unknown[]) => mockFsCopyFile(...args),
+			unlink: (...args: unknown[]) => mockFsUnlink(...args),
+			readdir: (...args: unknown[]) => mockFsReaddir(...args),
+			rename: (...args: unknown[]) => mockFsRename(...args),
+		}
+	}));
 
 // Mock logger
 vi.mock('../../../main/utils/logger', () => ({
@@ -121,7 +143,7 @@ describe('Auto Run session and task recording', () => {
 		it('should insert Auto Run session and return id', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const sessionId = db.insertAutoRunSession({
 				sessionId: 'session-1',
@@ -144,7 +166,7 @@ describe('Auto Run session and task recording', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const updated = db.updateAutoRunSession('session-id', {
 				duration: 60000,
@@ -172,7 +194,7 @@ describe('Auto Run session and task recording', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const sessions = db.getAutoRunSessions('week');
 
@@ -186,7 +208,7 @@ describe('Auto Run session and task recording', () => {
 		it('should insert Auto Run task with success=true', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const taskId = db.insertAutoRunTask({
 				autoRunSessionId: 'auto-1',
@@ -209,7 +231,7 @@ describe('Auto Run session and task recording', () => {
 		it('should insert Auto Run task with success=false', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.insertAutoRunTask({
 				autoRunSessionId: 'auto-1',
@@ -255,7 +277,7 @@ describe('Auto Run session and task recording', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const tasks = db.getAutoRunTasks('auto-1');
 
@@ -290,7 +312,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should record Auto Run session with all required fields', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const startTime = Date.now();
 			const sessionId = db.insertAutoRunSession({
@@ -325,7 +347,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should record Auto Run session with multiple documents (comma-separated)', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const sessionId = db.insertAutoRunSession({
 				sessionId: 'multi-doc-session',
@@ -348,7 +370,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should update Auto Run session duration and tasks on completion', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// First, insert the session
 			const autoRunId = db.insertAutoRunSession({
@@ -377,7 +399,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should update Auto Run session with partial completion (some tasks skipped)', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const autoRunId = db.insertAutoRunSession({
 				sessionId: 'partial-session',
@@ -402,7 +424,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should handle Auto Run session stopped by user (wasStopped)', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const autoRunId = db.insertAutoRunSession({
 				sessionId: 'stopped-session',
@@ -429,7 +451,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should record individual task with all fields', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const taskStartTime = Date.now() - 5000;
 			const taskId = db.insertAutoRunTask({
@@ -462,7 +484,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should record failed task with success=false', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.insertAutoRunTask({
 				autoRunSessionId: 'auto-run-1',
@@ -483,7 +505,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should record multiple tasks for same Auto Run session', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear mocks after initialize() to count only test operations
 			mockStatement.run.mockClear();
@@ -539,7 +561,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should record task without optional taskContent', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const taskId = db.insertAutoRunTask({
 				autoRunSessionId: 'auto-run-1',
@@ -590,7 +612,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const sessions = db.getAutoRunSessions('week');
 
@@ -654,7 +676,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const tasks = db.getAutoRunTasks('auto-run-1');
 
@@ -719,7 +741,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const tasks = db.getAutoRunTasks('ar1');
 
@@ -735,7 +757,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getAutoRunSessions('day');
 
@@ -751,7 +773,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should return all Auto Run sessions for "all" time range', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			mockStatement.all.mockReturnValue([
 				{
@@ -789,7 +811,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should support the full Auto Run lifecycle: start -> record tasks -> end', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear mocks after initialize() to count only test operations
 			mockStatement.run.mockClear();
@@ -845,7 +867,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should handle Auto Run with loop mode (multiple passes)', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear mocks after initialize() to count only test operations
 			mockStatement.run.mockClear();
@@ -908,7 +930,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should handle very long task content (synopsis)', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const longContent = 'A'.repeat(10000); // 10KB task content
 
@@ -933,7 +955,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should handle zero duration tasks', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const taskId = db.insertAutoRunTask({
 				autoRunSessionId: 'ar1',
@@ -956,7 +978,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should handle Auto Run session with zero tasks total', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// This shouldn't happen in practice, but the database should handle it
 			const sessionId = db.insertAutoRunSession({
@@ -976,7 +998,7 @@ describe('Auto Run sessions and tasks recorded correctly', () => {
 		it('should handle different agent types for Auto Run', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear mocks after initialize() to count only test operations
 			mockStatement.run.mockClear();
@@ -1039,7 +1061,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should create auto_run_tasks table with REFERENCES clause to auto_run_sessions', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Verify the CREATE TABLE statement includes the foreign key reference
 			const prepareCalls = mockDb.prepare.mock.calls.map((call) => call[0] as string);
@@ -1056,7 +1078,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should have auto_run_session_id column as NOT NULL in auto_run_tasks', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const prepareCalls = mockDb.prepare.mock.calls.map((call) => call[0] as string);
 			const createTasksTable = prepareCalls.find((sql) =>
@@ -1071,7 +1093,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should create index on auto_run_session_id foreign key column', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const prepareCalls = mockDb.prepare.mock.calls.map((call) => call[0] as string);
 			const indexCreation = prepareCalls.find((sql) => sql.includes('idx_task_auto_session'));
@@ -1085,7 +1107,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should store auto_run_session_id when inserting task', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const autoRunSessionId = 'parent-session-abc-123';
 			db.insertAutoRunTask({
@@ -1110,7 +1132,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should insert task with matching auto_run_session_id from parent session', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear calls from initialization
 			mockStatement.run.mockClear();
@@ -1182,7 +1204,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Query tasks for 'auto-run-A'
 			const tasksA = db.getAutoRunTasks('auto-run-A');
@@ -1200,7 +1222,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			const tasks = db.getAutoRunTasks('non-existent-session');
 
@@ -1213,7 +1235,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should maintain consistent auto_run_session_id across multiple tasks', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear calls from initialization
 			mockStatement.run.mockClear();
@@ -1246,7 +1268,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should allow tasks from different sessions to be inserted independently', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear calls from initialization
 			mockStatement.run.mockClear();
@@ -1299,7 +1321,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should use generated session ID as foreign key when retrieved after insertion', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			// Clear calls from initialization
 			mockStatement.run.mockClear();
@@ -1343,7 +1365,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should filter tasks using WHERE auto_run_session_id clause', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getAutoRunTasks('specific-session-id');
 
@@ -1361,7 +1383,7 @@ describe('Foreign key relationship between tasks and sessions', () => {
 		it('should order tasks by task_index within a session', async () => {
 			const { StatsDB } = await import('../../../main/stats');
 			const db = new StatsDB();
-			db.initialize();
+			await db.initialize();
 
 			db.getAutoRunTasks('any-session');
 

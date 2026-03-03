@@ -84,7 +84,7 @@ const mockFsReaddir = vi.fn(() => Promise.resolve([] as string[]));
 
 
 // Mock fs
-vi.mock('fs', () => ({
+const mockFsModule = {
 	existsSync: (...args: unknown[]) => mockFsExistsSync(...args),
 	mkdirSync: (...args: unknown[]) => mockFsMkdirSync(...args),
 	copyFileSync: (...args: unknown[]) => mockFsCopyFileSync(...args),
@@ -93,16 +93,21 @@ vi.mock('fs', () => ({
 	statSync: (...args: unknown[]) => mockFsStatSync(...args),
 	readFileSync: (...args: unknown[]) => mockFsReadFileSync(...args),
 	writeFileSync: (...args: unknown[]) => mockFsWriteFileSync(...args),
-		promises: {
-			access: (...args: unknown[]) => mockFsAccess(...args),
-			mkdir: (...args: unknown[]) => mockFsMkdir(...args),
-			stat: (...args: unknown[]) => mockFsStat(...args),
-			copyFile: (...args: unknown[]) => mockFsCopyFile(...args),
-			unlink: (...args: unknown[]) => mockFsUnlink(...args),
-			readdir: (...args: unknown[]) => mockFsReaddir(...args),
-			rename: (...args: unknown[]) => mockFsRename(...args),
-		}
-	}));
+	promises: {
+		access: (...args: unknown[]) => mockFsAccess(...args),
+		mkdir: (...args: unknown[]) => mockFsMkdir(...args),
+		stat: (...args: unknown[]) => mockFsStat(...args),
+		copyFile: (...args: unknown[]) => mockFsCopyFile(...args),
+		unlink: (...args: unknown[]) => mockFsUnlink(...args),
+		readdir: (...args: unknown[]) => mockFsReaddir(...args),
+		rename: (...args: unknown[]) => mockFsRename(...args),
+	},
+};
+
+vi.mock('fs', () => ({
+	...mockFsModule,
+	default: mockFsModule,
+}));
 
 // Mock logger
 vi.mock('../../../main/utils/logger', () => ({

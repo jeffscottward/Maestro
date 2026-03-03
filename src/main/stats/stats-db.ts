@@ -10,7 +10,7 @@
 
 import Database from 'better-sqlite3';
 import * as path from 'path';
-import { promises as fsp } from 'fs';
+import { existsSync, mkdirSync, promises as fsp } from 'fs';
 import { app } from 'electron';
 import { logger } from '../utils/logger';
 import type {
@@ -99,8 +99,8 @@ export class StatsDB {
 
 		try {
 			const dir = path.dirname(this.dbPath);
-			if (!(await this.pathExists(dir))) {
-				await fsp.mkdir(dir, { recursive: true });
+			if (!existsSync(dir)) {
+				mkdirSync(dir, { recursive: true });
 			}
 
 			const dbExists = await this.pathExists(this.dbPath);

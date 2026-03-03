@@ -290,7 +290,6 @@ export class CodexOutputParser implements AgentOutputParser {
 
 	// Cached context window - read once from config
 	private contextWindow: number;
-	private model: string;
 
 	// Track tool name from tool_call to carry over to tool_result
 	// (Codex emits tool_call and tool_result as separate item.completed events,
@@ -302,7 +301,6 @@ export class CodexOutputParser implements AgentOutputParser {
 			...getDefaultCodexConfig(),
 			...getCachedCodexConfigSnapshot(),
 		});
-		this.model = initialConfig.model;
 		this.contextWindow = initialConfig.contextWindow;
 
 		// Refresh config asynchronously and cache it for parser instances.
@@ -311,7 +309,6 @@ export class CodexOutputParser implements AgentOutputParser {
 				...getDefaultCodexConfig(),
 				...freshConfig,
 			});
-			this.model = resolvedConfig.model;
 			this.contextWindow = resolvedConfig.contextWindow;
 		});
 	}

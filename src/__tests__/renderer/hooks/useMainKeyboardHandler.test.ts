@@ -482,6 +482,8 @@ describe('useMainKeyboardHandler', () => {
 				activeSessionId: 'test-session',
 				activeSession: mockActiveSession,
 				toggleInputMode: mockToggleInputMode,
+				setActiveFocus: vi.fn(),
+				inputRef: { current: { focus: vi.fn() } },
 			});
 
 			act(() => {
@@ -844,6 +846,8 @@ describe('useMainKeyboardHandler', () => {
 				},
 				activeSessionId: 'session-1',
 				toggleInputMode: mockToggleInputMode,
+				setActiveFocus: vi.fn(),
+				inputRef: { current: { focus: vi.fn() } },
 			});
 
 			act(() => {
@@ -881,6 +885,8 @@ describe('useMainKeyboardHandler', () => {
 				},
 				activeSessionId: 'session-1',
 				toggleInputMode: mockToggleInputMode,
+				setActiveFocus: vi.fn(),
+				inputRef: { current: { focus: vi.fn() } },
 			});
 
 			act(() => {

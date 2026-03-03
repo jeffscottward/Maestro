@@ -1741,17 +1741,17 @@ function SessionListInner(props: SessionListProps) {
 					inactiveByState: skinnyDotInactiveByState,
 					fallback: {
 						active: {
-							...sessionListStyles.skinny.skinnyDotFallback,
+							...sessionListStyles.root.skinnyDotFallback,
 							opacity: 1,
 						},
 						inactive: {
-							...sessionListStyles.skinny.skinnyDotFallback,
+							...sessionListStyles.root.skinnyDotFallback,
 							opacity: 0.25,
 						},
 					},
 				},
 				tooltip: {
-					...sessionListStyles.skinny.skinnyTooltip,
+					...sessionListStyles.root.skinnyTooltip,
 					left: '80px',
 					...(tooltipPosition ? { top: `${tooltipPosition.y}px` } : {}),
 				},
@@ -1771,8 +1771,8 @@ function SessionListInner(props: SessionListProps) {
 		collapsedPillStyles.segment.tooltip,
 		leftSidebarWidthState,
 		theme,
-		sessionListStyles.skinny.skinnyDotFallback,
-		sessionListStyles.skinny.skinnyTooltip,
+		sessionListStyles.root.skinnyDotFallback,
+		sessionListStyles.root.skinnyTooltip,
 		sessionListStyles.root.badge.color,
 		sessionListStyles.root.iconAccent.color,
 		tooltipPosition?.y,
@@ -3187,7 +3187,7 @@ function SessionListInner(props: SessionListProps) {
 									{activeSessionId !== session.id && hasUnreadTabs && (
 										<div
 											className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full"
-											style={sessionListStyles.skinny.unreadBadge}
+											style={sessionListStyles.root.unreadBadge}
 											title="Unread messages"
 										/>
 									)}

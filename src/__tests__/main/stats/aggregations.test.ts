@@ -101,6 +101,26 @@ vi.mock('fs', () => ({
 		readdir: (...args: unknown[]) => mockFsReaddir(...args),
 		rename: (...args: unknown[]) => mockFsRename(...args),
 	},
+	default: {
+		existsSync: (...args: unknown[]) => mockFsExistsSync(...args),
+		mkdirSync: (...args: unknown[]) => mockFsMkdirSync(...args),
+		copyFileSync: (...args: unknown[]) => mockFsCopyFileSync(...args),
+		unlinkSync: (...args: unknown[]) => mockFsUnlinkSync(...args),
+		renameSync: (...args: unknown[]) => mockFsRenameSync(...args),
+		statSync: (...args: unknown[]) => mockFsStatSync(...args),
+		readFileSync: (...args: unknown[]) => mockFsReadFileSync(...args),
+		writeFileSync: (...args: unknown[]) => mockFsWriteFileSync(...args),
+		readdirSync: (...args: unknown[]) => mockFsReaddirSync(...args),
+		promises: {
+			access: (...args: unknown[]) => mockFsAccess(...args),
+			mkdir: (...args: unknown[]) => mockFsMkdir(...args),
+			stat: (...args: unknown[]) => mockFsStat(...args),
+			copyFile: (...args: unknown[]) => mockFsCopyFile(...args),
+			unlink: (...args: unknown[]) => mockFsUnlink(...args),
+			readdir: (...args: unknown[]) => mockFsReaddir(...args),
+			rename: (...args: unknown[]) => mockFsRename(...args),
+		},
+	},
 }));
 
 // Mock logger

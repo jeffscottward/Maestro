@@ -91,7 +91,7 @@ export interface UseAgentConfigurationReturn {
 
 	// Utilities
 	loadAgentConfig: (agentId: string) => Promise<void>;
-	saveAgentConfig: (agentId: string) => Promise<void>;
+	saveAgentConfig: (agentId: string) => Promise<boolean>;
 	resetState: () => void;
 	hasCustomization: boolean;
 }
@@ -135,6 +135,9 @@ export function useAgentConfiguration(
 	// Models
 	const [availableModels, setAvailableModels] = useState<string[]>([]);
 	const [loadingModels, setLoadingModels] = useState(false);
+
+	// Guard against stale async results when switching agents rapidly
+	const latestLoadRequestRef = useRef(0);
 
 	// Refresh
 	const [refreshingAgent, setRefreshingAgent] = useState(false);
@@ -186,7 +189,10 @@ export function useAgentConfiguration(
 	// Load agent config
 	const loadAgentConfig = useCallback(
 		async (agentId: string) => {
+			const requestId = ++latestLoadRequestRef.current;
+
 			const config = await window.maestro.agents.getConfig(agentId);
+			if (latestLoadRequestRef.current !== requestId) return; // stale
 			setAgentConfig(config || {});
 			agentConfigRef.current = config || {};
 
@@ -196,11 +202,14 @@ export function useAgentConfiguration(
 				setLoadingModels(true);
 				try {
 					const models = await window.maestro.agents.getModels(agentId);
+					if (latestLoadRequestRef.current !== requestId) return; // stale
 					setAvailableModels(models);
 				} catch (err) {
 					console.error('Failed to load models:', err);
 				} finally {
-					setLoadingModels(false);
+					if (latestLoadRequestRef.current === requestId) {
+						setLoadingModels(false);
+					}
 				}
 			}
 		},
@@ -208,8 +217,8 @@ export function useAgentConfiguration(
 	);
 
 	// Save agent config via IPC
-	const saveAgentConfig = useCallback(async (agentId: string) => {
-		await window.maestro.agents.setConfig(agentId, agentConfigRef.current);
+	const saveAgentConfig = useCallback(async (agentId: string): Promise<boolean> => {
+		return await window.maestro.agents.setConfig(agentId, agentConfigRef.current);
 	}, []);
 
 	// Refresh models
@@ -242,13 +251,20 @@ export function useAgentConfiguration(
 		}
 	}, [agentFilter]);
 
-	// Handle agent selection change — resets customizations
+	// Handle agent selection change — resets customizations and agent-scoped state
 	const handleAgentChange = useCallback(
 		(agentId: string) => {
+			// Invalidate any in-flight loadAgentConfig requests
+			latestLoadRequestRef.current++;
+
 			setSelectedAgent(agentId);
 			setCustomPath('');
 			setCustomArgs('');
 			setCustomEnvVars({});
+			setAgentConfig({});
+			agentConfigRef.current = {};
+			setAvailableModels([]);
+			setLoadingModels(false);
 			if (isConfigExpanded) {
 				loadAgentConfig(agentId);
 			}

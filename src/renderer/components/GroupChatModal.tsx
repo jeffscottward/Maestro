@@ -90,7 +90,12 @@ export function GroupChatModal(props: GroupChatModalProps): JSX.Element | null {
 	// Auto-select first supported agent (create mode only) after detection,
 	// and revalidate if current selection is no longer available
 	useEffect(() => {
-		if (mode !== 'create' || ac.isDetecting || ac.detectedAgents.length === 0) return;
+		if (mode !== 'create' || ac.isDetecting) return;
+
+		if (ac.detectedAgents.length === 0) {
+			ac.setSelectedAgent(null);
+			return;
+		}
 
 		// If current selection is still valid, keep it
 		if (ac.selectedAgent && ac.detectedAgents.some((a) => a.id === ac.selectedAgent)) return;
@@ -104,7 +109,7 @@ export function GroupChatModal(props: GroupChatModalProps): JSX.Element | null {
 		} else {
 			ac.setSelectedAgent(ac.detectedAgents[0].id);
 		}
-	}, [mode, ac.isDetecting, ac.detectedAgents, ac.selectedAgent]);
+	}, [mode, ac.isDetecting, ac.detectedAgents, ac.selectedAgent, ac.setSelectedAgent]);
 
 	// Reset local state when modal closes
 	useEffect(() => {
@@ -116,7 +121,7 @@ export function GroupChatModal(props: GroupChatModalProps): JSX.Element | null {
 
 	// Build moderator config from state
 	const buildModeratorConfig = useCallback((): ModeratorConfig | undefined => {
-		const customModelValue = mode === 'create' ? ac.agentConfig.model : undefined;
+		const customModelValue = ac.agentConfig.model;
 		const hasConfig =
 			ac.customPath ||
 			ac.customArgs ||
@@ -132,7 +137,7 @@ export function GroupChatModal(props: GroupChatModalProps): JSX.Element | null {
 			customModel: customModelValue || undefined,
 			sshRemoteConfig: ac.sshRemoteConfig || undefined,
 		};
-	}, [mode, ac.customPath, ac.customArgs, ac.customEnvVars, ac.agentConfig, ac.sshRemoteConfig]);
+	}, [ac.customPath, ac.customArgs, ac.customEnvVars, ac.agentConfig.model, ac.sshRemoteConfig]);
 
 	const handleSubmit = useCallback(() => {
 		if (!name.trim() || !ac.selectedAgent) return;

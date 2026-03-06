@@ -372,6 +372,7 @@ export function AgentCreationDialog({
 												tabIndex={0}
 												onClick={() => handleSelectAgent(agent.id)}
 												onKeyDown={(e) => {
+													if (e.target !== e.currentTarget) return;
 													if (e.key === 'Enter' || e.key === ' ') {
 														e.preventDefault();
 														handleSelectAgent(agent.id);

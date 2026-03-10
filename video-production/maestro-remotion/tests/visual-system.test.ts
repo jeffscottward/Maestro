@@ -43,6 +43,19 @@ describe('Maestro visual system', () => {
 	it('preserves required product labels and explicit screenshot fallback slots', () => {
 		expect(REQUIRED_PRODUCT_LABELS).toEqual([
 			'Maestro Symphony',
+			'Projects',
+			'Active',
+			'History',
+			'Stats',
+			'Start Symphony',
+			'Create Symphony Agent',
+			'Create Agent',
+			'Available Issues',
+			'Blocked',
+			'Draft PR',
+			'Check PR Status',
+			'Finalize PR',
+			'Ready for Review',
 			"Director's Notes",
 			'Unified History',
 			'AI Overview',
@@ -61,5 +74,10 @@ describe('Maestro visual system', () => {
 		expect(
 			VISUAL_FALLBACK_SLOTS.every((slot) => slot.sourcePath.startsWith('docs/screenshots/'))
 		).toBe(true);
+		expect(VISUAL_FALLBACK_SLOTS.find((slot) => slot.id === 'symphony-create-agent')).toMatchObject(
+			{
+				label: 'Create Symphony Agent',
+			}
+		);
 	});
 });

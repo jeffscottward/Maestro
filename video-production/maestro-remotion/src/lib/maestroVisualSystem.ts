@@ -46,6 +46,19 @@ export const MAESTRO_VISUAL_PRIMITIVE_IDS = [
 
 export const REQUIRED_PRODUCT_LABELS = [
 	'Maestro Symphony',
+	'Projects',
+	'Active',
+	'History',
+	'Stats',
+	'Start Symphony',
+	'Create Symphony Agent',
+	'Create Agent',
+	'Available Issues',
+	'Blocked',
+	'Draft PR',
+	'Check PR Status',
+	'Finalize PR',
+	'Ready for Review',
 	"Director's Notes",
 	'Unified History',
 	'AI Overview',
@@ -107,7 +120,8 @@ export const VISUAL_FALLBACK_SLOTS = [
 		label: 'AI Overview',
 		sourcePath: 'docs/screenshots/directors-notes-ai-overview.png',
 		mediaType: 'screenshot',
-		reason: 'Preserves the rendered markdown synopsis until the AI Overview panel is rebuilt exactly.',
+		reason:
+			'Preserves the rendered markdown synopsis until the AI Overview panel is rebuilt exactly.',
 	},
 	{
 		id: 'autorun-worktree',
@@ -122,7 +136,8 @@ export const VISUAL_FALLBACK_SLOTS = [
 		label: 'Git Worktree Configuration',
 		sourcePath: 'docs/screenshots/git-worktree-configuration.png',
 		mediaType: 'screenshot',
-		reason: 'Anchors the exact worktree configuration density until the later feature pass deepens it.',
+		reason:
+			'Anchors the exact worktree configuration density until the later feature pass deepens it.',
 	},
 	{
 		id: 'git-worktree-list',
@@ -137,14 +152,15 @@ export const VISUAL_FALLBACK_SLOTS = [
 		sourcePath: 'docs/screenshots/symphony-details.png',
 		mediaType: 'screenshot',
 		reason:
-			'Preserves the issue detail layout until the full split view is recreated from structured data.',
+			'Uses the older issue-detail screenshot as a visual reference until the full split view is recreated from structured data.',
 	},
 	{
 		id: 'symphony-create-agent',
-		label: 'Create Agent',
+		label: 'Create Symphony Agent',
 		sourcePath: 'docs/screenshots/symphony-create-agent.png',
 		mediaType: 'screenshot',
-		reason: 'Keeps the agent creation sheet exact while the form layout remains a later-phase rebuild.',
+		reason:
+			'Uses the older create-agent screenshot as a visual reference while the current `Create Symphony Agent` form continues to be rebuilt in-code.',
 	},
 ] as const satisfies readonly VisualFallbackSlot[];
 

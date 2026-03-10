@@ -14,11 +14,14 @@ This phase turns the shared prototype system into a finished standalone video fo
 	- Note: Tightened the source-material notes so the stale create-agent and active fallback screenshots are treated as visual references only, while current draft-PR and review-state behavior comes from product code and runner logic.
 	- Note: Added terminology assertions for `Create Symphony Agent` in the isolated video-workspace tests and re-ran `pnpm validate:capture`, targeted Vitest coverage, and full `pnpm validate` in `video-production/maestro-remotion`; all `38` tests passed.
 
-- [ ] Build Symphony-specific UI modules and scene assets inside the isolated video workspace:
+- [x] Build Symphony-specific UI modules and scene assets inside the isolated video workspace:
 	- Search existing shared components in `src/ui`, `src/components`, and `src/scenes` before creating feature-specific duplicates
 	- Implement the Symphony surfaces needed by the storyboard, such as project tiles, issue detail states, agent/session creation, progress cards, stats cards, and contribution history or achievement moments
 	- Reuse Maestro theme tokens and spacing rules so the video still looks like Maestro rather than a new product
 	- Keep all new code inside `video-production/maestro-remotion/`
+	- Note: Added `video-production/maestro-remotion/src/components/SymphonySurfaceShowcase.tsx` and routed Symphony scenes through scene-specific variants for projects browse, issue detail, `Create Symphony Agent`, setup proof, `Active`, and `History`/`Stats`, while reusing the shared Maestro modal/stat/fallback primitives.
+	- Note: Updated `video-production/maestro-remotion/src/lib/maestroVisualSystem.ts` and workspace tests so Symphony terminology now asserts the shipped labels (`Start Symphony`, `Create Symphony Agent`, `Check PR Status`, `Finalize PR`, `Ready for Review`) and treats the older screenshot fallbacks as visual-reference-only.
+	- Note: Added `video-production/maestro-remotion/tests/symphony-surface-showcase.test.ts` for scene-variant mapping and render signatures, then re-ran `pnpm validate` in `video-production/maestro-remotion`; all `42` tests passed.
 
 - [ ] Integrate live-capture and fallback assets for the Symphony flow:
 	- Connect the approved capture sources from Phase 02 to the specific storyboard scenes

@@ -1,22 +1,20 @@
 import type React from 'react';
+import { interpolate, useCurrentFrame } from 'remotion';
 
-import type {
-	CaptureManifestEntry,
-	SceneData,
-	SceneSurfaceId,
-} from '../data/production-schema';
+import type { CaptureManifestEntry, SceneData, SceneSurfaceId } from '../data/production-schema';
 import {
 	AUTO_RUN_DOCUMENTS,
+	DIRECTOR_NOTES_STATS,
 	DIRECTOR_NOTES_TABS,
 	MAESTRO_SURFACE_THEMES,
-	SYMPHONY_TABS,
 	TERMINAL_PLAN_LINES,
 	VISUAL_FALLBACK_SLOTS,
 	WORKTREE_TABS,
+	type MaestroVisualTheme,
+	type VisualFallbackSlot,
 	createFallbackSlot,
 } from '../lib/maestroVisualSystem';
 import {
-	MaestroActivityRow,
 	MaestroAnnotationSurface,
 	MaestroAutoRunDocumentList,
 	MaestroFallbackSlot,
@@ -25,96 +23,93 @@ import {
 	MaestroTerminalBlock,
 	MaestroWorktreeControls,
 } from '../ui/MaestroPrimitives';
+import { MetaBadge } from '../ui/MetaBadge';
+import { SymphonySurfaceShowcase } from './SymphonySurfaceShowcase';
 
 type FeatureSurfaceShowcaseProps = {
 	scene: SceneData;
 	captures: CaptureManifestEntry[];
 };
 
-type ShowcaseRow = {
-	title: string;
-	tag: string;
-	summary: string;
-	meta: string;
-	highlighted?: boolean;
+type SurfaceProps = {
+	captures: CaptureManifestEntry[];
+	fallbackSlots: VisualFallbackSlot[];
+	progress: number;
+	theme: MaestroVisualTheme;
 };
 
-const SYMPHONY_PROJECT_ROWS: readonly ShowcaseRow[] = [
+const clamp = {
+	extrapolateLeft: 'clamp',
+	extrapolateRight: 'clamp',
+} as const;
+
+const DIRECTOR_HISTORY_ROWS = [
 	{
-		title: 'runmaestro/maestro',
-		tag: 'Developer Tools',
+		agent: 'PedTome RSSidian',
 		summary:
-			'Issue detail, document previews, and blocked states stay visible without leaving the modal.',
-		meta: '12 open issues',
-		highlighted: true,
+			'Queried the RSSidian database to retrieve and synthesize 79 quality-rated articles from the past two days.',
+		tag: 'News Synopsis Request',
+		type: 'USER',
+		meta: '1m 6s',
+		cost: '$0.15',
+		time: '07:11 PM',
 	},
 	{
-		title: 'runmaestro/docs',
-		tag: 'Docs',
+		agent: 'Maestro',
 		summary:
-			'Registered projects keep category, status, and Start Symphony context grounded in real repository copy.',
-		meta: '5 docs',
+			'Reviewed current git working tree status and identified two files with uncommitted debug logging changes.',
+		tag: 'Git Status Check',
+		type: 'USER',
+		meta: '19s',
+		cost: '$0.20',
+		time: 'Feb 5',
 	},
 	{
-		title: 'runmaestro/website',
-		tag: 'Active',
-		summary:
-			'Contribution progress, PR links, and token usage can deepen later without changing the prototype shell.',
-		meta: '3 active runs',
+		agent: 'Learned Hand',
+		summary: 'Surveyed repository structure and key components to produce a project synopsis.',
+		tag: 'Project Overview',
+		type: 'USER',
+		meta: '25s',
+		cost: '$0.09',
+		time: 'Feb 4',
 	},
 ] as const;
 
-const DIRECTOR_HISTORY_ROWS: readonly ShowcaseRow[] = [
+const AI_OVERVIEW_SECTIONS = [
 	{
-		title: 'Remotion Videos',
-		tag: 'AUTO',
-		summary:
-			'Implemented teaser registration, prototype spec wiring, and validation updates inside video-production/maestro-remotion.',
-		meta: '2m | $0.42',
-		highlighted: true,
+		title: 'Accomplishments',
+		lines: [
+			'RSSidian fixed a critical embedding-generation bug and backfilled 223 missing embeddings.',
+			'Podsidian identified unprocessed podcast episodes from recent days.',
+			'Maestro reviewed the quit handler flow across quit-handler.ts and App.tsx.',
+		],
 	},
 	{
-		title: 'Codex',
-		tag: 'USER',
-		summary:
-			'Queued follow-up work for deeper scene polish after the first prototype reel is renderable end to end.',
-		meta: '45s | $0.09',
+		title: 'Challenges',
+		lines: [
+			'Embedding backfill required a refined query to catch every missing edge case.',
+			'Uncommitted debug instrumentation suggests the quit handler investigation is still in progress.',
+		],
 	},
 	{
-		title: 'Factory Droid',
-		tag: 'AUTO',
-		summary:
-			'Tracked prototype constraints, remaining capture fallback slots, and future ratio adaptation work.',
-		meta: '3m | $0.31',
+		title: 'Next Steps',
+		lines: [
+			'Productize the seven analytical capabilities demonstrated in the exploratory session.',
+			'Remove temporary logging once the quit flow is validated against production behavior.',
+		],
 	},
 ] as const;
 
-const DIRECTOR_AI_OVERVIEW_LINES = [
-	'# AI Overview',
-	'',
-	'Accomplishments',
-	'- Registered MaestroFeatureTeaser plus three prototype stubs.',
-	'- Kept Maestro Symphony, Director\'s Notes, and Run in Worktree copy literal.',
-	'',
-	'Challenges',
-	'- Dense modal surfaces still rely on exact screenshot fallback slots.',
-	'',
-	'Next Steps',
-	'- Replace screenshot slots with deeper reconstructed scenes.',
+const WORKTREE_CHILDREN = [
+	{ name: 'beta-opt-in', status: '10', active: false },
+	{ name: 'christmas-refactor', status: '', active: false },
+	{ name: 'context-management', status: '', active: false },
+	{ name: 'keyboard-gamification', status: '', active: false },
+	{ name: 'playbook-marketplace', status: '', active: false },
 ] as const;
 
-const WORKTREE_EXECUTION_LINES = [
-	'Auto Run Playbook: maestro-remotion-videos-01',
-	'Branch: worktree/teaser-prototype',
-	'Base Branch: main',
-	'',
-	'Dispatch to a separate worktree',
-	'Create New Worktree',
-	'Automatically create PR when complete',
-] as const;
-
-const getResolvedFallbackSlots = (captures: CaptureManifestEntry[]) =>
-	captures
+const getFallbackSlots = (captures: CaptureManifestEntry[]) => {
+	return captures
 		.filter((capture) => capture.mode === 'fallback-slot')
 		.map((capture) => {
 			return (
@@ -128,296 +123,447 @@ const getResolvedFallbackSlots = (captures: CaptureManifestEntry[]) =>
 				})
 			);
 		});
-
-const renderStats = (
-	stats: readonly { label: string; value: string; tone?: 'accent' | 'neutral' | 'success' | 'warning' }[],
-	theme: typeof MAESTRO_SURFACE_THEMES.symphony
-) => (
-	<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
-		{stats.map((stat) => (
-			<MaestroStatCard
-				key={stat.label}
-				label={stat.label}
-				value={stat.value}
-				tone={stat.tone}
-				theme={theme}
-			/>
-		))}
-	</div>
-);
-
-export const getSurfaceTheme = (surfaceId: SceneSurfaceId) => {
-	if (surfaceId.startsWith('symphony')) {
-		return MAESTRO_SURFACE_THEMES.symphony;
-	}
-
-	if (surfaceId.startsWith('director')) {
-		return MAESTRO_SURFACE_THEMES['director-notes'];
-	}
-
-	return MAESTRO_SURFACE_THEMES.worktree;
 };
 
-export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
-	scene,
-	captures,
-}) => {
-	const theme = getSurfaceTheme(scene.surfaceId);
-	const fallbackSlots = getResolvedFallbackSlots(captures);
-	const primaryFallback = fallbackSlots[0];
-	const secondaryFallback = fallbackSlots[1];
+const SurfacePanel: React.FC<{
+	children: React.ReactNode;
+	theme: MaestroVisualTheme;
+	padding?: number;
+}> = ({ children, theme, padding = 18 }) => {
+	return (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: 12,
+				padding,
+				borderRadius: 22,
+				border: `1px solid ${theme.colors.border}`,
+				background: theme.colors.bgActivity,
+			}}
+		>
+			{children}
+		</div>
+	);
+};
+
+const FieldCard: React.FC<{
+	label: string;
+	value: string;
+	theme: MaestroVisualTheme;
+	compact?: boolean;
+}> = ({ label, value, theme, compact = false }) => {
+	return (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: compact ? 6 : 10,
+				padding: compact ? '14px 16px' : '16px 18px',
+				borderRadius: 18,
+				border: `1px solid ${theme.colors.border}`,
+				background: theme.colors.bgMain,
+			}}
+		>
+			<div
+				style={{
+					fontSize: 15,
+					letterSpacing: 1.1,
+					textTransform: 'uppercase',
+					color: theme.colors.textDim,
+				}}
+			>
+				{label}
+			</div>
+			<div style={{ fontSize: compact ? 20 : 26, color: theme.colors.textMain }}>{value}</div>
+		</div>
+	);
+};
+
+const ActionButton: React.FC<{
+	label: string;
+	theme: MaestroVisualTheme;
+	tone?: 'accent' | 'neutral';
+}> = ({ label, theme, tone = 'accent' }) => {
+	const isAccent = tone === 'accent';
+
+	return (
+		<div
+			style={{
+				display: 'inline-flex',
+				alignItems: 'center',
+				justifyContent: 'center',
+				padding: '14px 22px',
+				borderRadius: 16,
+				border: `1px solid ${isAccent ? `${theme.colors.accent}88` : theme.colors.border}`,
+				background: isAccent ? theme.colors.accentDim : theme.colors.bgMain,
+				color: isAccent ? theme.colors.accentText : theme.colors.textMain,
+				fontSize: 19,
+			}}
+		>
+			{label}
+		</div>
+	);
+};
+
+const HistoryEntry: React.FC<{
+	agent: string;
+	tag: string;
+	type: string;
+	summary: string;
+	meta: string;
+	cost: string;
+	time: string;
+	theme: MaestroVisualTheme;
+	highlighted?: boolean;
+	progress: number;
+}> = ({ agent, tag, type, summary, meta, cost, time, theme, highlighted = false, progress }) => {
+	const barProgress = Math.max(0, Math.min(progress, 1));
+
+	return (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: 10,
+				padding: '16px 18px',
+				borderRadius: 18,
+				border: `1px solid ${highlighted ? `${theme.colors.accent}88` : theme.colors.border}`,
+				background: highlighted ? `${theme.colors.accentDim}` : theme.colors.bgActivity,
+			}}
+		>
+			<div
+				style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18 }}
+			>
+				<div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+					<div style={{ fontSize: 22, color: theme.colors.textMain }}>{agent}</div>
+					<MetaBadge label={tag} theme={theme} />
+					<MetaBadge label={type} tone="accent" theme={theme} />
+				</div>
+				<div style={{ fontSize: 16, color: theme.colors.textDim }}>{time}</div>
+			</div>
+			<div style={{ fontSize: 18, lineHeight: 1.42, color: theme.colors.textDim }}>{summary}</div>
+			<div
+				style={{
+					height: 3,
+					borderRadius: 999,
+					background: theme.colors.border,
+					overflow: 'hidden',
+				}}
+			>
+				<div
+					style={{
+						width: `${barProgress * 100}%`,
+						height: '100%',
+						borderRadius: 999,
+						background: theme.colors.accent,
+					}}
+				/>
+			</div>
+			<div style={{ display: 'flex', alignItems: 'center', gap: 12, color: theme.colors.textDim }}>
+				<span>{meta}</span>
+				<span>{cost}</span>
+			</div>
+		</div>
+	);
+};
+
+const WorktreeListPanel: React.FC<{
+	theme: MaestroVisualTheme;
+	progress: number;
+}> = ({ theme, progress }) => {
+	return (
+		<SurfacePanel theme={theme} padding={0}>
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					padding: '16px 20px',
+					borderBottom: `1px solid ${theme.colors.border}`,
+				}}
+			>
+				<div style={{ fontSize: 20, color: theme.colors.textMain }}>MAESTRO</div>
+				<MetaBadge label="LIVE" tone="accent" theme={theme} />
+			</div>
+			<div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+				<div
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						justifyContent: 'space-between',
+						padding: '18px 20px',
+						background: `${theme.colors.bgMain}`,
+					}}
+				>
+					<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+						<div style={{ fontSize: 18, color: theme.colors.textDim }}>MAESTRO</div>
+						<div style={{ fontSize: 28, color: theme.colors.textMain }}>Maestro</div>
+						<div style={{ fontSize: 18, color: theme.colors.textDim }}>claude-code</div>
+					</div>
+					<MetaBadge label="GIT" tone="accent" theme={theme} />
+				</div>
+				{WORKTREE_CHILDREN.map((child, index) => (
+					<div
+						key={child.name}
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							padding: '14px 20px 14px 28px',
+							borderTop: `1px solid ${theme.colors.border}`,
+							opacity: interpolate(progress, [0, 1], [0.35, 1], clamp) - index * 0.05,
+						}}
+					>
+						<div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+							<div style={{ color: theme.colors.accentText }}>|_</div>
+							<div style={{ fontSize: 20, color: theme.colors.textMain }}>{child.name}</div>
+						</div>
+						<div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+							{child.status ? (
+								<span style={{ color: theme.colors.warning }}>{child.status}</span>
+							) : null}
+							<div
+								style={{
+									width: 12,
+									height: 12,
+									borderRadius: 999,
+									background: theme.colors.success,
+								}}
+							/>
+						</div>
+					</div>
+				))}
+			</div>
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'center',
+					padding: '12px 18px',
+					borderTop: `1px solid ${theme.colors.border}`,
+					color: theme.colors.textDim,
+					fontSize: 18,
+				}}
+			>
+				9 worktrees
+			</div>
+		</SurfacePanel>
+	);
+};
+
+const renderStats = (
+	stats: readonly {
+		label: string;
+		value: string;
+		tone?: 'accent' | 'neutral' | 'success' | 'warning';
+	}[],
+	theme: MaestroVisualTheme
+) => {
+	return (
+		<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
+			{stats.map((stat) => (
+				<MaestroStatCard
+					key={stat.label}
+					label={stat.label}
+					value={stat.value}
+					tone={stat.tone}
+					theme={theme}
+				/>
+			))}
+		</div>
+	);
+};
+
+const DirectorHistorySurface: React.FC<SurfaceProps> = ({ progress, theme }) => {
 	const footer = (
 		<>
-			<span>Arrow keys to navigate | Enter to select</span>
-			<span>{captures.length} linked capture inputs</span>
+			<span>7 history entries across 4 agents</span>
+			<span>Enter to open detail view</span>
 		</>
 	);
 
-	if (scene.surfaceId === 'symphony-projects') {
-		return (
-			<MaestroModalShell
-				title="Maestro Symphony"
-				badge="Projects"
-				tabs={SYMPHONY_TABS}
-				activeTab="Projects"
-				footer={footer}
-				theme={theme}
-			>
-				<div style={{ display: 'grid', gridTemplateColumns: '1.08fr 0.92fr', gap: 18 }}>
-					<div style={{ display: 'grid', gap: 14 }}>
-						{SYMPHONY_PROJECT_ROWS.map((row) => (
-							<MaestroActivityRow
-								key={row.title}
-								title={row.title}
-								tag={row.tag}
-								summary={row.summary}
-								meta={row.meta}
-								highlighted={row.highlighted}
-								theme={theme}
+	return (
+		<MaestroModalShell
+			title="Director's Notes"
+			badge="Unified History"
+			tabs={DIRECTOR_NOTES_TABS}
+			activeTab="Unified History"
+			footer={footer}
+			theme={theme}
+		>
+			<div style={{ display: 'grid', gap: 14 }}>
+				<SurfacePanel theme={theme}>
+					<div
+						style={{
+							display: 'flex',
+							alignItems: 'center',
+							justifyContent: 'space-between',
+							gap: 14,
+						}}
+					>
+						<div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+							<MetaBadge label="AUTO" theme={theme} />
+							<MetaBadge label="USER" tone="accent" theme={theme} />
+						</div>
+						<div
+							style={{
+								flex: 1,
+								display: 'grid',
+								gridTemplateColumns: 'repeat(8, minmax(0, 1fr))',
+								gap: 8,
+							}}
+						>
+							{Array.from({ length: 8 }).map((_, index) => (
+								<div
+									key={`bar-${index}`}
+									style={{
+										height: 10 + ((index % 3) + 1) * 4,
+										alignSelf: 'end',
+										borderRadius: 999,
+										background:
+											index === 1
+												? theme.colors.warning
+												: index > 4
+													? theme.colors.accent
+													: `${theme.colors.accent}66`,
+										opacity: index / 10 + 0.4,
+									}}
+								/>
+							))}
+						</div>
+					</div>
+				</SurfacePanel>
+				{renderStats(DIRECTOR_NOTES_STATS, theme)}
+				<div style={{ display: 'grid', gap: 12 }}>
+					{DIRECTOR_HISTORY_ROWS.map((row, index) => (
+						<HistoryEntry
+							key={`${row.agent}-${row.tag}`}
+							agent={row.agent}
+							tag={row.tag}
+							type={row.type}
+							summary={row.summary}
+							meta={row.meta}
+							cost={row.cost}
+							time={row.time}
+							highlighted={index === 0}
+							progress={progress - index * 0.12}
+							theme={theme}
+						/>
+					))}
+				</div>
+			</div>
+		</MaestroModalShell>
+	);
+};
+
+const DirectorAiOverviewSurface: React.FC<SurfaceProps> = ({ theme }) => {
+	const footer = (
+		<>
+			<span>7 history entries analyzed</span>
+			<span>Generated in 1m 11s</span>
+		</>
+	);
+
+	return (
+		<MaestroModalShell
+			title="Director's Notes"
+			badge="AI Overview"
+			tabs={DIRECTOR_NOTES_TABS}
+			activeTab="AI Overview"
+			footer={footer}
+			theme={theme}
+		>
+			<SurfacePanel theme={theme}>
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: '1.3fr auto',
+						gap: 16,
+						alignItems: 'center',
+					}}
+				>
+					<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+						<div style={{ fontSize: 18, color: theme.colors.textDim }}>Lookback: 7 days</div>
+						<div
+							style={{
+								height: 10,
+								borderRadius: 999,
+								background: theme.colors.border,
+								overflow: 'hidden',
+							}}
+						>
+							<div
+								style={{
+									width: '24%',
+									height: '100%',
+									borderRadius: 999,
+									background: theme.colors.accent,
+								}}
 							/>
+						</div>
+					</div>
+					<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+						<ActionButton label="Refresh" theme={theme} />
+						<ActionButton label="Save" tone="neutral" theme={theme} />
+						<ActionButton label="Copy" tone="neutral" theme={theme} />
+					</div>
+				</div>
+			</SurfacePanel>
+			{renderStats(
+				[
+					{ label: 'History Entries', value: '7', tone: 'accent' },
+					{ label: 'Agents', value: '4', tone: 'neutral' },
+					{ label: 'Time', value: '1m 11s', tone: 'warning' },
+				],
+				theme
+			)}
+			<SurfacePanel theme={theme} padding={20}>
+				{AI_OVERVIEW_SECTIONS.map((section) => (
+					<div key={section.title} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+						<div style={{ fontSize: 30, color: theme.colors.warning }}>{section.title}</div>
+						{section.lines.map((line) => (
+							<div
+								key={line}
+								style={{ fontSize: 18, lineHeight: 1.42, color: theme.colors.textMain }}
+							>
+								- {line}
+							</div>
 						))}
 					</div>
-					<div style={{ display: 'grid', gap: 14 }}>
-						{renderStats(
-							[
-								{ label: 'Projects', value: '18', tone: 'accent' },
-								{ label: 'Issues', value: '47', tone: 'warning' },
-								{ label: 'PRs', value: '9', tone: 'success' },
-							],
-							theme
-						)}
-						<MaestroAnnotationSurface
-							title="Issue Detail"
-							body="Document previews rotate with Cmd+Shift+[ and Cmd+Shift+]. Blocked issues stay visible but disabled, while Start Symphony opens the Create Agent sheet for available work."
-							theme={theme}
-						/>
-						<MaestroAutoRunDocumentList
-							title="Document Previews"
-							documents={AUTO_RUN_DOCUMENTS}
-							summaryPillLabel="5 docs"
-							theme={theme}
-						/>
-						{primaryFallback ? <MaestroFallbackSlot slot={primaryFallback} theme={theme} /> : null}
-					</div>
-				</div>
-			</MaestroModalShell>
-		);
-	}
+				))}
+			</SurfacePanel>
+		</MaestroModalShell>
+	);
+};
 
-	if (scene.surfaceId === 'symphony-create-agent') {
-		return (
-			<MaestroModalShell
-				title="Maestro Symphony"
-				badge="Create Agent"
-				tabs={SYMPHONY_TABS}
-				activeTab="Projects"
-				footer={footer}
-				theme={theme}
-			>
-				<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 18 }}>
-					<div style={{ display: 'grid', gap: 14 }}>
-						<MaestroActivityRow
-							title="Issue #482"
-							tag="Start Symphony"
-							summary="Symphony: runmaestro/maestro #482 keeps the issue, repo, and Auto Run doc context attached to the launch action."
-							meta="Available"
-							highlighted
-							theme={theme}
-						/>
-						<MaestroAutoRunDocumentList
-							title="Document Previews"
-							documents={AUTO_RUN_DOCUMENTS}
-							summaryPillLabel="5 docs"
-							theme={theme}
-						/>
-						{primaryFallback ? <MaestroFallbackSlot slot={primaryFallback} theme={theme} /> : null}
-					</div>
-					<div style={{ display: 'grid', gap: 14 }}>
-						{renderStats(
-							[
-								{ label: 'Provider', value: 'Codex', tone: 'accent' },
-								{ label: 'Branch', value: '#482', tone: 'neutral' },
-								{ label: 'Docs', value: '5', tone: 'warning' },
-							],
-							theme
-						)}
-						<MaestroAnnotationSurface
-							title="Create Agent"
-							body="AI Provider, Session Name, and Working Directory stay literal to the real launch flow so later phases can deepen the handoff instead of replacing a generic CTA sheet."
-							theme={theme}
-						/>
-						<MaestroAnnotationSurface
-							title="Working Directory"
-							body="~/Maestro-Symphony/runmaestro-maestro | Create Agent clones the repo, creates symphony/{issue-number}-{short-id}, and starts the Playbook automatically."
-							theme={theme}
-						/>
-					</div>
-				</div>
-			</MaestroModalShell>
-		);
-	}
-
-	if (scene.surfaceId === 'director-history') {
-		return (
-			<MaestroModalShell
-				title="Director's Notes"
-				badge="Unified History"
-				tabs={DIRECTOR_NOTES_TABS}
-				activeTab="Unified History"
-				footer={footer}
-				theme={theme}
-			>
-				<div style={{ display: 'grid', gridTemplateColumns: '0.92fr 1.08fr', gap: 18 }}>
-					<div style={{ display: 'grid', gap: 14 }}>
-						{renderStats(
-							[
-								{ label: 'Queries', value: '412', tone: 'accent' },
-								{ label: 'Sessions', value: '203', tone: 'neutral' },
-								{ label: 'AUTO', value: '147', tone: 'warning' },
-							],
-							theme
-						)}
-						<MaestroAnnotationSurface
-							title="Filters"
-							body="AUTO / USER toggles, Cmd+F search, and the Activity Graph narrow the current dataset before an entry detail or session jump opens."
-							theme={theme}
-						/>
-						{primaryFallback ? <MaestroFallbackSlot slot={primaryFallback} theme={theme} /> : null}
-					</div>
-					<div style={{ display: 'grid', gap: 12 }}>
-						{DIRECTOR_HISTORY_ROWS.map((row) => (
-							<MaestroActivityRow
-								key={row.title}
-								title={row.title}
-								tag={row.tag}
-								summary={row.summary}
-								meta={row.meta}
-								highlighted={row.highlighted}
-								theme={theme}
-							/>
-						))}
-					</div>
-				</div>
-			</MaestroModalShell>
-		);
-	}
-
-	if (scene.surfaceId === 'director-ai-overview') {
-		return (
-			<MaestroModalShell
-				title="Director's Notes"
-				badge="AI Overview"
-				tabs={DIRECTOR_NOTES_TABS}
-				activeTab="AI Overview"
-				footer={footer}
-				theme={theme}
-			>
-				<div style={{ display: 'grid', gridTemplateColumns: '0.95fr 1.05fr', gap: 18 }}>
-					<div style={{ display: 'grid', gap: 14 }}>
-						{renderStats(
-							[
-								{ label: 'Entries', value: '127', tone: 'accent' },
-								{ label: 'Agents', value: '19', tone: 'neutral' },
-								{ label: 'Time', value: '8.2s', tone: 'success' },
-							],
-							theme
-						)}
-						<MaestroAnnotationSurface
-							title="Controls"
-							body="Lookback, Refresh, Save, and Copy keep the synopsis workflow grounded in the real Director's Notes tab rather than a generic analytics surface."
-							theme={theme}
-						/>
-						{primaryFallback ? <MaestroFallbackSlot slot={primaryFallback} theme={theme} /> : null}
-					</div>
-					<div style={{ display: 'grid', gap: 14 }}>
-						<MaestroTerminalBlock title="AI Overview" lines={DIRECTOR_AI_OVERVIEW_LINES} theme={theme} />
-						{secondaryFallback ? <MaestroFallbackSlot slot={secondaryFallback} theme={theme} /> : null}
-					</div>
-				</div>
-			</MaestroModalShell>
-		);
-	}
-
-	if (scene.surfaceId === 'worktree-dispatch') {
-		return (
-			<MaestroModalShell
-				title="Run in Worktree"
-				badge="Enabled"
-				tabs={WORKTREE_TABS}
-				activeTab="Run in Worktree"
-				footer={footer}
-				theme={theme}
-			>
-				<div style={{ display: 'grid', gridTemplateColumns: '1fr 0.95fr', gap: 18 }}>
-					<div style={{ display: 'grid', gap: 14 }}>
-						<MaestroWorktreeControls
-							baseBranch="main"
-							branchName="autorun-spinout"
-							createPROnCompletion
-							pathPreview="/Users/jeff/Projects/Maestro-WorkTrees/autorun-spinout"
-							theme={theme}
-						/>
-						{primaryFallback ? (
-							<MaestroFallbackSlot slot={primaryFallback} theme={theme} />
-						) : (
-							<MaestroAnnotationSurface
-								title="Capture Coverage"
-								body="Any surface that cannot be matched exactly stays explicit as a screenshot or video slot instead of a loose approximation."
-								theme={theme}
-							/>
-						)}
-					</div>
-					<div style={{ display: 'grid', gap: 14 }}>
-						{renderStats(
-							[
-								{ label: 'Base', value: 'main', tone: 'accent' },
-								{ label: 'Branch', value: 'spinout', tone: 'neutral' },
-								{ label: 'PR', value: 'Auto', tone: 'success' },
-							],
-							theme
-						)}
-						<MaestroAnnotationSurface
-							title="Dispatch to a separate worktree"
-							body="Create New Worktree, Base Branch, Worktree Branch Name, and Automatically create PR when complete stay attached to the same Auto Run modal."
-							theme={theme}
-						/>
-						{secondaryFallback ? <MaestroFallbackSlot slot={secondaryFallback} theme={theme} /> : null}
-					</div>
-				</div>
-			</MaestroModalShell>
-		);
-	}
+const WorktreeDispatchSurface: React.FC<SurfaceProps> = ({ fallbackSlots, theme }) => {
+	const footer = (
+		<>
+			<span>Dispatch to a separate worktree</span>
+			<span>Automatically create PR when complete</span>
+		</>
+	);
 
 	return (
 		<MaestroModalShell
 			title="Run in Worktree"
-			badge="Follow-through"
+			badge="Enabled"
 			tabs={WORKTREE_TABS}
-			activeTab="History"
+			activeTab="Run in Worktree"
 			footer={footer}
 			theme={theme}
 		>
-			<div style={{ display: 'grid', gridTemplateColumns: '0.98fr 1.02fr', gap: 18 }}>
+			<div style={{ display: 'grid', gridTemplateColumns: '1fr 0.92fr', gap: 16 }}>
+				<div style={{ display: 'grid', gap: 14 }}>
+					<MaestroWorktreeControls
+						baseBranch="main"
+						branchName="autorun-spinout"
+						createPROnCompletion
+						pathPreview="/Users/pedram/Projects/Maestro-WorkTrees/autorun-spinout"
+						theme={theme}
+					/>
+				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
 					<MaestroAutoRunDocumentList
 						title="Auto Run"
@@ -426,21 +572,163 @@ export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
 						theme={theme}
 					/>
 					<MaestroAnnotationSurface
-						title="Dispatch to a separate worktree"
-						body="The worktree flow keeps the Playbook queue, branch isolation, and PR follow-through connected instead of splitting them across separate tools."
+						title="Clean Main Checkout"
+						body="Longer Auto Run sessions stay isolated on a dedicated branch and directory, then hand off to pull-request creation once the run completes."
 						theme={theme}
 					/>
-					{primaryFallback ? <MaestroFallbackSlot slot={primaryFallback} theme={theme} /> : null}
-				</div>
-				<div style={{ display: 'grid', gap: 14 }}>
-					<MaestroTerminalBlock
-						title={scene.featureName}
-						lines={[...TERMINAL_PLAN_LINES, '', ...WORKTREE_EXECUTION_LINES]}
-						theme={theme}
-					/>
-					{secondaryFallback ? <MaestroFallbackSlot slot={secondaryFallback} theme={theme} /> : null}
+					{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
 				</div>
 			</div>
 		</MaestroModalShell>
 	);
+};
+
+const WorktreeTerminalSurface: React.FC<SurfaceProps> = ({ fallbackSlots, progress, theme }) => {
+	return (
+		<MaestroModalShell title="Worktree Configuration" badge="Follow-through" theme={theme}>
+			<div style={{ display: 'grid', gridTemplateColumns: '1fr 0.94fr', gap: 16 }}>
+				<div style={{ display: 'grid', gap: 14 }}>
+					<SurfacePanel theme={theme}>
+						<FieldCard
+							label="Worktree Directory"
+							value="/Users/pedram/Projects/Maestro-WorkTrees"
+							theme={theme}
+						/>
+						<div
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								justifyContent: 'space-between',
+								padding: '16px 18px',
+								borderRadius: 18,
+								border: `1px solid ${theme.colors.border}`,
+								background: theme.colors.bgMain,
+							}}
+						>
+							<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+								<div style={{ fontSize: 28, color: theme.colors.textMain }}>
+									Watch for new worktrees
+								</div>
+								<div style={{ fontSize: 18, color: theme.colors.textDim }}>
+									Auto-detect worktrees created outside Maestro
+								</div>
+							</div>
+							<div
+								style={{
+									width: 80,
+									height: 42,
+									borderRadius: 999,
+									background: theme.colors.success,
+									position: 'relative',
+								}}
+							>
+								<div
+									style={{
+										position: 'absolute',
+										top: 4,
+										right: 4,
+										width: 34,
+										height: 34,
+										borderRadius: 999,
+										background: '#ffffff',
+									}}
+								/>
+							</div>
+						</div>
+						<div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12 }}>
+							<FieldCard label="Create New Worktree" value="feature-xyz" theme={theme} />
+							<ActionButton label="+ Create" theme={theme} />
+						</div>
+					</SurfacePanel>
+					<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+						<ActionButton label="Disable" tone="neutral" theme={theme} />
+						<ActionButton label="Cancel" tone="neutral" theme={theme} />
+						<ActionButton label="Save Configuration" theme={theme} />
+					</div>
+					{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
+				</div>
+				<div style={{ display: 'grid', gap: 14 }}>
+					<MaestroTerminalBlock
+						title="Dispatch to a separate worktree"
+						lines={TERMINAL_PLAN_LINES}
+						theme={theme}
+					/>
+					<WorktreeListPanel theme={theme} progress={progress} />
+					{fallbackSlots[1] ? <MaestroFallbackSlot slot={fallbackSlots[1]} theme={theme} /> : null}
+				</div>
+			</div>
+		</MaestroModalShell>
+	);
+};
+
+export const getSurfaceTheme = (surfaceId: SceneSurfaceId): MaestroVisualTheme => {
+	if (surfaceId === 'director-history' || surfaceId === 'director-ai-overview') {
+		return MAESTRO_SURFACE_THEMES['director-notes'];
+	}
+
+	if (surfaceId === 'worktree-dispatch' || surfaceId === 'worktree-terminal') {
+		return MAESTRO_SURFACE_THEMES.worktree;
+	}
+
+	return MAESTRO_SURFACE_THEMES.symphony;
+};
+
+export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
+	scene,
+	captures,
+}) => {
+	const frame = useCurrentFrame();
+	const theme = getSurfaceTheme(scene.surfaceId);
+	const progress = interpolate(frame, [0, scene.durationInFrames - 1], [0.18, 1], clamp);
+	const fallbackSlots = getFallbackSlots(captures);
+
+	switch (scene.surfaceId) {
+		case 'symphony-projects':
+		case 'symphony-create-agent':
+			return (
+				<SymphonySurfaceShowcase
+					scene={scene}
+					captures={captures}
+					progress={progress}
+					theme={theme}
+				/>
+			);
+		case 'director-history':
+			return (
+				<DirectorHistorySurface
+					captures={captures}
+					fallbackSlots={fallbackSlots}
+					progress={progress}
+					theme={theme}
+				/>
+			);
+		case 'director-ai-overview':
+			return (
+				<DirectorAiOverviewSurface
+					captures={captures}
+					fallbackSlots={fallbackSlots}
+					progress={progress}
+					theme={theme}
+				/>
+			);
+		case 'worktree-terminal':
+			return (
+				<WorktreeTerminalSurface
+					captures={captures}
+					fallbackSlots={fallbackSlots}
+					progress={progress}
+					theme={theme}
+				/>
+			);
+		case 'worktree-dispatch':
+		default:
+			return (
+				<WorktreeDispatchSurface
+					captures={captures}
+					fallbackSlots={fallbackSlots}
+					progress={progress}
+					theme={theme}
+				/>
+			);
+	}
 };

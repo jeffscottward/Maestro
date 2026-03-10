@@ -46,7 +46,7 @@ describe('capture readiness coverage', () => {
 		expect(report).toContain('[[worktree-spin-offs-feature-research]]');
 		expect(report).toContain('scene implementation');
 		expect(report).toContain('`pnpm validate:capture`');
-		expect(report).toContain('`capture/live/symphony/projects-browse.mov`');
+		expect(report).toContain('`capture/docs/symphony/projects-browse-reference.png`');
 		expect(report).toContain('`capture/live/director-notes/modal-open.mov`');
 		expect(report).toContain('`capture/live/worktree/autorun-batch-runner.mov`');
 	});

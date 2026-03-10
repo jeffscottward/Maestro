@@ -86,26 +86,29 @@ export const symphonyStandaloneSpec = createProductionSpec({
 	assetPlaceholders: [
 		{
 			id: 'symphony-projects-hero',
-			kind: 'live-capture',
-			label: 'Projects browse hero capture',
-			plannedSource: 'capture/live/symphony/projects-browse.mov',
-			usage: 'Scenes 1 and 2 foundation for repository browsing and issue selection.',
+			kind: 'doc-capture',
+			label: 'Projects browse reference capture',
+			plannedSource: 'capture/docs/symphony/projects-browse-reference.png',
+			usage:
+				'Scenes 1 and 2 fallback reference for repository browsing and issue selection while the composition stays reconstruction-first.',
 			required: true,
 		},
 		{
 			id: 'symphony-doc-preview-inset',
 			kind: 'doc-capture',
 			label: 'Issue document preview inset',
-			plannedSource: 'capture/docs/symphony/issue-document-preview.png',
-			usage: 'Scene 2 support asset for document preview readability in tighter crops.',
+			plannedSource: 'capture/docs/symphony/issue-detail-reference.png',
+			usage:
+				'Scene 2 support asset for document preview readability and split-pane issue detail fidelity in tighter crops.',
 			required: true,
 		},
 		{
 			id: 'symphony-create-agent-focus',
-			kind: 'live-capture',
-			label: 'Create Symphony Agent handoff capture',
-			plannedSource: 'capture/live/symphony/create-agent.mov',
-			usage: 'Scenes 3 and 4 activation shell and provider-selection beat.',
+			kind: 'doc-capture',
+			label: 'Create Symphony Agent handoff reference',
+			plannedSource: 'capture/docs/symphony/create-agent-reference.png',
+			usage:
+				'Scenes 3 and 4 fallback reference for the activation shell while the dialog itself is reconstructed to current product terminology.',
 			required: true,
 		},
 		{
@@ -119,18 +122,29 @@ export const symphonyStandaloneSpec = createProductionSpec({
 		},
 		{
 			id: 'symphony-active-card-proof',
-			kind: 'live-capture',
-			label: 'Active contribution proof capture',
-			plannedSource: 'capture/live/symphony/active-card.mov',
-			usage: 'Scene 5 hero proof for draft PR state, live progress, and review readiness.',
+			kind: 'doc-capture',
+			label: 'Active contribution proof reference',
+			plannedSource: 'capture/docs/symphony/active-card-reference.png',
+			usage:
+				'Scene 5 fallback reference for contribution-card layout and pacing while the rendered state follows the current draft-PR-aware product behavior.',
+			required: true,
+		},
+		{
+			id: 'symphony-history-proof',
+			kind: 'doc-capture',
+			label: 'History proof reference',
+			plannedSource: 'capture/docs/symphony/history-proof-reference.png',
+			usage:
+				'Scene 6 fallback reference for completed contribution rows and merged-state proof before the closing stats settle.',
 			required: true,
 		},
 		{
 			id: 'symphony-stats-proof',
-			kind: 'live-capture',
-			label: 'Stats and history proof capture',
-			plannedSource: 'capture/live/symphony/stats-history.mov',
-			usage: 'Scene 6 closing proof for milestones, history, and measurable contribution output.',
+			kind: 'doc-capture',
+			label: 'Stats proof reference',
+			plannedSource: 'capture/docs/symphony/stats-proof-reference.png',
+			usage:
+				'Scene 6 closing proof for milestones, token donation, and measurable contribution output.',
 			required: true,
 		},
 	],
@@ -318,7 +332,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			body: 'Completed contribution proof, milestones, and cumulative contribution metrics make the browse-to-contribute transformation visible without leaving Maestro.',
 			durationInFrames: 240,
 			captureIds: ['symphony-history-stats-proof'],
-			assetPlaceholderIds: ['symphony-stats-proof'],
+			assetPlaceholderIds: ['symphony-history-proof', 'symphony-stats-proof'],
 			storyboard: {
 				sceneNumber: 6,
 				purpose: 'Close with measurable proof that discovery became durable contribution output.',

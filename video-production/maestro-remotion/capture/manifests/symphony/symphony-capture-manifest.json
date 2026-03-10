@@ -65,42 +65,42 @@
 	"assets": [
 		{
 			"id": "symphony-projects-hero",
-			"kind": "live-capture",
-			"label": "Projects browse hero capture",
-			"plannedSource": "capture/live/symphony/projects-browse.mov",
-			"usage": "Scenes 1 and 2 foundation for repository browsing and issue selection.",
-			"required": true,
-			"bucket": "live",
-			"featureSlug": "symphony",
-			"mediaType": "video",
-			"metadata": {
-				"relativePath": "capture/live/symphony/projects-browse.mov",
-				"bucket": "live",
-				"featureSlug": "symphony",
-				"fileName": "projects-browse.mov",
-				"stem": "projects-browse",
-				"extension": "mov",
-				"mediaType": "video"
-			},
-			"sourceStatus": "planned",
-			"capturedPath": null
-		},
-		{
-			"id": "symphony-doc-preview-inset",
 			"kind": "doc-capture",
-			"label": "Issue document preview inset",
-			"plannedSource": "capture/docs/symphony/issue-document-preview.png",
-			"usage": "Scene 2 support asset for document preview readability in tighter crops.",
+			"label": "Projects browse reference capture",
+			"plannedSource": "capture/docs/symphony/projects-browse-reference.png",
+			"usage": "Scenes 1 and 2 fallback reference for repository browsing and issue selection while the composition stays reconstruction-first.",
 			"required": true,
 			"bucket": "docs",
 			"featureSlug": "symphony",
 			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/docs/symphony/issue-document-preview.png",
+				"relativePath": "capture/docs/symphony/projects-browse-reference.png",
 				"bucket": "docs",
 				"featureSlug": "symphony",
-				"fileName": "issue-document-preview.png",
-				"stem": "issue-document-preview",
+				"fileName": "projects-browse-reference.png",
+				"stem": "projects-browse-reference",
+				"extension": "png",
+				"mediaType": "image"
+			},
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/symphony/projects-browse-reference.png"
+		},
+		{
+			"id": "symphony-doc-preview-inset",
+			"kind": "doc-capture",
+			"label": "Issue document preview inset",
+			"plannedSource": "capture/docs/symphony/issue-detail-reference.png",
+			"usage": "Scene 2 support asset for document preview readability and split-pane issue detail fidelity in tighter crops.",
+			"required": true,
+			"bucket": "docs",
+			"featureSlug": "symphony",
+			"mediaType": "image",
+			"metadata": {
+				"relativePath": "capture/docs/symphony/issue-detail-reference.png",
+				"bucket": "docs",
+				"featureSlug": "symphony",
+				"fileName": "issue-detail-reference.png",
+				"stem": "issue-detail-reference",
 				"extension": "png",
 				"mediaType": "image"
 			},
@@ -109,25 +109,25 @@
 		},
 		{
 			"id": "symphony-create-agent-focus",
-			"kind": "live-capture",
-			"label": "Create Agent handoff capture",
-			"plannedSource": "capture/live/symphony/create-agent.mov",
-			"usage": "Scenes 3 and 4 activation shell and provider-selection beat.",
+			"kind": "doc-capture",
+			"label": "Create Symphony Agent handoff reference",
+			"plannedSource": "capture/docs/symphony/create-agent-reference.png",
+			"usage": "Scenes 3 and 4 fallback reference for the activation shell while the dialog itself is reconstructed to current product terminology.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "symphony",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/symphony/create-agent.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/symphony/create-agent-reference.png",
+				"bucket": "docs",
 				"featureSlug": "symphony",
-				"fileName": "create-agent.mov",
-				"stem": "create-agent",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "create-agent-reference.png",
+				"stem": "create-agent-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/symphony/create-agent-reference.png"
 		},
 		{
 			"id": "symphony-automation-checklist",
@@ -153,47 +153,69 @@
 		},
 		{
 			"id": "symphony-active-card-proof",
-			"kind": "live-capture",
-			"label": "Active contribution proof capture",
-			"plannedSource": "capture/live/symphony/active-card.mov",
-			"usage": "Scene 5 hero proof that the contribution became a live Maestro object.",
+			"kind": "doc-capture",
+			"label": "Active contribution proof reference",
+			"plannedSource": "capture/docs/symphony/active-card-reference.png",
+			"usage": "Scene 5 fallback reference for contribution-card layout and pacing while the rendered state follows the current draft-PR-aware product behavior.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "symphony",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/symphony/active-card.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/symphony/active-card-reference.png",
+				"bucket": "docs",
 				"featureSlug": "symphony",
-				"fileName": "active-card.mov",
-				"stem": "active-card",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "active-card-reference.png",
+				"stem": "active-card-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/symphony/active-card-reference.png"
+		},
+		{
+			"id": "symphony-history-proof",
+			"kind": "doc-capture",
+			"label": "History proof reference",
+			"plannedSource": "capture/docs/symphony/history-proof-reference.png",
+			"usage": "Scene 6 fallback reference for completed contribution rows and merged-state proof before the closing stats settle.",
+			"required": true,
+			"bucket": "docs",
+			"featureSlug": "symphony",
+			"mediaType": "image",
+			"metadata": {
+				"relativePath": "capture/docs/symphony/history-proof-reference.png",
+				"bucket": "docs",
+				"featureSlug": "symphony",
+				"fileName": "history-proof-reference.png",
+				"stem": "history-proof-reference",
+				"extension": "png",
+				"mediaType": "image"
+			},
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/symphony/history-proof-reference.png"
 		},
 		{
 			"id": "symphony-stats-proof",
-			"kind": "live-capture",
-			"label": "Stats and history proof capture",
-			"plannedSource": "capture/live/symphony/stats-history.mov",
-			"usage": "Scene 6 closing proof for milestones, history, and measurable contribution output.",
+			"kind": "doc-capture",
+			"label": "Stats proof reference",
+			"plannedSource": "capture/docs/symphony/stats-proof-reference.png",
+			"usage": "Scene 6 closing proof for milestones, token donation, and measurable contribution output.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "symphony",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/symphony/stats-history.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/symphony/stats-proof-reference.png",
+				"bucket": "docs",
 				"featureSlug": "symphony",
-				"fileName": "stats-history.mov",
-				"stem": "stats-history",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "stats-proof-reference.png",
+				"stem": "stats-proof-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/symphony/stats-proof-reference.png"
 		}
 	],
 	"sceneMappings": [
@@ -417,7 +439,7 @@
 			"sceneNumber": 6,
 			"purpose": "Close with measurable proof that discovery became contribution history.",
 			"captureIds": ["symphony-history-stats-proof"],
-			"assetPlaceholderIds": ["symphony-stats-proof"],
+			"assetPlaceholderIds": ["symphony-history-proof", "symphony-stats-proof"],
 			"recordingPath": "capture/recordings/symphony/s06-symphony-standalone-history-stats.mov",
 			"cropPlan": [
 				{
@@ -444,8 +466,8 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/stats-proof-reference.png",
-					"fallbackAssetIds": ["symphony-stats-proof"],
-					"notes": "Source type: screenshot fallback. Resolved from the checked-in Symphony stats screenshot copied into capture/docs/symphony/stats-proof-reference.png, with capture/docs/symphony/history-proof-reference.png retained as the supporting review-state fallback. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"fallbackAssetIds": ["symphony-history-proof", "symphony-stats-proof"],
+					"notes": "Source type: screenshot fallback. Resolved from the checked-in Symphony stats screenshot copied into capture/docs/symphony/stats-proof-reference.png, with capture/docs/symphony/history-proof-reference.png tracked as the paired review-state fallback asset for the same closing beat. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
 		}

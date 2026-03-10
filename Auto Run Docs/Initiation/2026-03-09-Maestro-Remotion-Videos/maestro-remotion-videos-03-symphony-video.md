@@ -23,11 +23,14 @@ This phase turns the shared prototype system into a finished standalone video fo
 	- Note: Updated `video-production/maestro-remotion/src/lib/maestroVisualSystem.ts` and workspace tests so Symphony terminology now asserts the shipped labels (`Start Symphony`, `Create Symphony Agent`, `Check PR Status`, `Finalize PR`, `Ready for Review`) and treats the older screenshot fallbacks as visual-reference-only.
 	- Note: Added `video-production/maestro-remotion/tests/symphony-surface-showcase.test.ts` for scene-variant mapping and render signatures, then re-ran `pnpm validate` in `video-production/maestro-remotion`; all `42` tests passed.
 
-- [ ] Integrate live-capture and fallback assets for the Symphony flow:
+- [x] Integrate live-capture and fallback assets for the Symphony flow:
 	- Connect the approved capture sources from Phase 02 to the specific storyboard scenes
 	- Prefer reconstructed UI for elements that can be matched exactly, and use screenshot or trimmed recording fallback only where exact reconstruction would drift from the real product
 	- Preserve state transitions such as browse, select, create agent, active execution, progress, and ready-for-review outcomes
 	- Track every external asset used by the Symphony composition in the spec or asset manifest
+	- Note: Reworked `video-production/maestro-remotion/src/data/specs/symphony-standalone-spec.ts` so the Symphony asset placeholders now point at the approved checked-in fallback references for browse, issue detail, `Create Symphony Agent`, `Active`, `History`, and `Stats`, with the setup checklist staying on the derived JSON proof asset.
+	- Note: Updated `video-production/maestro-remotion/capture/manifests/symphony/symphony-capture-manifest.json` to promote those fallback files into concrete declared scene assets, add the missing `History` proof asset for the closing beat, and keep the scene-source notes explicit about where stale screenshots remain visual-reference-only.
+	- Note: Added `video-production/maestro-remotion/tests/symphony-capture-assets.test.ts`, updated the capture-readiness reporting assertions, analyzed `6` Symphony reference images under `video-production/maestro-remotion/capture/docs/symphony/`, and re-ran `pnpm test -- tests/symphony-capture-assets.test.ts`, `pnpm validate:capture`, and full `pnpm validate` in `video-production/maestro-remotion`; all `44` tests passed.
 
 - [ ] Implement the Symphony composition and motion choreography:
 	- Build the full Symphony scene sequence using Remotion primitives only; do not use CSS animations or Tailwind animation classes

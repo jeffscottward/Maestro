@@ -32,15 +32,17 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 			feature: 'Project Sources Research',
 			mode: 'reconstructed-ui',
 			sourceRef: 'docs/research/project-sources.md',
-			notes: 'Anchors Maestro terminology, screenshots, and source-of-truth references for later reconstructions.',
+			notes:
+				'Anchors Maestro terminology, screenshots, and source-of-truth references for later reconstructions.',
 			required: true,
 		},
 		{
-			id: 'theme-token-fallback',
-			feature: 'Theme Token Fallback Slot',
+			id: 'director-notes-history-fallback',
+			feature: "Director's Notes Unified History",
 			mode: 'fallback-slot',
-			sourceRef: 'src/shared/themes.ts',
-			notes: 'Keeps the token source explicit until the dedicated Maestro visual system is implemented.',
+			sourceRef: 'docs/screenshots/directors-notes-history.png',
+			notes:
+				'Use the exact Unified History screenshot until the dense history table is rebuilt as a data-driven surface.',
 			required: true,
 		},
 	],
@@ -63,7 +65,7 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 			title: 'Scenes, captures, and motion stay in validated specs',
 			body: "Each video can now declare source refs, required capture slots, and motion behavior in Zod-validated data before deeper Symphony, Director's Notes, and worktree productions land.",
 			durationInFrames: 90,
-			captureIds: ['project-sources', 'theme-token-fallback'],
+			captureIds: ['project-sources', 'director-notes-history-fallback'],
 		},
 	],
 });

@@ -1,24 +1,31 @@
 import type React from 'react';
 
+import { maestroVisualTheme, type MaestroVisualTheme } from '../lib/maestroVisualSystem';
+
 type MetaBadgeProps = {
 	label: string;
 	tone?: 'accent' | 'neutral';
+	theme?: MaestroVisualTheme;
 };
 
-const toneStyles: Record<NonNullable<MetaBadgeProps['tone']>, React.CSSProperties> = {
-	accent: {
-		backgroundColor: 'rgba(244, 139, 204, 0.14)',
-		borderColor: 'rgba(244, 139, 204, 0.32)',
-		color: '#ffb0dd',
-	},
-	neutral: {
-		backgroundColor: 'rgba(255, 255, 255, 0.04)',
-		borderColor: 'rgba(208, 185, 255, 0.16)',
-		color: '#f3e9ff',
-	},
-};
+export const MetaBadge: React.FC<MetaBadgeProps> = ({
+	label,
+	tone = 'neutral',
+	theme = maestroVisualTheme,
+}) => {
+	const toneStyles: Record<NonNullable<MetaBadgeProps['tone']>, React.CSSProperties> = {
+		accent: {
+			backgroundColor: theme.colors.accentDim,
+			borderColor: `${theme.colors.accent}55`,
+			color: theme.colors.accentText,
+		},
+		neutral: {
+			backgroundColor: theme.colors.bgActivity,
+			borderColor: theme.colors.border,
+			color: theme.colors.textMain,
+		},
+	};
 
-export const MetaBadge: React.FC<MetaBadgeProps> = ({ label, tone = 'neutral' }) => {
 	return (
 		<div
 			style={{

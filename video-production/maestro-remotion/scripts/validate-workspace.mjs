@@ -1,3 +1,5 @@
+/* global console, process */
+
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
@@ -28,7 +30,10 @@ const requiredPaths = [
 	'src/data/production-schema.ts',
 	'src/data/workspace-bootstrap-spec.ts',
 	'src/lib/composition-registry.ts',
+	'src/lib/maestroVisualSystem.ts',
 	'src/lib/timeline.ts',
+	'src/ui/MaestroPrimitives.tsx',
+	'src/components/FeatureSurfaceShowcase.tsx',
 	'renders',
 	'docs/research/project-sources.md',
 ];
@@ -60,7 +65,9 @@ const requiredPlanningLinks = [
 	'[[worktree-spin-offs-prototype-plan]]',
 ];
 
-const missingFiles = requiredPaths.filter((relativePath) => !existsSync(resolve(workspaceRoot, relativePath)));
+const missingFiles = requiredPaths.filter(
+	(relativePath) => !existsSync(resolve(workspaceRoot, relativePath))
+);
 
 if (missingFiles.length > 0) {
 	console.error(`Missing required workspace files:\n- ${missingFiles.join('\n- ')}`);
@@ -69,7 +76,9 @@ if (missingFiles.length > 0) {
 
 const packageJson = JSON.parse(readFileSync(resolve(workspaceRoot, 'package.json'), 'utf8'));
 if (packageJson.name !== '@maestro/video-production-remotion') {
-	console.error('Workspace package name must stay isolated under @maestro/video-production-remotion.');
+	console.error(
+		'Workspace package name must stay isolated under @maestro/video-production-remotion.'
+	);
 	process.exit(1);
 }
 
@@ -82,15 +91,18 @@ const remotionCliVersion =
 	packageJson.dependencies?.['@remotion/cli'] ?? packageJson.devDependencies?.['@remotion/cli'];
 
 if (!remotionCliVersion) {
-	console.error('Workspace must include @remotion/cli so the studio and render scripts are runnable.');
+	console.error(
+		'Workspace must include @remotion/cli so the studio and render scripts are runnable.'
+	);
 	process.exit(1);
 }
 
-const zodVersion =
-	packageJson.dependencies?.zod ?? packageJson.devDependencies?.zod;
+const zodVersion = packageJson.dependencies?.zod ?? packageJson.devDependencies?.zod;
 
 if (zodVersion !== '4.3.6') {
-	console.error('Workspace must pin zod to 4.3.6 so Remotion resolves local dependencies instead of the repo root.');
+	console.error(
+		'Workspace must pin zod to 4.3.6 so Remotion resolves local dependencies instead of the repo root.'
+	);
 	process.exit(1);
 }
 
@@ -101,7 +113,10 @@ if (!zodPackagePath.startsWith(workspaceRoot)) {
 	process.exit(1);
 }
 
-const researchDoc = readFileSync(resolve(workspaceRoot, 'docs/research/project-sources.md'), 'utf8');
+const researchDoc = readFileSync(
+	resolve(workspaceRoot, 'docs/research/project-sources.md'),
+	'utf8'
+);
 
 for (const sourcePath of requiredSourceReferences) {
 	if (!researchDoc.includes(`\`${sourcePath}\``)) {

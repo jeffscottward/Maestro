@@ -5,13 +5,31 @@ import { resolve } from 'node:path';
 const workspaceRoot = process.cwd();
 const requireFromWorkspace = createRequire(resolve(workspaceRoot, 'package.json'));
 
-const requiredFiles = [
+const requiredPaths = [
 	'package.json',
 	'pnpm-lock.yaml',
 	'src/index.ts',
 	'src/Root.tsx',
 	'src/WorkspaceBootstrap.tsx',
 	'src/workspace-metadata.ts',
+	'src/compositions',
+	'src/scenes',
+	'src/components',
+	'src/ui',
+	'src/animations',
+	'src/data',
+	'src/assets',
+	'src/lib',
+	'src/compositions/MaestroWorkspaceBootstrapComposition.tsx',
+	'src/scenes/FeatureHeroScene.tsx',
+	'src/components/ProductionFrame.tsx',
+	'src/ui/MetaBadge.tsx',
+	'src/animations/motion.ts',
+	'src/data/production-schema.ts',
+	'src/data/workspace-bootstrap-spec.ts',
+	'src/lib/composition-registry.ts',
+	'src/lib/timeline.ts',
+	'renders',
 	'docs/research/project-sources.md',
 ];
 
@@ -42,7 +60,7 @@ const requiredPlanningLinks = [
 	'[[worktree-spin-offs-prototype-plan]]',
 ];
 
-const missingFiles = requiredFiles.filter((relativePath) => !existsSync(resolve(workspaceRoot, relativePath)));
+const missingFiles = requiredPaths.filter((relativePath) => !existsSync(resolve(workspaceRoot, relativePath)));
 
 if (missingFiles.length > 0) {
 	console.error(`Missing required workspace files:\n- ${missingFiles.join('\n- ')}`);

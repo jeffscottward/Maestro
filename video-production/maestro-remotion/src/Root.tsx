@@ -1,24 +1,23 @@
-import { Composition } from 'remotion';
+import { Composition, Folder } from 'remotion';
 
-import { WorkspaceBootstrap } from './WorkspaceBootstrap';
-import {
-	WORKSPACE_COMPOSITION_ID,
-	WORKSPACE_DIMENSIONS,
-	WORKSPACE_DURATION_IN_FRAMES,
-	WORKSPACE_FPS,
-	workspaceBootstrapDefaults,
-} from './workspace-metadata';
+import { compositionDefinitions } from './lib/composition-registry';
 
 export const RemotionRoot = () => {
 	return (
-		<Composition
-			id={WORKSPACE_COMPOSITION_ID}
-			component={WorkspaceBootstrap}
-			durationInFrames={WORKSPACE_DURATION_IN_FRAMES}
-			fps={WORKSPACE_FPS}
-			width={WORKSPACE_DIMENSIONS.width}
-			height={WORKSPACE_DIMENSIONS.height}
-			defaultProps={workspaceBootstrapDefaults}
-		/>
+		<Folder name="Foundation">
+			{compositionDefinitions.map((definition) => (
+				<Composition
+					key={definition.id}
+					id={definition.id}
+					component={definition.component}
+					durationInFrames={definition.durationInFrames}
+					fps={definition.fps}
+					width={definition.width}
+					height={definition.height}
+					defaultProps={definition.defaultProps}
+					schema={definition.schema}
+				/>
+			))}
+		</Folder>
 	);
 };

@@ -76,6 +76,8 @@ describe('Worktree surface showcase', () => {
 		expect(markup).toContain('Select Auto Run Folder');
 		expect(markup).toContain('Dispatch to a separate worktree');
 		expect(markup).toContain('Current checkout');
+		expect(markup).toContain('Scene source');
+		expect(markup).toContain('capture/docs/worktree/autorun-worktree-reference.png');
 	});
 
 	it('renders the create form and PR handoff state with the shipped worktree labels', () => {
@@ -93,6 +95,7 @@ describe('Worktree surface showcase', () => {
 		expect(prMarkup).toContain('Automatically create PR when complete');
 		expect(prMarkup).toContain('Create Pull Request');
 		expect(prMarkup).toContain('Review path');
+		expect(prMarkup).toContain('capture/docs/worktree/autorun-worktree-reference.png');
 	});
 
 	it('renders inventory proof and terminal follow-through states for the isolated lane', () => {
@@ -109,10 +112,13 @@ describe('Worktree surface showcase', () => {
 		expect(inventoryMarkup).toContain('Available Worktrees');
 		expect(inventoryMarkup).toContain('Worktree Directory');
 		expect(inventoryMarkup).toContain('Watch for new worktrees');
+		expect(inventoryMarkup).toContain('capture/docs/worktree/worktree-inventory-reference.png');
+		expect(inventoryMarkup).toContain('capture/docs/worktree/worktree-configuration-reference.png');
 
 		expect(terminalMarkup).toContain('Parent checkout stays clean');
 		expect(terminalMarkup).toContain('Create Pull Request');
 		expect(terminalMarkup).toContain('autorun-spinout');
 		expect(terminalMarkup).toContain('Separate worktree path');
+		expect(terminalMarkup).toContain('capture/derived/worktree/terminal-proof.json');
 	});
 });

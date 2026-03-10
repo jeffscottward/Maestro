@@ -1,12 +1,24 @@
 import type React from 'react';
-import { interpolate } from 'remotion';
+import { Img, interpolate } from 'remotion';
 
+import worktreeAutorunReferencePng from '../../capture/docs/worktree/autorun-worktree-reference.png';
+import worktreeConfigurationReferencePng from '../../capture/docs/worktree/worktree-configuration-reference.png';
+import worktreeInventoryReferencePng from '../../capture/docs/worktree/worktree-inventory-reference.png';
 import worktreeTerminalProofJson from '../../capture/derived/worktree/terminal-proof.json';
+import worktreeCaptureManifestJson from '../../capture/manifests/worktree/worktree-capture-manifest.json';
+import { FeatureCaptureManifestSchema, type CaptureMediaType } from '../data/capture-schema';
 import type { CaptureManifestEntry, SceneData } from '../data/production-schema';
-import { AUTO_RUN_DOCUMENTS, type MaestroVisualTheme } from '../lib/maestroVisualSystem';
+import { getDeclaredCaptureAssetPath } from '../lib/capture-pipeline';
+import {
+	AUTO_RUN_DOCUMENTS,
+	createFallbackSlot,
+	type MaestroVisualTheme,
+	type VisualFallbackSlot,
+} from '../lib/maestroVisualSystem';
 import {
 	MaestroAnnotationSurface,
 	MaestroAutoRunDocumentList,
+	MaestroFallbackSlot,
 	MaestroModalShell,
 	MaestroTerminalBlock,
 } from '../ui/MaestroPrimitives';
@@ -78,6 +90,97 @@ const AVAILABLE_WORKTREES = [
 ] as const;
 
 const proofPoints = worktreeTerminalProofJson.proofPoints;
+const worktreeCaptureManifest = FeatureCaptureManifestSchema.parse(worktreeCaptureManifestJson);
+const worktreeAssetsById = new Map(
+	worktreeCaptureManifest.assets.map((asset) => [asset.id, asset])
+);
+const worktreeSceneMappingsById = new Map(
+	worktreeCaptureManifest.sceneMappings.map((sceneMapping) => [sceneMapping.sceneId, sceneMapping])
+);
+const WORKTREE_CAPTURE_PREVIEW_URLS = {
+	'capture/docs/worktree/autorun-worktree-reference.png': worktreeAutorunReferencePng,
+	'capture/docs/worktree/worktree-configuration-reference.png': worktreeConfigurationReferencePng,
+	'capture/docs/worktree/worktree-inventory-reference.png': worktreeInventoryReferencePng,
+} as const;
+
+type WorktreeCaptureReference = {
+	id: string;
+	label: string;
+	sourcePath: string;
+	mediaType: CaptureMediaType;
+	reason: string;
+	previewUrl?: string;
+};
+
+const getWorktreeCaptureMediaLabel = (mediaType: CaptureMediaType) => {
+	switch (mediaType) {
+		case 'image':
+			return 'Captured screenshot';
+		case 'video':
+			return 'Recorded source';
+		case 'audio':
+			return 'Audio source';
+		case 'data':
+		default:
+			return 'Derived proof';
+	}
+};
+
+const getPrototypeFallbackSlots = (captures: CaptureManifestEntry[]): VisualFallbackSlot[] => {
+	return captures
+		.filter((capture) => capture.mode === 'fallback-slot')
+		.map((capture) =>
+			createFallbackSlot({
+				id: capture.id,
+				label: capture.feature,
+				sourcePath: capture.sourceRef,
+				mediaType: 'screenshot',
+				reason: capture.notes,
+			})
+		);
+};
+
+const getStandaloneCaptureReferences = (scene: SceneData): WorktreeCaptureReference[] => {
+	const sceneMapping = worktreeSceneMappingsById.get(scene.id);
+
+	if (!sceneMapping) {
+		return [];
+	}
+
+	return (scene.assetPlaceholderIds ?? []).flatMap((assetId) => {
+		const asset = worktreeAssetsById.get(assetId);
+
+		if (!asset) {
+			return [];
+		}
+
+		const sourcePath = getDeclaredCaptureAssetPath(asset);
+		const reasons = [
+			...new Set(
+				sceneMapping.sources
+					.filter((source) => source.fallbackAssetIds.includes(assetId))
+					.map((source) => source.notes.trim())
+					.filter(Boolean)
+			),
+		];
+
+		return [
+			{
+				id: asset.id,
+				label: asset.label,
+				sourcePath,
+				mediaType: asset.mediaType,
+				reason: reasons.join(' ') || asset.usage,
+				previewUrl:
+					sourcePath in WORKTREE_CAPTURE_PREVIEW_URLS
+						? WORKTREE_CAPTURE_PREVIEW_URLS[
+								sourcePath as keyof typeof WORKTREE_CAPTURE_PREVIEW_URLS
+							]
+						: undefined,
+			},
+		];
+	});
+};
 
 const Panel: React.FC<{
 	children: React.ReactNode;
@@ -116,6 +219,118 @@ const SectionLabel: React.FC<{
 			}}
 		>
 			{label}
+		</div>
+	);
+};
+
+const CaptureReferenceCard: React.FC<{
+	reference: WorktreeCaptureReference;
+	theme: MaestroVisualTheme;
+	compact?: boolean;
+}> = ({ reference, theme, compact = false }) => {
+	return (
+		<Panel theme={theme} padding={16} gap={12}>
+			<div
+				style={{
+					display: 'flex',
+					alignItems: 'center',
+					justifyContent: 'space-between',
+					gap: 12,
+				}}
+			>
+				<div style={{ fontSize: compact ? 17 : 19, color: theme.colors.textMain }}>
+					{reference.label}
+				</div>
+				<MetaBadge label={getWorktreeCaptureMediaLabel(reference.mediaType)} theme={theme} />
+			</div>
+			{reference.previewUrl ? (
+				<div
+					style={{
+						position: 'relative',
+						borderRadius: 18,
+						border: `1px solid ${theme.colors.border}`,
+						overflow: 'hidden',
+						background: theme.colors.bgMain,
+						aspectRatio: compact ? '2.2 / 1' : '16 / 9',
+					}}
+				>
+					<Img
+						src={reference.previewUrl}
+						alt={reference.label}
+						style={{
+							width: '100%',
+							height: '100%',
+							objectFit: 'cover',
+							display: 'block',
+						}}
+					/>
+				</div>
+			) : null}
+			<div style={{ fontSize: compact ? 15 : 16, lineHeight: 1.45, color: theme.colors.textDim }}>
+				{reference.reason}
+			</div>
+			<div
+				style={{
+					fontSize: compact ? 14 : 15,
+					lineHeight: 1.5,
+					color: theme.colors.accentText,
+					fontFamily: 'monospace',
+					wordBreak: 'break-all',
+				}}
+			>
+				{reference.sourcePath}
+			</div>
+		</Panel>
+	);
+};
+
+const WorktreeCaptureEvidence: React.FC<{
+	scene: SceneData;
+	captures: CaptureManifestEntry[];
+	theme: MaestroVisualTheme;
+	compact?: boolean;
+}> = ({ scene, captures, theme, compact = false }) => {
+	const references = getStandaloneCaptureReferences(scene);
+	const fallbackSlots = references.length === 0 ? getPrototypeFallbackSlots(captures) : [];
+
+	if (references.length === 0 && fallbackSlots.length === 0) {
+		return null;
+	}
+
+	return (
+		<div style={{ display: 'grid', gap: 12 }}>
+			<SectionLabel label="Scene source" theme={theme} />
+			{references.length > 0 ? (
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: references.length > 1 ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+						gap: 12,
+					}}
+				>
+					{references.map((reference) => (
+						<CaptureReferenceCard
+							key={reference.id}
+							reference={reference}
+							theme={theme}
+							compact={compact}
+						/>
+					))}
+				</div>
+			) : null}
+			{fallbackSlots.length > 0 ? (
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: fallbackSlots.length > 1 ? 'repeat(2, minmax(0, 1fr))' : '1fr',
+						gap: 12,
+					}}
+				>
+					{fallbackSlots.map((slot) => (
+						<MaestroFallbackSlot key={slot.id} slot={slot} theme={theme} />
+					))}
+				</div>
+			) : null}
 		</div>
 	);
 };
@@ -522,7 +737,8 @@ const InventoryList: React.FC<{
 const WorktreeInventorySurface: React.FC<{
 	theme: MaestroVisualTheme;
 	progress: number;
-}> = ({ theme, progress }) => {
+	captureEvidence: React.ReactNode;
+}> = ({ theme, progress, captureEvidence }) => {
 	return (
 		<MaestroModalShell
 			title="Worktree Configuration"
@@ -590,6 +806,7 @@ const WorktreeInventorySurface: React.FC<{
 						body="Open and scanned worktrees stay visible as real Maestro destinations, so the isolated lane reads as an operational branch path instead of a promise."
 						theme={theme}
 					/>
+					{captureEvidence}
 				</div>
 			</div>
 		</MaestroModalShell>
@@ -599,7 +816,8 @@ const WorktreeInventorySurface: React.FC<{
 const TerminalOutcomeSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	progress: number;
-}> = ({ theme, progress }) => {
+	captureEvidence: React.ReactNode;
+}> = ({ theme, progress, captureEvidence }) => {
 	const visibleProofPoints = Math.max(
 		2,
 		Math.min(
@@ -677,6 +895,7 @@ const TerminalOutcomeSurface: React.FC<{
 							</div>
 						))}
 					</Panel>
+					{captureEvidence}
 				</div>
 			</div>
 		</MaestroModalShell>
@@ -686,7 +905,8 @@ const TerminalOutcomeSurface: React.FC<{
 const DispatchStorySurface: React.FC<{
 	variant: Exclude<WorktreeSceneVariant, 'inventory-proof' | 'terminal-proof'>;
 	theme: MaestroVisualTheme;
-}> = ({ variant, theme }) => {
+	captureEvidence: React.ReactNode;
+}> = ({ variant, theme, captureEvidence }) => {
 	const summaryBody =
 		variant === 'dispatch-overview'
 			? 'The worktree lane is available inside Auto Run before the parent checkout becomes the only place long-running automation can land.'
@@ -721,6 +941,7 @@ const DispatchStorySurface: React.FC<{
 				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
 					<WorktreeRunPanel variant={variant} theme={theme} />
+					{captureEvidence}
 				</div>
 			</div>
 		</MaestroModalShell>
@@ -751,21 +972,45 @@ export const getWorktreeSceneVariant = (scene: SceneData): WorktreeSceneVariant 
 
 export const WorktreeSurfaceShowcase: React.FC<WorktreeSurfaceShowcaseProps> = ({
 	scene,
+	captures,
 	progress,
 	theme,
 }) => {
 	const variant = getWorktreeSceneVariant(scene);
+	const captureEvidence = (
+		<WorktreeCaptureEvidence scene={scene} captures={captures} theme={theme} compact />
+	);
+	let surface: React.ReactElement;
 
 	switch (variant) {
 		case 'dispatch-overview':
 		case 'toggle-focus':
 		case 'create-form':
 		case 'pr-intent':
-			return <DispatchStorySurface variant={variant} theme={theme} />;
+			surface = (
+				<DispatchStorySurface variant={variant} theme={theme} captureEvidence={captureEvidence} />
+			);
+			break;
 		case 'inventory-proof':
-			return <WorktreeInventorySurface theme={theme} progress={progress} />;
+			surface = (
+				<WorktreeInventorySurface
+					theme={theme}
+					progress={progress}
+					captureEvidence={captureEvidence}
+				/>
+			);
+			break;
 		case 'terminal-proof':
 		default:
-			return <TerminalOutcomeSurface theme={theme} progress={progress} />;
+			surface = (
+				<TerminalOutcomeSurface
+					theme={theme}
+					progress={progress}
+					captureEvidence={captureEvidence}
+				/>
+			);
+			break;
 	}
+
+	return surface;
 };

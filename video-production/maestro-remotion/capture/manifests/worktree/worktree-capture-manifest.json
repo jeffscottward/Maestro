@@ -65,91 +65,113 @@
 	"assets": [
 		{
 			"id": "worktree-autorun-context",
-			"kind": "live-capture",
+			"kind": "doc-capture",
 			"label": "Auto Run launch context capture",
-			"plannedSource": "capture/live/worktree/autorun-batch-runner.mov",
+			"plannedSource": "capture/docs/worktree/autorun-worktree-reference.png",
 			"usage": "Scene 1 context for the risk setup.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "worktree",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/worktree/autorun-batch-runner.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/worktree/autorun-worktree-reference.png",
+				"bucket": "docs",
 				"featureSlug": "worktree",
-				"fileName": "autorun-batch-runner.mov",
-				"stem": "autorun-batch-runner",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "autorun-worktree-reference.png",
+				"stem": "autorun-worktree-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/worktree/autorun-worktree-reference.png"
 		},
 		{
 			"id": "worktree-toggle-focus",
-			"kind": "live-capture",
+			"kind": "doc-capture",
 			"label": "Run in Worktree toggle capture",
-			"plannedSource": "capture/live/worktree/toggle-enabled.mov",
+			"plannedSource": "capture/docs/worktree/autorun-worktree-reference.png",
 			"usage": "Scene 2 reveal of the isolation control surface.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "worktree",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/worktree/toggle-enabled.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/worktree/autorun-worktree-reference.png",
+				"bucket": "docs",
 				"featureSlug": "worktree",
-				"fileName": "toggle-enabled.mov",
-				"stem": "toggle-enabled",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "autorun-worktree-reference.png",
+				"stem": "autorun-worktree-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/worktree/autorun-worktree-reference.png"
 		},
 		{
 			"id": "worktree-create-form",
-			"kind": "live-capture",
+			"kind": "doc-capture",
 			"label": "Create worktree form capture",
-			"plannedSource": "capture/live/worktree/create-new-form.mov",
+			"plannedSource": "capture/docs/worktree/autorun-worktree-reference.png",
 			"usage": "Scenes 3 and 4 exact branch, path, and PR configuration beats.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "worktree",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/worktree/create-new-form.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/worktree/autorun-worktree-reference.png",
+				"bucket": "docs",
 				"featureSlug": "worktree",
-				"fileName": "create-new-form.mov",
-				"stem": "create-new-form",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "autorun-worktree-reference.png",
+				"stem": "autorun-worktree-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/worktree/autorun-worktree-reference.png"
 		},
 		{
 			"id": "worktree-inventory-panel",
-			"kind": "live-capture",
+			"kind": "doc-capture",
 			"label": "Worktree inventory capture",
-			"plannedSource": "capture/live/worktree/inventory-proof.mov",
+			"plannedSource": "capture/docs/worktree/worktree-inventory-reference.png",
 			"usage": "Scene 5 proof that the isolated worktree destination exists inside Maestro.",
 			"required": true,
-			"bucket": "live",
+			"bucket": "docs",
 			"featureSlug": "worktree",
-			"mediaType": "video",
+			"mediaType": "image",
 			"metadata": {
-				"relativePath": "capture/live/worktree/inventory-proof.mov",
-				"bucket": "live",
+				"relativePath": "capture/docs/worktree/worktree-inventory-reference.png",
+				"bucket": "docs",
 				"featureSlug": "worktree",
-				"fileName": "inventory-proof.mov",
-				"stem": "inventory-proof",
-				"extension": "mov",
-				"mediaType": "video"
+				"fileName": "worktree-inventory-reference.png",
+				"stem": "worktree-inventory-reference",
+				"extension": "png",
+				"mediaType": "image"
 			},
-			"sourceStatus": "planned",
-			"capturedPath": null
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/worktree/worktree-inventory-reference.png"
+		},
+		{
+			"id": "worktree-configuration-context",
+			"kind": "doc-capture",
+			"label": "Worktree configuration support capture",
+			"plannedSource": "capture/docs/worktree/worktree-configuration-reference.png",
+			"usage": "Scene 5 supporting directory and auto-detect context so the inventory proof stays anchored in real Maestro settings.",
+			"required": true,
+			"bucket": "docs",
+			"featureSlug": "worktree",
+			"mediaType": "image",
+			"metadata": {
+				"relativePath": "capture/docs/worktree/worktree-configuration-reference.png",
+				"bucket": "docs",
+				"featureSlug": "worktree",
+				"fileName": "worktree-configuration-reference.png",
+				"stem": "worktree-configuration-reference",
+				"extension": "png",
+				"mediaType": "image"
+			},
+			"sourceStatus": "captured",
+			"capturedPath": "capture/docs/worktree/worktree-configuration-reference.png"
 		},
 		{
 			"id": "worktree-terminal-card",
@@ -338,7 +360,7 @@
 			"sceneNumber": 5,
 			"purpose": "Prove the isolated worktree has its own tracked destination inside Maestro.",
 			"captureIds": ["worktree-inventory-proof"],
-			"assetPlaceholderIds": ["worktree-inventory-panel"],
+			"assetPlaceholderIds": ["worktree-inventory-panel", "worktree-configuration-context"],
 			"recordingPath": "capture/recordings/worktree/s05-worktree-standalone-inventory.mov",
 			"cropPlan": [
 				{
@@ -365,7 +387,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/worktree-inventory-reference.png",
-					"fallbackAssetIds": ["worktree-inventory-panel"],
+					"fallbackAssetIds": ["worktree-inventory-panel", "worktree-configuration-context"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in worktree list screenshot copied into capture/docs/worktree/worktree-inventory-reference.png, with capture/docs/worktree/worktree-configuration-reference.png retained as supporting config context. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]

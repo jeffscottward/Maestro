@@ -1,0 +1,19 @@
+{
+	"version": 1,
+	"title": "Director Notes AI Overview Loading",
+	"generatedFrom": [
+		"src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+		"src/renderer/components/DirectorNotes/DirectorNotesModal.tsx",
+		"docs/research/reconstructions/director-notes-ai-overview-loading-reconstruction.md"
+	],
+	"toolbar": {
+		"lookbackDays": 7,
+		"actions": ["Regenerate", "Save", "Copy"]
+	},
+	"progressSteps": ["History files", "Provider warmup", "Markdown report"],
+	"claims": [
+		"AI Overview starts generating when Director's Notes opens, even while Unified History stays active.",
+		"The tab shows progress first and only becomes clickable after the synopsis exists.",
+		"The loading beat should read as grounded work from recent history, not instant AI magic."
+	]
+}

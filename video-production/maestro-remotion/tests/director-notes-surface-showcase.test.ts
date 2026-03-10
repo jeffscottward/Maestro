@@ -79,6 +79,7 @@ describe("Director's Notes surface showcase", () => {
 		expect(detailMarkup).toContain('Prev');
 		expect(detailMarkup).toContain('Next');
 		expect(detailMarkup).toContain('Resume Session');
+		expect(detailMarkup).toContain('capture/derived/director-notes/history-detail-proof.json');
 	});
 
 	it('renders the warmup, ready, and closing bridge states with the shipped AI Overview labels', () => {
@@ -98,15 +99,21 @@ describe("Director's Notes surface showcase", () => {
 		expect(loadingMarkup).toContain('generating...');
 		expect(loadingMarkup).toContain('Generating synopsis...');
 		expect(loadingMarkup).toContain('Preparing from current history files');
+		expect(loadingMarkup).toContain(
+			'capture/derived/director-notes/ai-overview-loading-proof.json'
+		);
 
 		expect(readyMarkup).toContain('AI Overview');
 		expect(readyMarkup).toContain('Regenerate');
 		expect(readyMarkup).toContain('Save');
 		expect(readyMarkup).toContain('Copy');
 		expect(readyMarkup).toContain('Accomplishments');
+		expect(readyMarkup).toContain('capture/docs/director-notes/ai-overview-ready-reference.png');
 
 		expect(closingMarkup).toContain('history files');
 		expect(closingMarkup).toContain('synopsis out');
 		expect(closingMarkup).toContain('+ grounded synthesis');
+		expect(closingMarkup).toContain('Generated synopsis card');
+		expect(closingMarkup).toContain('capture/derived/director-notes/evidence-link.json');
 	});
 });

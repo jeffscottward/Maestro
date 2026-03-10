@@ -1,7 +1,16 @@
 import type React from 'react';
 
+import directorNotesCaptureManifestJson from '../../capture/manifests/director-notes/director-notes-capture-manifest.json';
+import directorNotesAiOverviewLoadingProofJson from '../../capture/derived/director-notes/ai-overview-loading-proof.json';
+import directorNotesEvidenceLinkJson from '../../capture/derived/director-notes/evidence-link.json';
+import directorNotesHistoryDetailProofJson from '../../capture/derived/director-notes/history-detail-proof.json';
+import { FeatureCaptureManifestSchema } from '../data/capture-schema';
 import type { CaptureManifestEntry, SceneData } from '../data/production-schema';
-import type { MaestroVisualTheme } from '../lib/maestroVisualSystem';
+import {
+	createFallbackSlot,
+	type MaestroVisualTheme,
+	type VisualFallbackSlot,
+} from '../lib/maestroVisualSystem';
 import {
 	DIRECTOR_NOTES_TAB_ORDER,
 	DirectorActivityGraph,
@@ -22,6 +31,7 @@ import {
 	DirectorOverviewSections,
 	DirectorOverviewToolbar,
 } from './DirectorNotesContentPrimitives';
+import { MaestroFallbackSlot } from '../ui/MaestroPrimitives';
 
 type DirectorNotesSurfaceShowcaseProps = {
 	scene: SceneData;
@@ -37,6 +47,22 @@ export type DirectorNotesSceneVariant =
 	| 'history-warmup'
 	| 'ai-ready'
 	| 'evidence-bridge';
+
+const directorNotesCaptureManifest = FeatureCaptureManifestSchema.parse(
+	directorNotesCaptureManifestJson
+);
+const directorNotesAssetsById = new Map(
+	directorNotesCaptureManifest.assets.map((asset) => [asset.id, asset])
+);
+const directorNotesSceneMappingsById = new Map(
+	directorNotesCaptureManifest.sceneMappings.map((sceneMapping) => [
+		sceneMapping.sceneId,
+		sceneMapping,
+	])
+);
+const historyDetailProof = directorNotesHistoryDetailProofJson;
+const aiOverviewLoadingProof = directorNotesAiOverviewLoadingProofJson;
+const evidenceLinkProof = directorNotesEvidenceLinkJson;
 
 const HISTORY_ROWS = [
 	{
@@ -139,6 +165,47 @@ const createTabs = ({
 	}));
 };
 
+const getSceneFallbackSlots = (scene: SceneData): VisualFallbackSlot[] => {
+	const sceneMapping = directorNotesSceneMappingsById.get(scene.id);
+
+	if (!sceneMapping) {
+		return [];
+	}
+
+	return (scene.assetPlaceholderIds ?? []).flatMap((assetId) => {
+		const asset = directorNotesAssetsById.get(assetId);
+
+		if (!asset) {
+			return [];
+		}
+
+		const source = sceneMapping.sources.find((candidate) =>
+			candidate.fallbackAssetIds.includes(assetId)
+		);
+		const sourcePath = asset.capturedPath ?? asset.plannedSource;
+
+		return [
+			createFallbackSlot({
+				id: asset.id,
+				label: asset.label,
+				sourcePath,
+				mediaType: asset.mediaType === 'video' ? 'video' : 'screenshot',
+				reason: source?.notes ?? asset.usage,
+			}),
+		];
+	});
+};
+
+const sceneUsesScreenshotFallback = (scene: SceneData) => {
+	const sceneMapping = directorNotesSceneMappingsById.get(scene.id);
+
+	return (
+		sceneMapping?.sources.some((source) =>
+			source.notes.toLowerCase().includes('screenshot fallback')
+		) ?? false
+	);
+};
+
 const buildHistoryControls = ({
 	theme,
 	searchQuery,
@@ -190,7 +257,8 @@ const HistoryDefaultSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	progress: number;
 	showCaptureNote: boolean;
-}> = ({ theme, progress, showCaptureNote }) => {
+	fallbackSlots: VisualFallbackSlot[];
+}> = ({ theme, progress, showCaptureNote, fallbackSlots }) => {
 	const visibleRows = Math.max(
 		3,
 		Math.min(HISTORY_ROWS.length, Math.round(progress * HISTORY_ROWS.length))
@@ -240,6 +308,7 @@ const HistoryDefaultSurface: React.FC<{
 					/>
 				))}
 			</div>
+			{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
 		</DirectorNotesSurfaceShell>
 	);
 };
@@ -247,7 +316,8 @@ const HistoryDefaultSurface: React.FC<{
 const HistoryFilteredSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	progress: number;
-}> = ({ theme, progress }) => {
+	fallbackSlots: VisualFallbackSlot[];
+}> = ({ theme, progress, fallbackSlots }) => {
 	const filteredRows = HISTORY_ROWS.filter((row) =>
 		`${row.agent} ${row.session} ${row.summary}`.toLowerCase().includes('rss')
 	);
@@ -295,22 +365,24 @@ const HistoryFilteredSurface: React.FC<{
 					/>
 				))}
 			</div>
+			{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
 		</DirectorNotesSurfaceShell>
 	);
 };
 
 const HistoryDetailSurface: React.FC<{
 	theme: MaestroVisualTheme;
-}> = ({ theme }) => {
+	fallbackSlots: VisualFallbackSlot[];
+}> = ({ theme, fallbackSlots }) => {
+	const detailSlot = fallbackSlots[fallbackSlots.length - 1];
+
 	return (
 		<DirectorNotesSurfaceShell
 			tabs={createTabs({ activeTab: 'history', aiEnabled: false, aiGenerating: false })}
 			footer={
 				<>
-					<span>
-						Resume Session closes Director&apos;s Notes and returns to the originating agent tab
-					</span>
-					<span>Arrow keys move between neighboring entries</span>
+					<span>{historyDetailProof.claims[1]}</span>
+					<span>{historyDetailProof.claims[2]}</span>
 				</>
 			}
 			theme={theme}
@@ -339,12 +411,13 @@ const HistoryDetailSurface: React.FC<{
 					style={{
 						position: 'absolute',
 						inset: '56px 48px 20px 48px',
-						display: 'flex',
-						alignItems: 'center',
-						justifyContent: 'center',
+						display: 'grid',
+						gridTemplateRows: '1fr auto',
+						gap: 16,
 					}}
 				>
 					<DirectorDetailCard row={HISTORY_ROWS[0]} theme={theme} />
+					{detailSlot ? <MaestroFallbackSlot slot={detailSlot} theme={theme} /> : null}
 				</div>
 			</div>
 		</DirectorNotesSurfaceShell>
@@ -353,16 +426,15 @@ const HistoryDetailSurface: React.FC<{
 
 const HistoryWarmupSurface: React.FC<{
 	theme: MaestroVisualTheme;
-}> = ({ theme }) => {
+	fallbackSlots: VisualFallbackSlot[];
+}> = ({ theme, fallbackSlots }) => {
 	return (
 		<DirectorNotesSurfaceShell
 			tabs={createTabs({ activeTab: 'history', aiEnabled: false, aiGenerating: true })}
 			footer={
 				<>
-					<span>
-						AI Overview starts on modal open and stays unavailable until the synopsis exists
-					</span>
-					<span>Unified History remains the active default view</span>
+					<span>{aiOverviewLoadingProof.claims[0]}</span>
+					<span>{aiOverviewLoadingProof.claims[1]}</span>
 				</>
 			}
 			theme={theme}
@@ -401,7 +473,7 @@ const HistoryWarmupSurface: React.FC<{
 				<div style={{ display: 'grid', gap: 14 }}>
 					<DirectorOverviewToolbar
 						generatedAt="Preparing from current history files"
-						lookbackDays={7}
+						lookbackDays={aiOverviewLoadingProof.toolbar.lookbackDays}
 						showGenerating
 						disableSecondaryActions
 						theme={theme}
@@ -411,8 +483,7 @@ const HistoryWarmupSurface: React.FC<{
 							AI Overview is building in the background.
 						</div>
 						<div style={{ fontSize: 16, lineHeight: 1.46, color: theme.colors.textDim }}>
-							The main-process handler is collecting history-file paths and grounding the synopsis
-							before the tab becomes ready.
+							{aiOverviewLoadingProof.claims[2]}
 						</div>
 						<div
 							style={{
@@ -421,7 +492,7 @@ const HistoryWarmupSurface: React.FC<{
 								gap: 10,
 							}}
 						>
-							{['History files', 'Provider warmup', 'Markdown report'].map((label, index) => (
+							{aiOverviewLoadingProof.progressSteps.map((label, index) => (
 								<DirectorPanel key={label} theme={theme} padding={14} gap={8}>
 									<div style={{ fontSize: 13, color: theme.colors.textDim }}>{label}</div>
 									<div
@@ -445,6 +516,7 @@ const HistoryWarmupSurface: React.FC<{
 							))}
 						</div>
 					</DirectorPanel>
+					{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
 				</div>
 			</div>
 		</DirectorNotesSurfaceShell>
@@ -454,7 +526,8 @@ const HistoryWarmupSurface: React.FC<{
 const AiReadySurface: React.FC<{
 	theme: MaestroVisualTheme;
 	showCaptureNote: boolean;
-}> = ({ theme, showCaptureNote }) => {
+	fallbackSlots: VisualFallbackSlot[];
+}> = ({ theme, showCaptureNote, fallbackSlots }) => {
 	return (
 		<DirectorNotesSurfaceShell
 			tabs={createTabs({ activeTab: 'ai-overview', aiEnabled: true, aiGenerating: false })}
@@ -486,13 +559,17 @@ const AiReadySurface: React.FC<{
 				theme
 			)}
 			<DirectorOverviewSections sections={READY_OVERVIEW_SECTIONS} theme={theme} />
+			{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
 		</DirectorNotesSurfaceShell>
 	);
 };
 
 const EvidenceBridgeSurface: React.FC<{
 	theme: MaestroVisualTheme;
-}> = ({ theme }) => {
+	fallbackSlots: VisualFallbackSlot[];
+}> = ({ theme, fallbackSlots }) => {
+	const evidenceSlot = fallbackSlots[fallbackSlots.length - 1];
+
 	return (
 		<DirectorNotesSurfaceShell
 			tabs={createTabs({ activeTab: 'ai-overview', aiEnabled: true, aiGenerating: false })}
@@ -514,6 +591,22 @@ const EvidenceBridgeSurface: React.FC<{
 				sections={READY_OVERVIEW_SECTIONS}
 				theme={theme}
 			/>
+			<DirectorPanel theme={theme} padding={18} gap={12}>
+				<div style={{ fontSize: 15, color: theme.colors.textDim }}>
+					{evidenceLinkProof.panels.join(' -> ')}
+				</div>
+				<div style={{ display: 'grid', gap: 10 }}>
+					{evidenceLinkProof.claims.map((claim) => (
+						<div
+							key={claim}
+							style={{ fontSize: 17, lineHeight: 1.45, color: theme.colors.textMain }}
+						>
+							{claim}
+						</div>
+					))}
+				</div>
+			</DirectorPanel>
+			{evidenceSlot ? <MaestroFallbackSlot slot={evidenceSlot} theme={theme} /> : null}
 		</DirectorNotesSurfaceShell>
 	);
 };
@@ -540,28 +633,37 @@ export const getDirectorNotesSceneVariant = (scene: SceneData): DirectorNotesSce
 
 export const DirectorNotesSurfaceShowcase: React.FC<DirectorNotesSurfaceShowcaseProps> = ({
 	scene,
-	captures,
 	progress,
 	theme,
 }) => {
 	const variant = getDirectorNotesSceneVariant(scene);
-	const showCaptureNote = captures.some((capture) => capture.mode === 'fallback-slot');
+	const fallbackSlots = getSceneFallbackSlots(scene);
+	const showCaptureNote = sceneUsesScreenshotFallback(scene);
 
 	switch (variant) {
 		case 'history-filtered':
-			return <HistoryFilteredSurface progress={progress} theme={theme} />;
+			return (
+				<HistoryFilteredSurface fallbackSlots={fallbackSlots} progress={progress} theme={theme} />
+			);
 		case 'history-detail':
-			return <HistoryDetailSurface theme={theme} />;
+			return <HistoryDetailSurface fallbackSlots={fallbackSlots} theme={theme} />;
 		case 'history-warmup':
-			return <HistoryWarmupSurface theme={theme} />;
+			return <HistoryWarmupSurface fallbackSlots={fallbackSlots} theme={theme} />;
 		case 'ai-ready':
-			return <AiReadySurface showCaptureNote={showCaptureNote} theme={theme} />;
+			return (
+				<AiReadySurface
+					fallbackSlots={fallbackSlots}
+					showCaptureNote={showCaptureNote}
+					theme={theme}
+				/>
+			);
 		case 'evidence-bridge':
-			return <EvidenceBridgeSurface theme={theme} />;
+			return <EvidenceBridgeSurface fallbackSlots={fallbackSlots} theme={theme} />;
 		case 'history-default':
 		default:
 			return (
 				<HistoryDefaultSurface
+					fallbackSlots={fallbackSlots}
 					progress={progress}
 					showCaptureNote={showCaptureNote}
 					theme={theme}

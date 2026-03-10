@@ -86,42 +86,47 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 	assetPlaceholders: [
 		{
 			id: 'director-modal-shell',
-			kind: 'live-capture',
-			label: 'Director Notes modal shell capture',
-			plannedSource: 'capture/live/director-notes/modal-open.mov',
-			usage: 'Scene 1 modal-open proof and reusable shell for later scenes.',
+			kind: 'doc-capture',
+			label: 'Director Notes modal shell reference',
+			plannedSource: 'capture/docs/director-notes/unified-history-reference.png',
+			usage:
+				'Scene 1 fallback reference for the modal shell and tab strip while the composition preserves the current shipped tab order and labels.',
 			required: true,
 		},
 		{
 			id: 'director-history-controls',
-			kind: 'live-capture',
-			label: 'Unified History controls capture',
-			plannedSource: 'capture/live/director-notes/unified-history.mov',
-			usage: 'Scenes 2 and 3 evidence-first browsing and actionability beats.',
+			kind: 'doc-capture',
+			label: 'Unified History reference capture',
+			plannedSource: 'capture/docs/director-notes/unified-history-reference.png',
+			usage:
+				'Scenes 2 and 3 fallback reference for the shipped `Unified History` list, stats bar, and tab strip while the filtering and detail beats stay reconstruction-first.',
 			required: true,
 		},
 		{
 			id: 'director-history-detail-card',
-			kind: 'live-capture',
-			label: 'History detail modal capture',
-			plannedSource: 'capture/live/director-notes/history-detail.mov',
-			usage: 'Scene 3 proof that the timeline can route back into the source session.',
+			kind: 'reconstructed-ui',
+			label: 'History detail proof asset',
+			plannedSource: 'capture/derived/director-notes/history-detail-proof.json',
+			usage:
+				'Scene 3 reconstructed-ui reference proving the detail modal, arrow navigation, and session jump-back behavior when no checked-in screenshot exists.',
 			required: true,
 		},
 		{
 			id: 'director-ai-overview-loading-card',
-			kind: 'live-capture',
-			label: 'AI Overview loading capture',
-			plannedSource: 'capture/live/director-notes/ai-overview-loading.mov',
-			usage: 'Scene 4 generation-state beat.',
+			kind: 'reconstructed-ui',
+			label: 'AI Overview loading proof asset',
+			plannedSource: 'capture/derived/director-notes/ai-overview-loading-proof.json',
+			usage:
+				'Scene 4 reconstructed-ui reference for the loading state where `AI Overview` is warming in the background before the tab becomes ready.',
 			required: true,
 		},
 		{
 			id: 'director-ai-overview-ready-card',
-			kind: 'live-capture',
-			label: 'AI Overview ready capture',
-			plannedSource: 'capture/live/director-notes/ai-overview-ready.mov',
-			usage: 'Scenes 5 and 6 synopsis-ready proof and closing comparison beat.',
+			kind: 'doc-capture',
+			label: 'AI Overview ready reference capture',
+			plannedSource: 'capture/docs/director-notes/ai-overview-ready-reference.png',
+			usage:
+				'Scenes 5 and 6 fallback reference for the synopsis-ready layout while the composition preserves the current `Regenerate` label from source.',
 			required: true,
 		},
 		{

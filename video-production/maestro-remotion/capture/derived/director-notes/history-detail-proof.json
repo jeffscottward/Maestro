@@ -1,0 +1,22 @@
+{
+	"version": 1,
+	"title": "Director Notes History Detail",
+	"generatedFrom": [
+		"src/renderer/components/HistoryDetailModal.tsx",
+		"docs/director-notes.md",
+		"docs/research/reconstructions/director-notes-history-detail-reconstruction.md"
+	],
+	"header": {
+		"agent": "PedTome RSSidian",
+		"session": "News Synopsis Request",
+		"type": "USER",
+		"status": "Done",
+		"timestamp": "07:11 PM"
+	},
+	"controls": ["Prev", "Next", "Resume Session"],
+	"claims": [
+		"Unified History entries open into a detail modal instead of forcing a tab switch first.",
+		"Resume Session closes Director's Notes and returns to the originating agent tab.",
+		"Arrow-key navigation keeps evidence review fast across neighboring entries."
+	]
+}

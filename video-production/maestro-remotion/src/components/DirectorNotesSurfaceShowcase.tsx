@@ -1,4 +1,5 @@
 import type React from 'react';
+import { interpolate } from 'remotion';
 
 import directorNotesCaptureManifestJson from '../../capture/manifests/director-notes/director-notes-capture-manifest.json';
 import directorNotesAiOverviewLoadingProofJson from '../../capture/derived/director-notes/ai-overview-loading-proof.json';
@@ -38,6 +39,7 @@ type DirectorNotesSurfaceShowcaseProps = {
 	captures: CaptureManifestEntry[];
 	progress: number;
 	theme: MaestroVisualTheme;
+	timelineProgress?: number;
 };
 
 export type DirectorNotesSceneVariant =
@@ -63,6 +65,11 @@ const directorNotesSceneMappingsById = new Map(
 const historyDetailProof = directorNotesHistoryDetailProofJson;
 const aiOverviewLoadingProof = directorNotesAiOverviewLoadingProofJson;
 const evidenceLinkProof = directorNotesEvidenceLinkJson;
+
+const clamp = {
+	extrapolateLeft: 'clamp',
+	extrapolateRight: 'clamp',
+} as const;
 
 const HISTORY_ROWS = [
 	{
@@ -373,8 +380,13 @@ const HistoryFilteredSurface: React.FC<{
 const HistoryDetailSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	fallbackSlots: VisualFallbackSlot[];
-}> = ({ theme, fallbackSlots }) => {
+	progress: number;
+}> = ({ theme, fallbackSlots, progress }) => {
 	const detailSlot = fallbackSlots[fallbackSlots.length - 1];
+	const rowsOpacity = interpolate(progress, [0, 1], [0.72, 0.4], clamp);
+	const detailLift = interpolate(progress, [0, 1], [48, 0], clamp);
+	const detailScale = interpolate(progress, [0, 1], [0.92, 1], clamp);
+	const detailOpacity = interpolate(progress, [0, 1], [0.16, 1], clamp);
 
 	return (
 		<DirectorNotesSurfaceShell
@@ -395,7 +407,7 @@ const HistoryDetailSurface: React.FC<{
 				countLabel: '7 matching entries',
 			})}
 			<div style={{ position: 'relative', minHeight: 500 }}>
-				<div style={{ display: 'grid', gap: 12, opacity: 0.44 }}>
+				<div style={{ display: 'grid', gap: 12, opacity: rowsOpacity }}>
 					{HISTORY_ROWS.slice(0, 3).map((row, index) => (
 						<DirectorHistoryRow
 							key={`${row.agent}-${row.session}`}
@@ -414,10 +426,15 @@ const HistoryDetailSurface: React.FC<{
 						display: 'grid',
 						gridTemplateRows: '1fr auto',
 						gap: 16,
+						opacity: detailOpacity,
+						transform: `translate3d(0, ${detailLift}px, 0) scale(${detailScale})`,
+						transformOrigin: 'center top',
 					}}
 				>
-					<DirectorDetailCard row={HISTORY_ROWS[0]} theme={theme} />
-					{detailSlot ? <MaestroFallbackSlot slot={detailSlot} theme={theme} /> : null}
+					<DirectorDetailCard progress={progress} row={HISTORY_ROWS[0]} theme={theme} />
+					<div style={{ opacity: detailOpacity }}>
+						{detailSlot ? <MaestroFallbackSlot slot={detailSlot} theme={theme} /> : null}
+					</div>
 				</div>
 			</div>
 		</DirectorNotesSurfaceShell>
@@ -427,7 +444,17 @@ const HistoryDetailSurface: React.FC<{
 const HistoryWarmupSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	fallbackSlots: VisualFallbackSlot[];
-}> = ({ theme, fallbackSlots }) => {
+	progress: number;
+}> = ({ theme, fallbackSlots, progress }) => {
+	const rightColumnLift = interpolate(progress, [0, 1], [32, 0], clamp);
+	const rightColumnOpacity = interpolate(progress, [0, 1], [0.22, 1], clamp);
+	const progressFills = [
+		100,
+		interpolate(progress, [0, 1], [24, 72], clamp),
+		interpolate(progress, [0, 1], [4, 48], clamp),
+	] as const;
+	const visibleRows = Math.max(2, Math.min(HISTORY_ROWS.length, 2 + Math.round(progress * 2)));
+
 	return (
 		<DirectorNotesSurfaceShell
 			tabs={createTabs({ activeTab: 'history', aiEnabled: false, aiGenerating: true })}
@@ -459,7 +486,7 @@ const HistoryWarmupSurface: React.FC<{
 						theme
 					)}
 					<div style={{ display: 'grid', gap: 12 }}>
-						{HISTORY_ROWS.slice(0, 2).map((row, index) => (
+						{HISTORY_ROWS.slice(0, visibleRows).map((row, index) => (
 							<DirectorHistoryRow
 								key={`${row.agent}-${row.session}`}
 								row={row}
@@ -470,12 +497,20 @@ const HistoryWarmupSurface: React.FC<{
 						))}
 					</div>
 				</div>
-				<div style={{ display: 'grid', gap: 14 }}>
+				<div
+					style={{
+						display: 'grid',
+						gap: 14,
+						opacity: rightColumnOpacity,
+						transform: `translate3d(0, ${rightColumnLift}px, 0)`,
+					}}
+				>
 					<DirectorOverviewToolbar
 						generatedAt="Preparing from current history files"
 						lookbackDays={aiOverviewLoadingProof.toolbar.lookbackDays}
 						showGenerating
 						disableSecondaryActions
+						progress={progress}
 						theme={theme}
 					/>
 					<DirectorPanel theme={theme} padding={18} gap={12}>
@@ -505,7 +540,7 @@ const HistoryWarmupSurface: React.FC<{
 									>
 										<div
 											style={{
-												width: `${index === 0 ? 100 : index === 1 ? 58 : 22}%`,
+												width: `${progressFills[index]}%`,
 												height: '100%',
 												borderRadius: 999,
 												background: index === 2 ? theme.colors.warning : theme.colors.accent,
@@ -527,7 +562,11 @@ const AiReadySurface: React.FC<{
 	theme: MaestroVisualTheme;
 	showCaptureNote: boolean;
 	fallbackSlots: VisualFallbackSlot[];
-}> = ({ theme, showCaptureNote, fallbackSlots }) => {
+	progress: number;
+}> = ({ theme, showCaptureNote, fallbackSlots, progress }) => {
+	const summaryLift = interpolate(progress, [0, 1], [26, 0], clamp);
+	const summaryOpacity = interpolate(progress, [0, 1], [0.34, 1], clamp);
+
 	return (
 		<DirectorNotesSurfaceShell
 			tabs={createTabs({ activeTab: 'ai-overview', aiEnabled: true, aiGenerating: false })}
@@ -545,21 +584,35 @@ const AiReadySurface: React.FC<{
 					Regenerate label from source.
 				</div>
 			) : null}
-			<DirectorOverviewToolbar
-				generatedAt="Feb 10, 2026, 11:03 PM"
-				lookbackDays={7}
-				theme={theme}
-			/>
-			{buildHistoryStats(
-				[
-					{ label: 'History Entries', value: '7', tone: 'accent' },
-					{ label: 'Agents', value: '4', tone: 'neutral' },
-					{ label: 'Time', value: '1m 11s', tone: 'warning' },
-				],
-				theme
-			)}
-			<DirectorOverviewSections sections={READY_OVERVIEW_SECTIONS} theme={theme} />
-			{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
+			<div
+				style={{
+					display: 'grid',
+					gap: 14,
+					opacity: summaryOpacity,
+					transform: `translate3d(0, ${summaryLift}px, 0)`,
+				}}
+			>
+				<DirectorOverviewToolbar
+					generatedAt="Feb 10, 2026, 11:03 PM"
+					lookbackDays={7}
+					progress={progress}
+					theme={theme}
+				/>
+				{buildHistoryStats(
+					[
+						{ label: 'History Entries', value: '7', tone: 'accent' },
+						{ label: 'Agents', value: '4', tone: 'neutral' },
+						{ label: 'Time', value: '1m 11s', tone: 'warning' },
+					],
+					theme
+				)}
+				<DirectorOverviewSections
+					progress={progress}
+					sections={READY_OVERVIEW_SECTIONS}
+					theme={theme}
+				/>
+				{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
+			</div>
 		</DirectorNotesSurfaceShell>
 	);
 };
@@ -567,8 +620,11 @@ const AiReadySurface: React.FC<{
 const EvidenceBridgeSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	fallbackSlots: VisualFallbackSlot[];
-}> = ({ theme, fallbackSlots }) => {
+	progress: number;
+}> = ({ theme, fallbackSlots, progress }) => {
 	const evidenceSlot = fallbackSlots[fallbackSlots.length - 1];
+	const proofLift = interpolate(progress, [0, 1], [24, 0], clamp);
+	const proofOpacity = interpolate(progress, [0, 1], [0.24, 1], clamp);
 
 	return (
 		<DirectorNotesSurfaceShell
@@ -584,26 +640,37 @@ const EvidenceBridgeSurface: React.FC<{
 			<DirectorOverviewToolbar
 				generatedAt="Grounded from the current lookback window"
 				lookbackDays={7}
+				progress={progress}
 				theme={theme}
 			/>
 			<DirectorEvidenceBridge
 				historyRows={HISTORY_ROWS}
+				progress={progress}
 				sections={READY_OVERVIEW_SECTIONS}
 				theme={theme}
 			/>
 			<DirectorPanel theme={theme} padding={18} gap={12}>
-				<div style={{ fontSize: 15, color: theme.colors.textDim }}>
-					{evidenceLinkProof.panels.join(' -> ')}
-				</div>
-				<div style={{ display: 'grid', gap: 10 }}>
-					{evidenceLinkProof.claims.map((claim) => (
-						<div
-							key={claim}
-							style={{ fontSize: 17, lineHeight: 1.45, color: theme.colors.textMain }}
-						>
-							{claim}
-						</div>
-					))}
+				<div
+					style={{
+						display: 'grid',
+						gap: 12,
+						opacity: proofOpacity,
+						transform: `translate3d(0, ${proofLift}px, 0)`,
+					}}
+				>
+					<div style={{ fontSize: 15, color: theme.colors.textDim }}>
+						{evidenceLinkProof.panels.join(' -> ')}
+					</div>
+					<div style={{ display: 'grid', gap: 10 }}>
+						{evidenceLinkProof.claims.map((claim) => (
+							<div
+								key={claim}
+								style={{ fontSize: 17, lineHeight: 1.45, color: theme.colors.textMain }}
+							>
+								{claim}
+							</div>
+						))}
+					</div>
 				</div>
 			</DirectorPanel>
 			{evidenceSlot ? <MaestroFallbackSlot slot={evidenceSlot} theme={theme} /> : null}
@@ -635,36 +702,61 @@ export const DirectorNotesSurfaceShowcase: React.FC<DirectorNotesSurfaceShowcase
 	scene,
 	progress,
 	theme,
+	timelineProgress,
 }) => {
 	const variant = getDirectorNotesSceneVariant(scene);
 	const fallbackSlots = getSceneFallbackSlots(scene);
 	const showCaptureNote = sceneUsesScreenshotFallback(scene);
+	const motionProgress = timelineProgress ?? progress;
 
 	switch (variant) {
 		case 'history-filtered':
 			return (
-				<HistoryFilteredSurface fallbackSlots={fallbackSlots} progress={progress} theme={theme} />
+				<HistoryFilteredSurface
+					fallbackSlots={fallbackSlots}
+					progress={motionProgress}
+					theme={theme}
+				/>
 			);
 		case 'history-detail':
-			return <HistoryDetailSurface fallbackSlots={fallbackSlots} theme={theme} />;
+			return (
+				<HistoryDetailSurface
+					fallbackSlots={fallbackSlots}
+					progress={motionProgress}
+					theme={theme}
+				/>
+			);
 		case 'history-warmup':
-			return <HistoryWarmupSurface fallbackSlots={fallbackSlots} theme={theme} />;
+			return (
+				<HistoryWarmupSurface
+					fallbackSlots={fallbackSlots}
+					progress={motionProgress}
+					theme={theme}
+				/>
+			);
 		case 'ai-ready':
 			return (
 				<AiReadySurface
 					fallbackSlots={fallbackSlots}
+					progress={motionProgress}
 					showCaptureNote={showCaptureNote}
 					theme={theme}
 				/>
 			);
 		case 'evidence-bridge':
-			return <EvidenceBridgeSurface fallbackSlots={fallbackSlots} theme={theme} />;
+			return (
+				<EvidenceBridgeSurface
+					fallbackSlots={fallbackSlots}
+					progress={motionProgress}
+					theme={theme}
+				/>
+			);
 		case 'history-default':
 		default:
 			return (
 				<HistoryDefaultSurface
 					fallbackSlots={fallbackSlots}
-					progress={progress}
+					progress={motionProgress}
 					showCaptureNote={showCaptureNote}
 					theme={theme}
 				/>

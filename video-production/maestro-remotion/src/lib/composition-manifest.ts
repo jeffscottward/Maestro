@@ -1,5 +1,5 @@
 import type { VideoCompositionProps, VideoSpec } from '../data/production-schema';
-import { prototypeSpecs, symphonyStandaloneSpec } from '../data/specs';
+import { directorNotesStandaloneSpec, prototypeSpecs, symphonyStandaloneSpec } from '../data/specs';
 import {
 	WORKSPACE_COMPOSITION_ID,
 	WORKSPACE_DIMENSIONS,
@@ -40,6 +40,7 @@ export const compositionManifest = [
 	},
 	...prototypeSpecs.map((spec) => createCompositionManifestEntry(spec)),
 	createCompositionManifestEntry(symphonyStandaloneSpec),
+	createCompositionManifestEntry(directorNotesStandaloneSpec),
 ] satisfies CompositionManifestEntry[];
 
 export const prototypeCompositionManifest = compositionManifest.filter(

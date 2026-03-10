@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { workspaceBootstrapSpec } from '../src/data/workspace-bootstrap-spec';
 import { VideoCompositionPropsSchema } from '../src/data/production-schema';
-import { symphonyStandaloneSpec } from '../src/data/specs';
+import { directorNotesStandaloneSpec, symphonyStandaloneSpec } from '../src/data/specs';
 import {
 	WORKSPACE_COMPOSITION_ID,
 	compositionDefinitions,
@@ -11,7 +11,7 @@ import {
 import { getDurationInFrames } from '../src/lib/timeline';
 
 describe('composition registry', () => {
-	it('registers the workspace bootstrap, prototype reel, and Symphony standalone master', () => {
+	it("registers the workspace bootstrap, prototype reel, Symphony standalone master, and Director's Notes standalone master", () => {
 		expect(compositionDefinitions.map((definition) => definition.id)).toEqual([
 			'MaestroWorkspaceBootstrap',
 			'MaestroFeatureTeaser',
@@ -19,6 +19,7 @@ describe('composition registry', () => {
 			'DirectorNotesPrototype',
 			'WorktreeSpinOffsPrototype',
 			'SymphonyStandalone',
+			'DirectorNotesStandalone',
 		]);
 	});
 
@@ -64,5 +65,15 @@ describe('composition registry', () => {
 		expect(definition?.durationInFrames).toBe(getDurationInFrames(symphonyStandaloneSpec));
 		expect(definition?.defaultProps.spec.id).toBe('SymphonyStandalone');
 		expect(definition?.defaultProps.spec.featureName).toBe('Maestro Symphony');
+	});
+
+	it("registers the Director's Notes standalone master at 30 fps for the list-traversal and summary handoff motion", () => {
+		const definition = getCompositionById('DirectorNotesStandalone');
+
+		expect(definition).toBeDefined();
+		expect(definition?.fps).toBe(30);
+		expect(definition?.durationInFrames).toBe(getDurationInFrames(directorNotesStandaloneSpec));
+		expect(definition?.defaultProps.spec.id).toBe('DirectorNotesStandalone');
+		expect(definition?.defaultProps.spec.featureName).toBe("Director's Notes");
 	});
 });

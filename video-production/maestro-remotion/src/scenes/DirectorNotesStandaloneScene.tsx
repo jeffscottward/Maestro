@@ -3,15 +3,20 @@ import { interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 
 import {
 	getEntranceProgress,
+	getProgressInRange,
 	getSceneOpacity,
 	translateXFromProgress,
 	translateYFromProgress,
 } from '../animations/motion';
 import {
-	DirectorNotesSurfaceShowcase,
-	getDirectorNotesSceneVariant,
-} from '../components/DirectorNotesSurfaceShowcase';
-import { AnimatedReveal } from '../components/SymphonyMotionPrimitives';
+	DIRECTOR_NOTES_FLOW_STAGES,
+	getDirectorNotesCursorPose,
+	getDirectorNotesFlowStage,
+	getDirectorNotesFocusFrame,
+	getDirectorNotesStagePose,
+} from '../animations/director-notes-choreography';
+import { DirectorNotesSurfaceShowcase } from '../components/DirectorNotesSurfaceShowcase';
+import { AnimatedReveal, GuidedCursor } from '../components/SymphonyMotionPrimitives';
 import { ProductionFrame } from '../components/ProductionFrame';
 import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
 import { getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
@@ -26,47 +31,12 @@ type DirectorNotesStandaloneSceneProps = {
 	captures: CaptureManifestEntry[];
 };
 
-type DirectorNotesFlowStage =
-	| 'Fragmentation'
-	| 'Visibility'
-	| 'Actionability'
-	| 'Warmup'
-	| 'Synthesis'
-	| 'Check-In';
-
 const clamp = {
 	extrapolateLeft: 'clamp',
 	extrapolateRight: 'clamp',
 } as const;
 
-const DIRECTOR_NOTES_FLOW_STAGES = [
-	'Fragmentation',
-	'Visibility',
-	'Actionability',
-	'Warmup',
-	'Synthesis',
-	'Check-In',
-] as const satisfies readonly DirectorNotesFlowStage[];
-
 const formatNarrativeCopy = (value: string) => value.replaceAll('`', '');
-
-const getDirectorNotesFlowStage = (scene: SceneData): DirectorNotesFlowStage => {
-	switch (getDirectorNotesSceneVariant(scene)) {
-		case 'history-filtered':
-			return 'Visibility';
-		case 'history-detail':
-			return 'Actionability';
-		case 'history-warmup':
-			return 'Warmup';
-		case 'ai-ready':
-			return 'Synthesis';
-		case 'evidence-bridge':
-			return 'Check-In';
-		case 'history-default':
-		default:
-			return 'Fragmentation';
-	}
-};
 
 const StoryNote: React.FC<{
 	label: string;
@@ -101,7 +71,7 @@ const StoryNote: React.FC<{
 };
 
 const DirectorNotesFlowStrip: React.FC<{
-	activeStage: DirectorNotesFlowStage;
+	activeStage: (typeof DIRECTOR_NOTES_FLOW_STAGES)[number];
 	frame: number;
 	theme: MaestroVisualTheme;
 }> = ({ activeStage, frame, theme }) => {
@@ -169,6 +139,53 @@ const DirectorNotesFlowStrip: React.FC<{
 	);
 };
 
+const DirectorNotesFocusOverlay: React.FC<{
+	label: string;
+	opacity: number;
+	theme: MaestroVisualTheme;
+	x: number;
+	y: number;
+	width: number;
+	height: number;
+}> = ({ label, opacity, theme, x, y, width, height }) => {
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				left: `${x * 100}%`,
+				top: `${y * 100}%`,
+				width: `${width * 100}%`,
+				height: `${height * 100}%`,
+				transform: 'translate(-50%, -50%)',
+				borderRadius: 28,
+				border: `1px solid ${theme.colors.accent}88`,
+				boxShadow: `0 0 0 1px ${theme.colors.accent}33, 0 20px 60px ${theme.colors.accent}18`,
+				background: `linear-gradient(180deg, ${theme.colors.accent}10, transparent)`,
+				opacity,
+				pointerEvents: 'none',
+			}}
+		>
+			<div
+				style={{
+					position: 'absolute',
+					left: 18,
+					top: -18,
+					padding: '8px 12px',
+					borderRadius: 999,
+					border: `1px solid ${theme.colors.accent}55`,
+					background: `${theme.colors.bgMain}f2`,
+					color: theme.colors.accentText,
+					fontSize: 14,
+					letterSpacing: 0.8,
+					whiteSpace: 'nowrap',
+				}}
+			>
+				{label}
+			</div>
+		</div>
+	);
+};
+
 const FragmentedContextBackdrop: React.FC<{
 	theme: MaestroVisualTheme;
 	opacity: number;
@@ -228,7 +245,11 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 	const copyEntrance = getEntranceProgress(frame, fps, spec.motion, 6);
 	const supportEntrance = getEntranceProgress(frame, fps, spec.motion, 12);
 	const sceneOpacity = getSceneOpacity(frame, scene.durationInFrames, spec.motion);
-	const activeStage = getDirectorNotesFlowStage(scene);
+	const sceneProgress = getProgressInRange(frame, 0, Math.max(scene.durationInFrames - 1, 1));
+	const stagePose = getDirectorNotesStagePose(scene.id, frame, scene.durationInFrames);
+	const cursorPose = getDirectorNotesCursorPose(scene.id, frame, scene.durationInFrames);
+	const focusFrame = getDirectorNotesFocusFrame(scene.id, frame, scene.durationInFrames);
+	const activeStage = getDirectorNotesFlowStage(scene.id);
 	const title = formatNarrativeCopy(scene.title);
 	const body = formatNarrativeCopy(scene.body);
 	const currentBeat = formatNarrativeCopy(storyboard?.uiStateShown ?? scene.accentLabel);
@@ -272,6 +293,7 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 								<MetaBadge label={scene.accentLabel} tone="accent" theme={theme} />
 								<MetaBadge label={`${sceneIndex + 1}/${sceneCount} scenes`} theme={theme} />
 								<MetaBadge label="Help / Unified History / AI Overview" theme={theme} />
+								<MetaBadge label={`${spec.fps} fps master`} theme={theme} />
 							</div>
 						</AnimatedReveal>
 
@@ -354,9 +376,6 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 							transform: `translateX(${surfaceSlide}px)`,
 						}}
 					>
-						{scene.id === 'director-notes-standalone-open' ? (
-							<FragmentedContextBackdrop opacity={backdropOpacity} theme={theme} />
-						) : null}
 						<div
 							style={{
 								display: 'flex',
@@ -398,22 +417,62 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 
 							<div
 								style={{
+									position: 'relative',
 									flex: 1,
 									minHeight: 0,
-									display: 'flex',
-									alignItems: 'stretch',
+									borderRadius: 34,
+									border: `1px solid ${theme.colors.border}`,
+									background: `linear-gradient(180deg, ${theme.colors.bgSidebar}, ${theme.colors.bgMain})`,
+									boxShadow: `0 28px 80px rgba(7, 4, 14, ${0.28 + stagePose.glowOpacity})`,
+									overflow: 'hidden',
 								}}
 							>
+								<div
+									style={{
+										position: 'absolute',
+										inset: 0,
+										background: `radial-gradient(circle at 16% 12%, ${theme.colors.accent}2a 0%, transparent 36%), radial-gradient(circle at 80% 82%, ${theme.colors.warning}16 0%, transparent 30%)`,
+									}}
+								/>
+								<div
+									style={{
+										position: 'absolute',
+										inset: 0,
+										background: `linear-gradient(180deg, ${theme.colors.bgSidebar}00, ${theme.colors.bgMain})`,
+										opacity: stagePose.vignetteOpacity,
+									}}
+								/>
+								{scene.id === 'director-notes-standalone-open' ? (
+									<FragmentedContextBackdrop opacity={backdropOpacity} theme={theme} />
+								) : null}
 								<AnimatedReveal frame={frame} delayFrames={14} durationFrames={18}>
-									<div style={{ height: '100%' }}>
+									<div
+										style={{
+											position: 'absolute',
+											inset: 18,
+											transform: `translate3d(${stagePose.translateX}px, ${stagePose.translateY}px, 0) scale(${stagePose.scale}) rotate(${stagePose.rotate}deg)`,
+											transformOrigin: 'center center',
+										}}
+									>
 										<DirectorNotesSurfaceShowcase
 											scene={scene}
 											captures={captures}
 											progress={copyEntrance}
 											theme={theme}
+											timelineProgress={sceneProgress}
 										/>
 									</div>
 								</AnimatedReveal>
+								<DirectorNotesFocusOverlay
+									height={focusFrame.height}
+									label={focusFrame.label}
+									opacity={focusFrame.opacity * stagePose.focusOpacity}
+									theme={theme}
+									width={focusFrame.width}
+									x={focusFrame.x}
+									y={focusFrame.y}
+								/>
+								<GuidedCursor cursor={cursorPose} theme={theme} />
 							</div>
 						</div>
 					</div>

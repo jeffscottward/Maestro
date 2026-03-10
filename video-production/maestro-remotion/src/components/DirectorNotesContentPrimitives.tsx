@@ -1,4 +1,5 @@
 import type React from 'react';
+import { interpolate } from 'remotion';
 
 import type { MaestroVisualTheme } from '../lib/maestroVisualSystem';
 import {
@@ -11,19 +12,32 @@ import {
 } from './DirectorNotesPrimitives';
 import { MetaBadge } from '../ui/MetaBadge';
 
+const clamp = {
+	extrapolateLeft: 'clamp',
+	extrapolateRight: 'clamp',
+} as const;
+
 export const DirectorOverviewToolbar: React.FC<{
 	theme: MaestroVisualTheme;
 	lookbackDays: number;
 	generatedAt: string;
 	showGenerating?: boolean;
 	disableSecondaryActions?: boolean;
+	progress?: number;
 }> = ({
 	theme,
 	lookbackDays,
 	generatedAt,
 	showGenerating = false,
 	disableSecondaryActions = false,
+	progress = 1,
 }) => {
+	const toolbarOpacity = interpolate(progress, [0, 1], [0.54, 1], clamp);
+	const controlsOffset = interpolate(progress, [0, 1], [24, 0], clamp);
+	const sliderWidth = interpolate(progress, [0, 1], [18, 32], clamp);
+	const sliderHandleLeft = interpolate(progress, [0, 1], [18, 22], clamp);
+	const generatingWidth = interpolate(progress, [0, 1], [18, 44], clamp);
+
 	return (
 		<DirectorPanel theme={theme} padding={18} gap={14}>
 			<div
@@ -32,6 +46,7 @@ export const DirectorOverviewToolbar: React.FC<{
 					gridTemplateColumns: 'minmax(0, 1fr) auto',
 					gap: 18,
 					alignItems: 'center',
+					opacity: toolbarOpacity,
 				}}
 			>
 				<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -50,10 +65,10 @@ export const DirectorOverviewToolbar: React.FC<{
 						<div
 							style={{
 								position: 'absolute',
-								left: '22%',
+								left: `${sliderHandleLeft}%`,
 								top: 0,
 								bottom: 0,
-								width: '32%',
+								width: `${sliderWidth}%`,
 								borderRadius: 999,
 								background: theme.colors.accent,
 							}}
@@ -61,7 +76,7 @@ export const DirectorOverviewToolbar: React.FC<{
 						<div
 							style={{
 								position: 'absolute',
-								left: '22%',
+								left: `${sliderHandleLeft}%`,
 								top: '50%',
 								width: 18,
 								height: 18,
@@ -73,7 +88,14 @@ export const DirectorOverviewToolbar: React.FC<{
 						/>
 					</div>
 				</div>
-				<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+				<div
+					style={{
+						display: 'flex',
+						alignItems: 'center',
+						gap: 12,
+						transform: `translate3d(${controlsOffset}px, 0, 0)`,
+					}}
+				>
 					<div
 						style={{
 							fontSize: 15,
@@ -105,7 +127,7 @@ export const DirectorOverviewToolbar: React.FC<{
 					>
 						<div
 							style={{
-								width: '44%',
+								width: `${generatingWidth}%`,
 								height: '100%',
 								borderRadius: 999,
 								background: theme.colors.warning,
@@ -122,35 +144,75 @@ export const DirectorOverviewToolbar: React.FC<{
 export const DirectorOverviewSections: React.FC<{
 	sections: readonly DirectorNotesOverviewSection[];
 	theme: MaestroVisualTheme;
-}> = ({ sections, theme }) => {
+	progress?: number;
+}> = ({ sections, theme, progress = 1 }) => {
 	return (
 		<DirectorPanel theme={theme} padding={22} gap={20}>
-			{sections.map((section) => (
-				<div key={section.title} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-					<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-						<div style={{ fontSize: 34, color: theme.colors.warning }}>{section.title}</div>
-						{section.subtitle ? (
-							<div style={{ fontSize: 18, color: theme.colors.textDim }}>{section.subtitle}</div>
-						) : null}
-					</div>
-					{section.lines.map((line) => (
-						<div
-							key={line}
-							style={{
-								display: 'flex',
-								gap: 12,
-								alignItems: 'flex-start',
-								fontSize: 18,
-								lineHeight: 1.48,
-								color: theme.colors.textMain,
-							}}
-						>
-							<span style={{ color: theme.colors.accentText }}>-</span>
-							<span>{line}</span>
+			{sections.map((section, index) => {
+				const sectionProgress = interpolate(
+					progress,
+					[index * 0.18, Math.min(index * 0.18 + 0.34, 1)],
+					[0, 1],
+					clamp
+				);
+				const sectionOpacity = interpolate(sectionProgress, [0, 1], [0.2, 1], clamp);
+				const sectionLift = interpolate(sectionProgress, [0, 1], [28, 0], clamp);
+
+				return (
+					<div
+						key={section.title}
+						style={{
+							display: 'flex',
+							flexDirection: 'column',
+							gap: 10,
+							opacity: sectionOpacity,
+							transform: `translate3d(0, ${sectionLift}px, 0)`,
+						}}
+					>
+						<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+							<div style={{ fontSize: 34, color: theme.colors.warning }}>{section.title}</div>
+							{section.subtitle ? (
+								<div style={{ fontSize: 18, color: theme.colors.textDim }}>{section.subtitle}</div>
+							) : null}
 						</div>
-					))}
-				</div>
-			))}
+						{section.lines.map((line, lineIndex) => {
+							const lineProgress = interpolate(
+								progress,
+								[
+									index * 0.18 + lineIndex * 0.08,
+									Math.min(index * 0.18 + lineIndex * 0.08 + 0.28, 1),
+								],
+								[0, 1],
+								clamp
+							);
+
+							return (
+								<div
+									key={line}
+									style={{
+										display: 'flex',
+										gap: 12,
+										alignItems: 'flex-start',
+										fontSize: 18,
+										lineHeight: 1.48,
+										color: theme.colors.textMain,
+										opacity: interpolate(lineProgress, [0, 1], [0.12, 1], clamp),
+										transform: `translate3d(0, ${interpolate(
+											lineProgress,
+											[0, 1],
+											[18, 0],
+											clamp
+										)}px, 0)`,
+									}}
+								>
+									<span style={{ color: theme.colors.accentText }}>-</span>
+									<span>{line}</span>
+								</div>
+							);
+						})}
+					</div>
+				);
+			})}
 		</DirectorPanel>
 	);
 };
@@ -158,7 +220,12 @@ export const DirectorOverviewSections: React.FC<{
 export const DirectorDetailCard: React.FC<{
 	row: DirectorNotesHistoryRowData;
 	theme: MaestroVisualTheme;
-}> = ({ row, theme }) => {
+	progress?: number;
+}> = ({ row, theme, progress = 1 }) => {
+	const cardOpacity = interpolate(progress, [0, 1], [0.2, 1], clamp);
+	const cardScale = interpolate(progress, [0, 1], [0.92, 1], clamp);
+	const cardLift = interpolate(progress, [0, 1], [42, 0], clamp);
+
 	return (
 		<div
 			style={{
@@ -171,6 +238,9 @@ export const DirectorDetailCard: React.FC<{
 				background: `${theme.colors.bgSidebar}f4`,
 				boxShadow: `0 26px 60px ${theme.colors.bgSidebar}`,
 				backdropFilter: 'blur(18px)',
+				opacity: cardOpacity,
+				transform: `translate3d(0, ${cardLift}px, 0) scale(${cardScale})`,
+				transformOrigin: 'center top',
 			}}
 		>
 			<div
@@ -241,24 +311,40 @@ export const DirectorEvidenceBridge: React.FC<{
 	theme: MaestroVisualTheme;
 	historyRows: readonly DirectorNotesHistoryRowData[];
 	sections: readonly DirectorNotesOverviewSection[];
-}> = ({ theme, historyRows, sections }) => {
+	progress?: number;
+}> = ({ theme, historyRows, sections, progress = 1 }) => {
+	const historyPanelOffset = interpolate(progress, [0, 1], [0, -18], clamp);
+	const historyPanelScale = interpolate(progress, [0, 1], [1, 0.98], clamp);
+	const summaryPanelOffset = interpolate(progress, [0, 1], [28, 0], clamp);
+	const summaryPanelScale = interpolate(progress, [0, 1], [0.96, 1.02], clamp);
+	const summaryOpacity = interpolate(progress, [0, 1], [0.52, 1], clamp);
+	const connectorWidth = interpolate(progress, [0, 1], [36, 72], clamp);
+	const connectorScale = interpolate(progress, [0, 1], [0.84, 1.08], clamp);
+
 	return (
 		<div style={{ display: 'grid', gridTemplateColumns: '0.98fr auto 1.02fr', gap: 18 }}>
-			<DirectorPanel theme={theme} padding={18} gap={14}>
-				<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-					<div style={{ fontSize: 22, color: theme.colors.textMain }}>Unified History</div>
-					<div style={{ fontSize: 15, color: theme.colors.textDim }}>history files</div>
-				</div>
-				{historyRows.slice(0, 3).map((row, index) => (
-					<DirectorHistoryRow
-						key={`${row.agent}-${row.session}`}
-						row={row}
-						highlighted={index === 0}
-						showResumeCue={index === 0}
-						theme={theme}
-					/>
-				))}
-			</DirectorPanel>
+			<div
+				style={{
+					transform: `translate3d(${historyPanelOffset}px, 0, 0) scale(${historyPanelScale})`,
+					transformOrigin: 'left center',
+				}}
+			>
+				<DirectorPanel theme={theme} padding={18} gap={14}>
+					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+						<div style={{ fontSize: 22, color: theme.colors.textMain }}>Unified History</div>
+						<div style={{ fontSize: 15, color: theme.colors.textDim }}>history files</div>
+					</div>
+					{historyRows.slice(0, 3).map((row, index) => (
+						<DirectorHistoryRow
+							key={`${row.agent}-${row.session}`}
+							row={row}
+							highlighted={index === 0}
+							showResumeCue={index === 0}
+							theme={theme}
+						/>
+					))}
+				</DirectorPanel>
+			</div>
 			<div
 				style={{
 					display: 'flex',
@@ -278,13 +364,14 @@ export const DirectorEvidenceBridge: React.FC<{
 						fontSize: 14,
 						letterSpacing: 1,
 						textTransform: 'uppercase',
+						transform: `scale(${connectorScale})`,
 					}}
 				>
 					+ grounded synthesis
 				</div>
 				<div
 					style={{
-						width: 72,
+						width: connectorWidth,
 						height: 2,
 						background: theme.colors.accent,
 					}}
@@ -300,12 +387,21 @@ export const DirectorEvidenceBridge: React.FC<{
 						alignItems: 'center',
 						justifyContent: 'center',
 						fontSize: 16,
+						transform: `scale(${connectorScale})`,
 					}}
 				>
 					{'>'}
 				</div>
 			</div>
-			<div style={{ display: 'grid', gap: 14 }}>
+			<div
+				style={{
+					display: 'grid',
+					gap: 14,
+					opacity: summaryOpacity,
+					transform: `translate3d(${summaryPanelOffset}px, 0, 0) scale(${summaryPanelScale})`,
+					transformOrigin: 'right center',
+				}}
+			>
 				<DirectorPanel theme={theme} padding={18} gap={10}>
 					<div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
 						<div style={{ fontSize: 22, color: theme.colors.textMain }}>AI Overview</div>
@@ -320,7 +416,7 @@ export const DirectorEvidenceBridge: React.FC<{
 						theme={theme}
 					/>
 				</DirectorPanel>
-				<DirectorOverviewSections sections={sections} theme={theme} />
+				<DirectorOverviewSections progress={progress} sections={sections} theme={theme} />
 			</div>
 		</div>
 	);

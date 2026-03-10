@@ -9,7 +9,7 @@ import {
 	translateYFromProgress,
 } from '../animations/motion';
 import type { MaestroVisualTheme } from '../lib/maestroVisualSystem';
-import type { SymphonyCursorPose, SymphonyFlowStage } from '../animations/symphony-choreography';
+import type { SymphonyFlowStage } from '../animations/symphony-choreography';
 
 const clamp = {
 	extrapolateLeft: 'clamp',
@@ -58,8 +58,19 @@ export const AnimatedReveal: React.FC<{
 	);
 };
 
-export const SymphonyGuidedCursor: React.FC<{
-	cursor: SymphonyCursorPose;
+export type GuidedCursorPose = {
+	x: number;
+	y: number;
+	scale: number;
+	opacity: number;
+	haloScale: number;
+	pressed: boolean;
+	visible: boolean;
+	hint: string;
+};
+
+export const GuidedCursor: React.FC<{
+	cursor: GuidedCursorPose;
 	theme: MaestroVisualTheme;
 }> = ({ cursor, theme }) => {
 	if (!cursor.visible) {
@@ -131,6 +142,8 @@ export const SymphonyGuidedCursor: React.FC<{
 		</div>
 	);
 };
+
+export const SymphonyGuidedCursor = GuidedCursor;
 
 export const SymphonyFlowStrip: React.FC<{
 	activeStage: SymphonyFlowStage;

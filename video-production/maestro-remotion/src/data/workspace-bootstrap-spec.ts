@@ -76,7 +76,7 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 			title: 'Scenes, captures, and motion stay in validated specs',
 			body: "Each video can now declare source refs, required capture slots, and motion behavior in Zod-validated data before deeper Symphony, Director's Notes, and worktree productions land.",
 			durationInFrames: 90,
-			captureIds: ['project-sources', 'director-notes-history', 'autorun-worktree'],
+			captureIds: ['project-sources', 'autorun-worktree', 'director-notes-history'],
 		},
 	],
 });

@@ -16,20 +16,24 @@ export const PROTOTYPE_MOTION_PRESET = {
 	},
 } satisfies MotionSettings;
 
-type PrototypeSpecInput = Omit<
+type ProductionSpecInput = Omit<
 	VideoSpec,
 	'aspectRatio' | 'dimensions' | 'motion' | 'terminology' | 'sourceRefs'
 > & {
 	dimensions?: VideoSpec['dimensions'];
 	motion?: MotionSettings;
+	terminology?: VideoSpec['terminology'];
+	sourceRefs?: VideoSpec['sourceRefs'];
 };
 
-export const createPrototypeSpec = (spec: PrototypeSpecInput) =>
+export const createProductionSpec = (spec: ProductionSpecInput) =>
 	validateVideoSpec({
 		...spec,
 		aspectRatio: '16:9',
 		dimensions: spec.dimensions ?? PROTOTYPE_MASTER_DIMENSIONS,
 		motion: spec.motion ?? PROTOTYPE_MOTION_PRESET,
-		terminology: [...PRESERVED_TERMINOLOGY],
-		sourceRefs: [...MAESTRO_SOURCE_REFERENCES],
+		terminology: [...new Set([...PRESERVED_TERMINOLOGY, ...(spec.terminology ?? [])])],
+		sourceRefs: [...new Set([...MAESTRO_SOURCE_REFERENCES, ...(spec.sourceRefs ?? [])])],
 	});
+
+export const createPrototypeSpec = (spec: ProductionSpecInput) => createProductionSpec(spec);

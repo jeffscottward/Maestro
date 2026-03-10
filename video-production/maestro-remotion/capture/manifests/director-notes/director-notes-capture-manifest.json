@@ -1,0 +1,488 @@
+{
+	"version": 1,
+	"status": "planned",
+	"specId": "DirectorNotesStandalone",
+	"featureName": "Director's Notes",
+	"featureSlug": "director-notes",
+	"manifestPath": "capture/manifests/director-notes/director-notes-capture-manifest.json",
+	"directories": {
+		"live": "capture/live/director-notes",
+		"docs": "capture/docs/director-notes",
+		"derived": "capture/derived/director-notes",
+		"manifests": "capture/manifests/director-notes",
+		"recordings": "capture/recordings/director-notes"
+	},
+	"captures": [
+		{
+			"id": "director-modal-open",
+			"feature": "Director's Notes Modal Open",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/DirectorNotes/DirectorNotesModal.tsx",
+			"notes": "Capture the modal opening with the visible tab order `Help`, `Unified History`, and `AI Overview`.",
+			"required": true
+		},
+		{
+			"id": "director-unified-history",
+			"feature": "Director's Notes Unified History",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/DirectorNotes/UnifiedHistoryTab.tsx",
+			"notes": "Capture the stats row, filters, search, and dense history rows in the default `Unified History` view.",
+			"required": true
+		},
+		{
+			"id": "director-history-detail",
+			"feature": "Director Notes History Detail",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/HistoryDetailModal.tsx",
+			"notes": "Capture the detail modal proving the timeline is actionable and can route back to the originating session.",
+			"required": true
+		},
+		{
+			"id": "director-ai-overview-loading",
+			"feature": "Director's Notes AI Overview Loading",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+			"notes": "Capture the cold-open or generating state so the synopsis feels grounded in actual history processing.",
+			"required": true
+		},
+		{
+			"id": "director-ai-overview-ready",
+			"feature": "Director's Notes AI Overview Ready",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+			"notes": "Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible.",
+			"required": true
+		},
+		{
+			"id": "director-evidence-link",
+			"feature": "Director Notes Evidence Link",
+			"mode": "derived-asset",
+			"sourceRef": "src/main/ipc/handlers/director-notes.ts",
+			"notes": "Represent the link between history-file evidence and the generated synopsis so the summary is framed as grounded, not freeform.",
+			"required": true
+		}
+	],
+	"assets": [
+		{
+			"id": "director-modal-shell",
+			"kind": "live-capture",
+			"label": "Director Notes modal shell capture",
+			"plannedSource": "capture/live/director-notes/modal-open.mov",
+			"usage": "Scene 1 modal-open proof and reusable shell for later scenes.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "director-notes",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/director-notes/modal-open.mov",
+				"bucket": "live",
+				"featureSlug": "director-notes",
+				"fileName": "modal-open.mov",
+				"stem": "modal-open",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "director-history-controls",
+			"kind": "live-capture",
+			"label": "Unified History controls capture",
+			"plannedSource": "capture/live/director-notes/unified-history.mov",
+			"usage": "Scenes 2 and 3 evidence-first browsing and actionability beats.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "director-notes",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/director-notes/unified-history.mov",
+				"bucket": "live",
+				"featureSlug": "director-notes",
+				"fileName": "unified-history.mov",
+				"stem": "unified-history",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "director-history-detail-card",
+			"kind": "live-capture",
+			"label": "History detail modal capture",
+			"plannedSource": "capture/live/director-notes/history-detail.mov",
+			"usage": "Scene 3 proof that the timeline can route back into the source session.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "director-notes",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/director-notes/history-detail.mov",
+				"bucket": "live",
+				"featureSlug": "director-notes",
+				"fileName": "history-detail.mov",
+				"stem": "history-detail",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "director-ai-overview-loading-card",
+			"kind": "live-capture",
+			"label": "AI Overview loading capture",
+			"plannedSource": "capture/live/director-notes/ai-overview-loading.mov",
+			"usage": "Scene 4 generation-state beat.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "director-notes",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/director-notes/ai-overview-loading.mov",
+				"bucket": "live",
+				"featureSlug": "director-notes",
+				"fileName": "ai-overview-loading.mov",
+				"stem": "ai-overview-loading",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "director-ai-overview-ready-card",
+			"kind": "live-capture",
+			"label": "AI Overview ready capture",
+			"plannedSource": "capture/live/director-notes/ai-overview-ready.mov",
+			"usage": "Scenes 5 and 6 synopsis-ready proof and closing comparison beat.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "director-notes",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/director-notes/ai-overview-ready.mov",
+				"bucket": "live",
+				"featureSlug": "director-notes",
+				"fileName": "ai-overview-ready.mov",
+				"stem": "ai-overview-ready",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "director-grounded-synthesis-overlay",
+			"kind": "motion-graphic",
+			"label": "Grounded synthesis overlay",
+			"plannedSource": "capture/derived/director-notes/evidence-link.json",
+			"usage": "Scene 6 overlay connecting the timeline evidence to the generated summary.",
+			"required": true,
+			"bucket": "derived",
+			"featureSlug": "director-notes",
+			"mediaType": "data",
+			"metadata": {
+				"relativePath": "capture/derived/director-notes/evidence-link.json",
+				"bucket": "derived",
+				"featureSlug": "director-notes",
+				"fileName": "evidence-link.json",
+				"stem": "evidence-link",
+				"extension": "json",
+				"mediaType": "data"
+			},
+			"sourceStatus": "derived",
+			"capturedPath": null
+		}
+	],
+	"sceneMappings": [
+		{
+			"sceneId": "director-notes-standalone-open",
+			"sceneNumber": 1,
+			"purpose": "Frame fragmented agent oversight as a real operational burden before the feature resolves it.",
+			"captureIds": ["director-modal-open"],
+			"assetPlaceholderIds": ["director-modal-shell"],
+			"recordingPath": "capture/recordings/director-notes/s01-director-notes-standalone-open.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+					"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+					"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "director-modal-open",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/DirectorNotesModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["director-modal-shell"],
+					"notes": "Capture the modal opening with the visible tab order `Help`, `Unified History`, and `AI Overview`."
+				}
+			]
+		},
+		{
+			"sceneId": "director-notes-standalone-history",
+			"sceneNumber": 2,
+			"purpose": "Show `Unified History` as the central operational control surface.",
+			"captureIds": ["director-unified-history"],
+			"assetPlaceholderIds": ["director-history-controls"],
+			"recordingPath": "capture/recordings/director-notes/s02-director-notes-standalone-history.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+					"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+					"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "director-unified-history",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/UnifiedHistoryTab.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["director-history-controls"],
+					"notes": "Capture the stats row, filters, search, and dense history rows in the default `Unified History` view."
+				}
+			]
+		},
+		{
+			"sceneId": "director-notes-standalone-detail",
+			"sceneNumber": 3,
+			"purpose": "Prove the history is actionable, not passive reporting.",
+			"captureIds": ["director-unified-history", "director-history-detail"],
+			"assetPlaceholderIds": ["director-history-controls", "director-history-detail-card"],
+			"recordingPath": "capture/recordings/director-notes/s03-director-notes-standalone-detail.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+					"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+					"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "director-unified-history",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/UnifiedHistoryTab.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["director-history-controls", "director-history-detail-card"],
+					"notes": "Capture the stats row, filters, search, and dense history rows in the default `Unified History` view."
+				},
+				{
+					"captureId": "director-history-detail",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/HistoryDetailModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["director-history-controls", "director-history-detail-card"],
+					"notes": "Capture the detail modal proving the timeline is actionable and can route back to the originating session."
+				}
+			]
+		},
+		{
+			"sceneId": "director-notes-standalone-ai-loading",
+			"sceneNumber": 4,
+			"purpose": "Acknowledge the grounded generation step before showing the summary.",
+			"captureIds": ["director-ai-overview-loading"],
+			"assetPlaceholderIds": ["director-ai-overview-loading-card"],
+			"recordingPath": "capture/recordings/director-notes/s04-director-notes-standalone-ai-loading.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+					"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+					"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "director-ai-overview-loading",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["director-ai-overview-loading-card"],
+					"notes": "Capture the cold-open or generating state so the synopsis feels grounded in actual history processing."
+				}
+			]
+		},
+		{
+			"sceneId": "director-notes-standalone-ai-ready",
+			"sceneNumber": 5,
+			"purpose": "Resolve into the ready synopsis with export controls.",
+			"captureIds": ["director-ai-overview-ready"],
+			"assetPlaceholderIds": ["director-ai-overview-ready-card"],
+			"recordingPath": "capture/recordings/director-notes/s05-director-notes-standalone-ai-ready.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+					"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+					"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "director-ai-overview-ready",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["director-ai-overview-ready-card"],
+					"notes": "Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible."
+				}
+			]
+		},
+		{
+			"sceneId": "director-notes-standalone-close",
+			"sceneNumber": 6,
+			"purpose": "Close on faster project check-ins built from evidence first and synthesis second.",
+			"captureIds": [
+				"director-unified-history",
+				"director-ai-overview-ready",
+				"director-evidence-link"
+			],
+			"assetPlaceholderIds": [
+				"director-history-controls",
+				"director-ai-overview-ready-card",
+				"director-grounded-synthesis-overlay"
+			],
+			"recordingPath": "capture/recordings/director-notes/s06-director-notes-standalone-close.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+					"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+					"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "director-unified-history",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/UnifiedHistoryTab.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": [
+						"director-history-controls",
+						"director-ai-overview-ready-card",
+						"director-grounded-synthesis-overlay"
+					],
+					"notes": "Capture the stats row, filters, search, and dense history rows in the default `Unified History` view."
+				},
+				{
+					"captureId": "director-ai-overview-ready",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": [
+						"director-history-controls",
+						"director-ai-overview-ready-card",
+						"director-grounded-synthesis-overlay"
+					],
+					"notes": "Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible."
+				},
+				{
+					"captureId": "director-evidence-link",
+					"plannedMode": "derived-asset",
+					"sourceRef": "src/main/ipc/handlers/director-notes.ts",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": [
+						"director-history-controls",
+						"director-ai-overview-ready-card",
+						"director-grounded-synthesis-overlay"
+					],
+					"notes": "Represent the link between history-file evidence and the generated synopsis so the summary is framed as grounded, not freeform."
+				}
+			]
+		}
+	],
+	"aspectRatioIntent": {
+		"primary": "16:9",
+		"adaptations": [
+			{
+				"ratio": "1:1",
+				"framing": "Center the stats row, filter pills, and synopsis header while using tighter crops for long timeline rows or markdown paragraphs.",
+				"safeZone": "Keep `Unified History`, `AI Overview`, and the key control strip inside the middle crop so the story still reads without peripheral list density."
+			},
+			{
+				"ratio": "9:16",
+				"framing": "Stack the history controls and synopsis header as vertical story beats, using list rows and markdown blocks as guided inserts instead of full-width panels.",
+				"safeZone": "Protect tab labels, control buttons, and the active summary section in a tall central column with animated transitions between evidence and synthesis."
+			}
+		]
+	}
+}

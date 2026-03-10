@@ -20,8 +20,10 @@ const requiredPaths = [
 	'src/ui',
 	'src/animations',
 	'src/data',
+	'src/data/capture-schema.ts',
 	'src/assets',
 	'src/lib',
+	'src/lib/capture-pipeline.ts',
 	'src/compositions/MaestroWorkspaceBootstrapComposition.tsx',
 	'src/scenes/FeatureHeroScene.tsx',
 	'src/components/ProductionFrame.tsx',
@@ -35,8 +37,16 @@ const requiredPaths = [
 	'src/lib/timeline.ts',
 	'src/ui/MaestroPrimitives.tsx',
 	'src/components/FeatureSurfaceShowcase.tsx',
+	'scripts/export-capture-manifests.mjs',
+	'scripts/validate-capture-pipeline.mjs',
+	'capture/live',
+	'capture/docs',
+	'capture/derived',
+	'capture/manifests',
+	'capture/recordings',
 	'renders',
 	'docs/research/project-sources.md',
+	'docs/research/feature-capture-plan.md',
 ];
 
 const requiredSourceReferences = [
@@ -90,6 +100,14 @@ export const validateWorkspace = () => {
 
 	if (!String(packageJson.packageManager ?? '').startsWith('pnpm@')) {
 		fail('Workspace must declare pnpm as its package manager.');
+	}
+
+	if (!packageJson.scripts?.['capture:manifests']) {
+		fail('Workspace must expose a capture:manifests script for feature manifest scaffolding.');
+	}
+
+	if (!packageJson.scripts?.['validate:capture']) {
+		fail('Workspace must expose a validate:capture script for capture pipeline validation.');
 	}
 
 	const remotionCliVersion =

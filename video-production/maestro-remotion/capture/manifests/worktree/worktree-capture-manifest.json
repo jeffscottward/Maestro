@@ -1,0 +1,426 @@
+{
+	"version": 1,
+	"status": "planned",
+	"specId": "WorktreeSpinOffsStandalone",
+	"featureName": "Run in Worktree",
+	"featureSlug": "worktree",
+	"manifestPath": "capture/manifests/worktree/worktree-capture-manifest.json",
+	"directories": {
+		"live": "capture/live/worktree",
+		"docs": "capture/docs/worktree",
+		"derived": "capture/derived/worktree",
+		"manifests": "capture/manifests/worktree",
+		"recordings": "capture/recordings/worktree"
+	},
+	"captures": [
+		{
+			"id": "worktree-batch-runner",
+			"feature": "Auto Run Batch Runner",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/BatchRunnerModal.tsx",
+			"notes": "Capture the Auto Run launch surface in a git-backed session before the worktree section becomes the focal point.",
+			"required": true
+		},
+		{
+			"id": "worktree-toggle-enabled",
+			"feature": "Run In Worktree Toggle",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+			"notes": "Capture the `Run in Worktree` section opening as `Dispatch to a separate worktree` is enabled.",
+			"required": true
+		},
+		{
+			"id": "worktree-create-new-form",
+			"feature": "Create New Worktree Form",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+			"notes": "Capture `Create New Worktree`, `Base Branch`, `Worktree Branch Name`, and path preview in one readable state.",
+			"required": true
+		},
+		{
+			"id": "worktree-pr-intent",
+			"feature": "Worktree PR Intent",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+			"notes": "Capture `Automatically create PR when complete` enabled alongside the rest of the create-new form.",
+			"required": true
+		},
+		{
+			"id": "worktree-inventory-proof",
+			"feature": "Worktree Inventory Proof",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/WorktreeConfigModal.tsx",
+			"notes": "Capture `Open in Maestro`, `Available Worktrees`, or supporting inventory proof that the destination is real and selectable.",
+			"required": true
+		},
+		{
+			"id": "worktree-terminal-proof",
+			"feature": "Worktree Terminal Proof",
+			"mode": "derived-asset",
+			"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+			"notes": "Represent the launched run with isolated branch, directory, and clean-parent-checkout proof in terminal-oriented visuals.",
+			"required": true
+		}
+	],
+	"assets": [
+		{
+			"id": "worktree-autorun-context",
+			"kind": "live-capture",
+			"label": "Auto Run launch context capture",
+			"plannedSource": "capture/live/worktree/autorun-batch-runner.mov",
+			"usage": "Scene 1 context for the risk setup.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "worktree",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/worktree/autorun-batch-runner.mov",
+				"bucket": "live",
+				"featureSlug": "worktree",
+				"fileName": "autorun-batch-runner.mov",
+				"stem": "autorun-batch-runner",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "worktree-toggle-focus",
+			"kind": "live-capture",
+			"label": "Run in Worktree toggle capture",
+			"plannedSource": "capture/live/worktree/toggle-enabled.mov",
+			"usage": "Scene 2 reveal of the isolation control surface.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "worktree",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/worktree/toggle-enabled.mov",
+				"bucket": "live",
+				"featureSlug": "worktree",
+				"fileName": "toggle-enabled.mov",
+				"stem": "toggle-enabled",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "worktree-create-form",
+			"kind": "live-capture",
+			"label": "Create worktree form capture",
+			"plannedSource": "capture/live/worktree/create-new-form.mov",
+			"usage": "Scenes 3 and 4 exact branch, path, and PR configuration beats.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "worktree",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/worktree/create-new-form.mov",
+				"bucket": "live",
+				"featureSlug": "worktree",
+				"fileName": "create-new-form.mov",
+				"stem": "create-new-form",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "worktree-inventory-panel",
+			"kind": "live-capture",
+			"label": "Worktree inventory capture",
+			"plannedSource": "capture/live/worktree/inventory-proof.mov",
+			"usage": "Scene 5 proof that the spin-off destination exists inside Maestro.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "worktree",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/worktree/inventory-proof.mov",
+				"bucket": "live",
+				"featureSlug": "worktree",
+				"fileName": "inventory-proof.mov",
+				"stem": "inventory-proof",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "worktree-terminal-card",
+			"kind": "motion-graphic",
+			"label": "Terminal and branch proof card",
+			"plannedSource": "capture/derived/worktree/terminal-proof.json",
+			"usage": "Scene 6 operational follow-through and clean-parent-checkout close.",
+			"required": true,
+			"bucket": "derived",
+			"featureSlug": "worktree",
+			"mediaType": "data",
+			"metadata": {
+				"relativePath": "capture/derived/worktree/terminal-proof.json",
+				"bucket": "derived",
+				"featureSlug": "worktree",
+				"fileName": "terminal-proof.json",
+				"stem": "terminal-proof",
+				"extension": "json",
+				"mediaType": "data"
+			},
+			"sourceStatus": "derived",
+			"capturedPath": null
+		}
+	],
+	"sceneMappings": [
+		{
+			"sceneId": "worktree-standalone-risk",
+			"sceneNumber": 1,
+			"purpose": "Frame branch contamination risk inside the real Auto Run workflow.",
+			"captureIds": ["worktree-batch-runner"],
+			"assetPlaceholderIds": ["worktree-autorun-context"],
+			"recordingPath": "capture/recordings/worktree/s01-worktree-standalone-risk.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+					"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+					"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "worktree-batch-runner",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/BatchRunnerModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-autorun-context"],
+					"notes": "Capture the Auto Run launch surface in a git-backed session before the worktree section becomes the focal point."
+				}
+			]
+		},
+		{
+			"sceneId": "worktree-standalone-toggle",
+			"sceneNumber": 2,
+			"purpose": "Reveal the isolation controls as a native part of Auto Run.",
+			"captureIds": ["worktree-toggle-enabled"],
+			"assetPlaceholderIds": ["worktree-toggle-focus"],
+			"recordingPath": "capture/recordings/worktree/s02-worktree-standalone-toggle.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+					"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+					"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "worktree-toggle-enabled",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-toggle-focus"],
+					"notes": "Capture the `Run in Worktree` section opening as `Dispatch to a separate worktree` is enabled."
+				}
+			]
+		},
+		{
+			"sceneId": "worktree-standalone-create-form",
+			"sceneNumber": 3,
+			"purpose": "Show the exact create-new workflow the product ships today.",
+			"captureIds": ["worktree-create-new-form"],
+			"assetPlaceholderIds": ["worktree-create-form"],
+			"recordingPath": "capture/recordings/worktree/s03-worktree-standalone-create-form.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+					"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+					"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "worktree-create-new-form",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-create-form"],
+					"notes": "Capture `Create New Worktree`, `Base Branch`, `Worktree Branch Name`, and path preview in one readable state."
+				}
+			]
+		},
+		{
+			"sceneId": "worktree-standalone-pr-intent",
+			"sceneNumber": 4,
+			"purpose": "Add review handoff proof to the isolation story.",
+			"captureIds": ["worktree-create-new-form", "worktree-pr-intent"],
+			"assetPlaceholderIds": ["worktree-create-form"],
+			"recordingPath": "capture/recordings/worktree/s04-worktree-standalone-pr-intent.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+					"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+					"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "worktree-create-new-form",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-create-form"],
+					"notes": "Capture `Create New Worktree`, `Base Branch`, `Worktree Branch Name`, and path preview in one readable state."
+				},
+				{
+					"captureId": "worktree-pr-intent",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-create-form"],
+					"notes": "Capture `Automatically create PR when complete` enabled alongside the rest of the create-new form."
+				}
+			]
+		},
+		{
+			"sceneId": "worktree-standalone-inventory",
+			"sceneNumber": 5,
+			"purpose": "Prove the spin-off has its own tracked destination inside Maestro.",
+			"captureIds": ["worktree-inventory-proof"],
+			"assetPlaceholderIds": ["worktree-inventory-panel"],
+			"recordingPath": "capture/recordings/worktree/s05-worktree-standalone-inventory.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+					"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+					"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "worktree-inventory-proof",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/WorktreeConfigModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-inventory-panel"],
+					"notes": "Capture `Open in Maestro`, `Available Worktrees`, or supporting inventory proof that the destination is real and selectable."
+				}
+			]
+		},
+		{
+			"sceneId": "worktree-standalone-terminal-proof",
+			"sceneNumber": 6,
+			"purpose": "Finish on execution proof and a clean parent checkout.",
+			"captureIds": ["worktree-terminal-proof"],
+			"assetPlaceholderIds": ["worktree-terminal-card"],
+			"recordingPath": "capture/recordings/worktree/s06-worktree-standalone-terminal-proof.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+					"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+					"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "worktree-terminal-proof",
+					"plannedMode": "derived-asset",
+					"sourceRef": "src/renderer/components/WorktreeRunSection.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["worktree-terminal-card"],
+					"notes": "Represent the launched run with isolated branch, directory, and clean-parent-checkout proof in terminal-oriented visuals."
+				}
+			]
+		}
+	],
+	"aspectRatioIntent": {
+		"primary": "16:9",
+		"adaptations": [
+			{
+				"ratio": "1:1",
+				"framing": "Center the worktree toggle, branch fields, and PR option while side lists compress into stacked callout blocks.",
+				"safeZone": "Keep `Run in Worktree`, `Dispatch to a separate worktree`, `Base Branch`, and `Worktree Branch Name` inside the square crop at all times."
+			},
+			{
+				"ratio": "9:16",
+				"framing": "Use vertical storytelling from Auto Run queue to toggle row to branch form, then close on terminal proof without attempting to keep the full modal width visible.",
+				"safeZone": "Protect the toggle state, branch form, path preview, and terminal proof inside a tall central column with list or config context as lower-priority inserts."
+			}
+		]
+	}
+}

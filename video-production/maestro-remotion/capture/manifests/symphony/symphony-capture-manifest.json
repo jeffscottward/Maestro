@@ -1,0 +1,468 @@
+{
+	"version": 1,
+	"status": "planned",
+	"specId": "SymphonyStandalone",
+	"featureName": "Maestro Symphony",
+	"featureSlug": "symphony",
+	"manifestPath": "capture/manifests/symphony/symphony-capture-manifest.json",
+	"directories": {
+		"live": "capture/live/symphony",
+		"docs": "capture/docs/symphony",
+		"derived": "capture/derived/symphony",
+		"manifests": "capture/manifests/symphony",
+		"recordings": "capture/recordings/symphony"
+	},
+	"captures": [
+		{
+			"id": "symphony-projects-browse",
+			"feature": "Maestro Symphony Projects Browse",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+			"notes": "Capture the `Projects` tab with repository cards, search, filters, and issue counts in a real Maestro session.",
+			"required": true
+		},
+		{
+			"id": "symphony-issue-detail-preview",
+			"feature": "Symphony Issue Detail And Document Preview",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+			"notes": "Capture one selected issue with `Available Issues`, `Blocked`, and the Auto Run document preview controls visible together.",
+			"required": true
+		},
+		{
+			"id": "symphony-create-agent-modal",
+			"feature": "Symphony Create Agent",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+			"notes": "Capture the `Create Agent` handoff with provider selection and working directory ready to confirm.",
+			"required": true
+		},
+		{
+			"id": "symphony-setup-proof",
+			"feature": "Symphony Setup Proof",
+			"mode": "derived-asset",
+			"sourceRef": "src/main/services/symphony-runner.ts",
+			"notes": "Represent the source-of-truth setup steps: clone, branch, empty commit, draft PR, and Auto Run doc staging.",
+			"required": true
+		},
+		{
+			"id": "symphony-active-proof",
+			"feature": "Symphony Active Contribution",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+			"notes": "Capture the `Active` contribution card with status badge, elapsed time, token usage, and PR state.",
+			"required": true
+		},
+		{
+			"id": "symphony-history-stats-proof",
+			"feature": "Symphony History And Stats",
+			"mode": "live-capture",
+			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+			"notes": "Capture `History` or `Stats` proof that contribution progress and milestones persist after activation.",
+			"required": true
+		}
+	],
+	"assets": [
+		{
+			"id": "symphony-projects-hero",
+			"kind": "live-capture",
+			"label": "Projects browse hero capture",
+			"plannedSource": "capture/live/symphony/projects-browse.mov",
+			"usage": "Scenes 1 and 2 foundation for repository browsing and issue selection.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "symphony",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/symphony/projects-browse.mov",
+				"bucket": "live",
+				"featureSlug": "symphony",
+				"fileName": "projects-browse.mov",
+				"stem": "projects-browse",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "symphony-doc-preview-inset",
+			"kind": "doc-capture",
+			"label": "Issue document preview inset",
+			"plannedSource": "capture/docs/symphony/issue-document-preview.png",
+			"usage": "Scene 2 support asset for document preview readability in tighter crops.",
+			"required": true,
+			"bucket": "docs",
+			"featureSlug": "symphony",
+			"mediaType": "image",
+			"metadata": {
+				"relativePath": "capture/docs/symphony/issue-document-preview.png",
+				"bucket": "docs",
+				"featureSlug": "symphony",
+				"fileName": "issue-document-preview.png",
+				"stem": "issue-document-preview",
+				"extension": "png",
+				"mediaType": "image"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "symphony-create-agent-focus",
+			"kind": "live-capture",
+			"label": "Create Agent handoff capture",
+			"plannedSource": "capture/live/symphony/create-agent.mov",
+			"usage": "Scenes 3 and 4 activation shell and provider-selection beat.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "symphony",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/symphony/create-agent.mov",
+				"bucket": "live",
+				"featureSlug": "symphony",
+				"fileName": "create-agent.mov",
+				"stem": "create-agent",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "symphony-automation-checklist",
+			"kind": "motion-graphic",
+			"label": "Automation proof checklist overlay",
+			"plannedSource": "capture/derived/symphony/setup-checklist.json",
+			"usage": "Scene 4 source-of-truth visualization for clone, branch, doc staging, and draft PR setup.",
+			"required": true,
+			"bucket": "derived",
+			"featureSlug": "symphony",
+			"mediaType": "data",
+			"metadata": {
+				"relativePath": "capture/derived/symphony/setup-checklist.json",
+				"bucket": "derived",
+				"featureSlug": "symphony",
+				"fileName": "setup-checklist.json",
+				"stem": "setup-checklist",
+				"extension": "json",
+				"mediaType": "data"
+			},
+			"sourceStatus": "derived",
+			"capturedPath": null
+		},
+		{
+			"id": "symphony-active-card-proof",
+			"kind": "live-capture",
+			"label": "Active contribution proof capture",
+			"plannedSource": "capture/live/symphony/active-card.mov",
+			"usage": "Scene 5 hero proof that the contribution became a live Maestro object.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "symphony",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/symphony/active-card.mov",
+				"bucket": "live",
+				"featureSlug": "symphony",
+				"fileName": "active-card.mov",
+				"stem": "active-card",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		},
+		{
+			"id": "symphony-stats-proof",
+			"kind": "live-capture",
+			"label": "Stats and history proof capture",
+			"plannedSource": "capture/live/symphony/stats-history.mov",
+			"usage": "Scene 6 closing proof for milestones, history, and measurable contribution output.",
+			"required": true,
+			"bucket": "live",
+			"featureSlug": "symphony",
+			"mediaType": "video",
+			"metadata": {
+				"relativePath": "capture/live/symphony/stats-history.mov",
+				"bucket": "live",
+				"featureSlug": "symphony",
+				"fileName": "stats-history.mov",
+				"stem": "stats-history",
+				"extension": "mov",
+				"mediaType": "video"
+			},
+			"sourceStatus": "planned",
+			"capturedPath": null
+		}
+	],
+	"sceneMappings": [
+		{
+			"sceneId": "symphony-standalone-projects-browse",
+			"sceneNumber": 1,
+			"purpose": "Establish contribution inventory and repository credibility before any setup begins.",
+			"captureIds": ["symphony-projects-browse"],
+			"assetPlaceholderIds": ["symphony-projects-hero"],
+			"recordingPath": "capture/recordings/symphony/s01-symphony-standalone-projects-browse.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+					"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "symphony-projects-browse",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-projects-hero"],
+					"notes": "Capture the `Projects` tab with repository cards, search, filters, and issue counts in a real Maestro session."
+				}
+			]
+		},
+		{
+			"sceneId": "symphony-standalone-issue-detail",
+			"sceneNumber": 2,
+			"purpose": "Show the issue detail and Auto Run document preview before activation so the work feels concrete.",
+			"captureIds": ["symphony-projects-browse", "symphony-issue-detail-preview"],
+			"assetPlaceholderIds": ["symphony-projects-hero", "symphony-doc-preview-inset"],
+			"recordingPath": "capture/recordings/symphony/s02-symphony-standalone-issue-detail.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+					"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "symphony-projects-browse",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-projects-hero", "symphony-doc-preview-inset"],
+					"notes": "Capture the `Projects` tab with repository cards, search, filters, and issue counts in a real Maestro session."
+				},
+				{
+					"captureId": "symphony-issue-detail-preview",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-projects-hero", "symphony-doc-preview-inset"],
+					"notes": "Capture one selected issue with `Available Issues`, `Blocked`, and the Auto Run document preview controls visible together."
+				}
+			]
+		},
+		{
+			"sceneId": "symphony-standalone-create-agent",
+			"sceneNumber": 3,
+			"purpose": "Turn browsing into a decisive handoff.",
+			"captureIds": ["symphony-issue-detail-preview", "symphony-create-agent-modal"],
+			"assetPlaceholderIds": ["symphony-create-agent-focus"],
+			"recordingPath": "capture/recordings/symphony/s03-symphony-standalone-create-agent.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+					"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "symphony-issue-detail-preview",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-create-agent-focus"],
+					"notes": "Capture one selected issue with `Available Issues`, `Blocked`, and the Auto Run document preview controls visible together."
+				},
+				{
+					"captureId": "symphony-create-agent-modal",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-create-agent-focus"],
+					"notes": "Capture the `Create Agent` handoff with provider selection and working directory ready to confirm."
+				}
+			]
+		},
+		{
+			"sceneId": "symphony-standalone-setup-proof",
+			"sceneNumber": 4,
+			"purpose": "Prove the orchestration Maestro performs during activation.",
+			"captureIds": ["symphony-create-agent-modal", "symphony-setup-proof"],
+			"assetPlaceholderIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
+			"recordingPath": "capture/recordings/symphony/s04-symphony-standalone-setup-proof.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+					"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "symphony-create-agent-modal",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
+					"notes": "Capture the `Create Agent` handoff with provider selection and working directory ready to confirm."
+				},
+				{
+					"captureId": "symphony-setup-proof",
+					"plannedMode": "derived-asset",
+					"sourceRef": "src/main/services/symphony-runner.ts",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
+					"notes": "Represent the source-of-truth setup steps: clone, branch, empty commit, draft PR, and Auto Run doc staging."
+				}
+			]
+		},
+		{
+			"sceneId": "symphony-standalone-active-proof",
+			"sceneNumber": 5,
+			"purpose": "Show the contribution as a live Maestro object instead of a one-off dialog.",
+			"captureIds": ["symphony-active-proof"],
+			"assetPlaceholderIds": ["symphony-active-card-proof"],
+			"recordingPath": "capture/recordings/symphony/s05-symphony-standalone-active-proof.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+					"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "symphony-active-proof",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-active-card-proof"],
+					"notes": "Capture the `Active` contribution card with status badge, elapsed time, token usage, and PR state."
+				}
+			]
+		},
+		{
+			"sceneId": "symphony-standalone-history-stats",
+			"sceneNumber": 6,
+			"purpose": "Close with measurable proof that discovery became contribution history.",
+			"captureIds": ["symphony-history-stats-proof"],
+			"assetPlaceholderIds": ["symphony-stats-proof"],
+			"recordingPath": "capture/recordings/symphony/s06-symphony-standalone-history-stats.mov",
+			"cropPlan": [
+				{
+					"ratio": "16:9",
+					"framing": "Use the authored 1920x1080 master frame for capture logging and trims.",
+					"safeZone": "Keep the full master frame available so later trims can derive square and vertical crops without re-recording."
+				},
+				{
+					"ratio": "1:1",
+					"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+					"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+				},
+				{
+					"ratio": "9:16",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+				}
+			],
+			"sources": [
+				{
+					"captureId": "symphony-history-stats-proof",
+					"plannedMode": "live-capture",
+					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"required": true,
+					"sourceStatus": "planned",
+					"resolvedSourcePath": null,
+					"fallbackAssetIds": ["symphony-stats-proof"],
+					"notes": "Capture `History` or `Stats` proof that contribution progress and milestones persist after activation."
+				}
+			]
+		}
+	],
+	"aspectRatioIntent": {
+		"primary": "16:9",
+		"adaptations": [
+			{
+				"ratio": "1:1",
+				"framing": "Center the selected project, issue detail, and activation CTA while secondary repository chrome compresses into the side safe zone.",
+				"safeZone": "Keep `Projects`, issue status, and `Start Symphony` inside the central 1080x1080 crop so the handoff remains readable without voiceover."
+			},
+			{
+				"ratio": "9:16",
+				"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+				"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
+			}
+		]
+	}
+}

@@ -5,12 +5,14 @@
 	"type": "module",
 	"packageManager": "pnpm@10.29.2",
 	"scripts": {
+		"capture:manifests": "tsx scripts/export-capture-manifests.mjs",
 		"studio": "remotion studio src/index.ts --port 7101",
 		"render": "remotion render src/index.ts MaestroWorkspaceBootstrap renders/maestro-workspace-bootstrap.mp4",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
+		"validate:capture": "tsx scripts/validate-capture-pipeline.mjs",
 		"validate:workspace": "tsx scripts/validate-workspace.mjs",
-		"validate": "pnpm validate:workspace && pnpm typecheck && pnpm test"
+		"validate": "pnpm validate:capture && pnpm validate:workspace && pnpm typecheck && pnpm test"
 	},
 	"dependencies": {
 		"react": "^19.2.4",

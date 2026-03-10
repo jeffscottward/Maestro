@@ -1,0 +1,30 @@
+{
+	"name": "@maestro/video-production-remotion",
+	"private": true,
+	"version": "0.0.0",
+	"type": "module",
+	"packageManager": "pnpm@10.29.2",
+	"scripts": {
+		"studio": "remotion studio src/index.ts --port 7101",
+		"render": "remotion render src/index.ts MaestroWorkspaceBootstrap renders/maestro-workspace-bootstrap.mp4",
+		"typecheck": "tsc --noEmit",
+		"test": "vitest run",
+		"validate:workspace": "node scripts/validate-workspace.mjs",
+		"validate": "pnpm validate:workspace && pnpm typecheck && pnpm test"
+	},
+	"dependencies": {
+		"react": "^19.2.4",
+		"react-dom": "^19.2.4",
+		"remotion": "^4.0.434",
+		"zod": "4.3.6"
+	},
+	"devDependencies": {
+		"@remotion/cli": "^4.0.434",
+		"@types/node": "^25.4.0",
+		"@types/react": "^19.2.14",
+		"@types/react-dom": "^19.2.3",
+		"typescript": "^5.9.3",
+		"vite": "^7.3.1",
+		"vitest": "^4.0.18"
+	}
+}

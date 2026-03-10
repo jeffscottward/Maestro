@@ -580,6 +580,7 @@ const WorktreeRunPanel: React.FC<{
 				: 1;
 	const reviewProgress = variant === 'pr-intent' ? progress : 0;
 	const isExpanded = toggleProgress > 0.12;
+	const isEnabled = toggleProgress > 0.5;
 	const showCreateForm =
 		variant === 'create-form' || variant === 'pr-intent' || variant === 'toggle-focus';
 	const showReviewPath = variant === 'pr-intent';
@@ -591,8 +592,8 @@ const WorktreeRunPanel: React.FC<{
 			>
 				<SectionLabel label="Run in Worktree" theme={theme} />
 				<MetaBadge
-					label={isExpanded ? 'Enabled' : 'Off'}
-					tone={isExpanded ? 'accent' : 'neutral'}
+					label={isEnabled ? 'Enabled' : 'Off'}
+					tone={isEnabled ? 'accent' : 'neutral'}
 					theme={theme}
 				/>
 			</div>

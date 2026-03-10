@@ -44,4 +44,20 @@ describe('Worktree standalone scene shell', () => {
 		expect(markup).toContain('Inventory');
 		expect(markup).toContain('Proof');
 	});
+
+	it('renders the toggle scene with the dedicated focus callout outside the clipped surface frame', () => {
+		const scene = worktreeSpinOffsStandaloneSpec.scenes[1];
+		const markup = renderToStaticMarkup(
+			createElement(FeatureHeroScene, {
+				scene,
+				sceneIndex: 1,
+				sceneCount: worktreeSpinOffsStandaloneSpec.scenes.length,
+				spec: worktreeSpinOffsStandaloneSpec,
+				captures: getCapturesForScene(worktreeSpinOffsStandaloneSpec, scene),
+			})
+		);
+
+		expect(markup).toContain('Enable isolated lane');
+		expect(markup).toContain('Dispatch to a separate worktree');
+	});
 });

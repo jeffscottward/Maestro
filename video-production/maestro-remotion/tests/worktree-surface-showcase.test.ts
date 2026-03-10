@@ -23,7 +23,8 @@ const worktreeTheme = MAESTRO_SURFACE_THEMES.worktree;
 
 const renderScene = (
 	spec: typeof worktreeSpinOffsPrototypeSpec | typeof worktreeSpinOffsStandaloneSpec,
-	sceneId: string
+	sceneId: string,
+	progress = 0.82
 ) => {
 	const scene = spec.scenes.find((candidate) => candidate.id === sceneId);
 
@@ -35,7 +36,7 @@ const renderScene = (
 		createElement(WorktreeSurfaceShowcase, {
 			scene,
 			captures: getCapturesForScene(spec, scene),
-			progress: 0.82,
+			progress,
 			theme: worktreeTheme,
 		})
 	);
@@ -96,6 +97,23 @@ describe('Worktree surface showcase', () => {
 		expect(prMarkup).toContain('Create Pull Request');
 		expect(prMarkup).toContain('Review path');
 		expect(prMarkup).toContain('capture/docs/worktree/autorun-worktree-reference.png');
+	});
+
+	it('keeps the toggle badge aligned with the visual switch state during the toggle reveal', () => {
+		const midToggleMarkup = renderScene(
+			worktreeSpinOffsStandaloneSpec,
+			'worktree-standalone-toggle',
+			0.32
+		);
+		const completedToggleMarkup = renderScene(
+			worktreeSpinOffsStandaloneSpec,
+			'worktree-standalone-toggle',
+			0.82
+		);
+
+		expect(midToggleMarkup).toContain('Off');
+		expect(midToggleMarkup).not.toContain('Enabled');
+		expect(completedToggleMarkup).toContain('Enabled');
 	});
 
 	it('renders inventory proof and terminal follow-through states for the isolated lane', () => {

@@ -289,8 +289,8 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 										width={focusFrame.width}
 										height={focusFrame.height}
 									/>
-									<GuidedCursor cursor={cursorPose} theme={theme} />
 								</div>
+								<GuidedCursor cursor={cursorPose} theme={theme} />
 							</div>
 						</div>
 					</div>

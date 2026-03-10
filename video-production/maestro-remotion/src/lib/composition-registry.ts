@@ -2,16 +2,9 @@ import type { ComponentType } from 'react';
 import type { z } from 'zod';
 
 import { MaestroFeatureComposition } from '../compositions/MaestroWorkspaceBootstrapComposition';
-import { VideoCompositionPropsSchema, type VideoCompositionProps, type VideoSpec } from '../data/production-schema';
-import { prototypeSpecs } from '../data/specs';
-import { getDurationInFrames } from './timeline';
-import {
-	WORKSPACE_COMPOSITION_ID,
-	WORKSPACE_DIMENSIONS,
-	WORKSPACE_DURATION_IN_FRAMES,
-	WORKSPACE_FPS,
-	workspaceBootstrapDefaults,
-} from '../workspace-metadata';
+import { VideoCompositionPropsSchema, type VideoCompositionProps } from '../data/production-schema';
+import { compositionManifest } from './composition-manifest';
+import { WORKSPACE_COMPOSITION_ID } from '../workspace-metadata';
 
 type RegisteredComposition = {
 	id: string;
@@ -24,32 +17,22 @@ type RegisteredComposition = {
 	schema: z.ZodType<VideoCompositionProps>;
 };
 
-const createRegisteredComposition = (spec: VideoSpec): RegisteredComposition => ({
-	id: spec.id,
+const createRegisteredComposition = (
+	entry: (typeof compositionManifest)[number]
+): RegisteredComposition => ({
+	id: entry.id,
 	component: MaestroFeatureComposition,
-	width: spec.dimensions.width,
-	height: spec.dimensions.height,
-	fps: spec.fps,
-	durationInFrames: getDurationInFrames(spec),
-	defaultProps: {
-		spec,
-	},
+	width: entry.width,
+	height: entry.height,
+	fps: entry.fps,
+	durationInFrames: entry.durationInFrames,
+	defaultProps: entry.defaultProps,
 	schema: VideoCompositionPropsSchema,
 });
 
-export const compositionDefinitions = [
-	{
-		id: WORKSPACE_COMPOSITION_ID,
-		component: MaestroFeatureComposition,
-		width: WORKSPACE_DIMENSIONS.width,
-		height: WORKSPACE_DIMENSIONS.height,
-		fps: WORKSPACE_FPS,
-		durationInFrames: WORKSPACE_DURATION_IN_FRAMES,
-		defaultProps: workspaceBootstrapDefaults,
-		schema: VideoCompositionPropsSchema,
-	},
-	...prototypeSpecs.map((spec) => createRegisteredComposition(spec)),
-] satisfies RegisteredComposition[];
+export const compositionDefinitions = compositionManifest.map((entry) =>
+	createRegisteredComposition(entry)
+) satisfies RegisteredComposition[];
 
 export const getCompositionById = (compositionId: string) => {
 	return compositionDefinitions.find((composition) => composition.id === compositionId);

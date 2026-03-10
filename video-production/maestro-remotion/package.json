@@ -9,7 +9,7 @@
 		"render": "remotion render src/index.ts MaestroWorkspaceBootstrap renders/maestro-workspace-bootstrap.mp4",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
-		"validate:workspace": "node scripts/validate-workspace.mjs",
+		"validate:workspace": "tsx scripts/validate-workspace.mjs",
 		"validate": "pnpm validate:workspace && pnpm typecheck && pnpm test"
 	},
 	"dependencies": {
@@ -23,6 +23,7 @@
 		"@types/node": "^25.4.0",
 		"@types/react": "^19.2.14",
 		"@types/react-dom": "^19.2.3",
+		"tsx": "^4.21.0",
 		"typescript": "^5.9.3",
 		"vite": "^7.3.1",
 		"vitest": "^4.0.18"

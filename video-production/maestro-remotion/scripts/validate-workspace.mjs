@@ -3,9 +3,9 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
-const workspaceRoot = process.cwd();
-const requireFromWorkspace = createRequire(resolve(workspaceRoot, 'package.json'));
+import { validatePrototypeWorkspace } from '../src/lib/production-validation.ts';
 
 const requiredPaths = [
 	'package.json',
@@ -31,6 +31,7 @@ const requiredPaths = [
 	'src/data/workspace-bootstrap-spec.ts',
 	'src/lib/composition-registry.ts',
 	'src/lib/maestroVisualSystem.ts',
+	'src/lib/production-validation.ts',
 	'src/lib/timeline.ts',
 	'src/ui/MaestroPrimitives.tsx',
 	'src/components/FeatureSurfaceShowcase.tsx',
@@ -65,78 +66,97 @@ const requiredPlanningLinks = [
 	'[[worktree-spin-offs-prototype-plan]]',
 ];
 
-const missingFiles = requiredPaths.filter(
-	(relativePath) => !existsSync(resolve(workspaceRoot, relativePath))
-);
+const fail = (message) => {
+	throw new Error(message);
+};
 
-if (missingFiles.length > 0) {
-	console.error(`Missing required workspace files:\n- ${missingFiles.join('\n- ')}`);
-	process.exit(1);
-}
+const readWorkspaceFile = (workspaceRoot, relativePath) =>
+	readFileSync(resolve(workspaceRoot, relativePath), 'utf8');
 
-const packageJson = JSON.parse(readFileSync(resolve(workspaceRoot, 'package.json'), 'utf8'));
-if (packageJson.name !== '@maestro/video-production-remotion') {
-	console.error(
-		'Workspace package name must stay isolated under @maestro/video-production-remotion.'
+export const validateWorkspace = () => {
+	const workspaceRoot = process.cwd();
+	const missingFiles = requiredPaths.filter(
+		(relativePath) => !existsSync(resolve(workspaceRoot, relativePath))
 	);
-	process.exit(1);
-}
 
-if (!String(packageJson.packageManager ?? '').startsWith('pnpm@')) {
-	console.error('Workspace must declare pnpm as its package manager.');
-	process.exit(1);
-}
+	if (missingFiles.length > 0) {
+		fail(`Missing required workspace files:\n- ${missingFiles.join('\n- ')}`);
+	}
 
-const remotionCliVersion =
-	packageJson.dependencies?.['@remotion/cli'] ?? packageJson.devDependencies?.['@remotion/cli'];
+	const packageJson = JSON.parse(readWorkspaceFile(workspaceRoot, 'package.json'));
+	if (packageJson.name !== '@maestro/video-production-remotion') {
+		fail('Workspace package name must stay isolated under @maestro/video-production-remotion.');
+	}
 
-if (!remotionCliVersion) {
-	console.error(
-		'Workspace must include @remotion/cli so the studio and render scripts are runnable.'
-	);
-	process.exit(1);
-}
+	if (!String(packageJson.packageManager ?? '').startsWith('pnpm@')) {
+		fail('Workspace must declare pnpm as its package manager.');
+	}
 
-const zodVersion = packageJson.dependencies?.zod ?? packageJson.devDependencies?.zod;
+	const remotionCliVersion =
+		packageJson.dependencies?.['@remotion/cli'] ?? packageJson.devDependencies?.['@remotion/cli'];
 
-if (zodVersion !== '4.3.6') {
-	console.error(
-		'Workspace must pin zod to 4.3.6 so Remotion resolves local dependencies instead of the repo root.'
-	);
-	process.exit(1);
-}
+	if (!remotionCliVersion) {
+		fail('Workspace must include @remotion/cli so the studio and render scripts are runnable.');
+	}
 
-const zodPackagePath = requireFromWorkspace.resolve('zod/package.json');
+	const tsxVersion = packageJson.dependencies?.tsx ?? packageJson.devDependencies?.tsx;
 
-if (!zodPackagePath.startsWith(workspaceRoot)) {
-	console.error(`zod must resolve inside the isolated workspace, got: ${zodPackagePath}`);
-	process.exit(1);
-}
+	if (!tsxVersion) {
+		fail('Workspace must include tsx so the workspace validator can execute TypeScript modules.');
+	}
 
-const researchDoc = readFileSync(
-	resolve(workspaceRoot, 'docs/research/project-sources.md'),
-	'utf8'
-);
+	const zodVersion = packageJson.dependencies?.zod ?? packageJson.devDependencies?.zod;
 
-for (const sourcePath of requiredSourceReferences) {
-	if (!researchDoc.includes(`\`${sourcePath}\``)) {
-		console.error(`Research note is missing source reference: ${sourcePath}`);
+	if (zodVersion !== '4.3.6') {
+		fail(
+			'Workspace must pin zod to 4.3.6 so Remotion resolves local dependencies instead of the repo root.'
+		);
+	}
+
+	const requireFromWorkspace = createRequire(resolve(workspaceRoot, 'package.json'));
+	const zodPackagePath = requireFromWorkspace.resolve('zod/package.json');
+
+	if (!zodPackagePath.startsWith(workspaceRoot)) {
+		fail(`zod must resolve inside the isolated workspace, got: ${zodPackagePath}`);
+	}
+
+	const researchDoc = readWorkspaceFile(workspaceRoot, 'docs/research/project-sources.md');
+
+	for (const sourcePath of requiredSourceReferences) {
+		if (!researchDoc.includes(`\`${sourcePath}\``)) {
+			fail(`Research note is missing source reference: ${sourcePath}`);
+		}
+	}
+
+	for (const label of requiredLabels) {
+		if (!researchDoc.includes(`\`${label}\``)) {
+			fail(`Research note is missing preserved terminology: ${label}`);
+		}
+	}
+
+	for (const link of requiredPlanningLinks) {
+		if (!researchDoc.includes(link)) {
+			fail(`Research note is missing planning link: ${link}`);
+		}
+	}
+
+	const prototypeValidationIssues = validatePrototypeWorkspace();
+
+	if (prototypeValidationIssues.length > 0) {
+		fail(`Prototype validation failed:\n- ${prototypeValidationIssues.join('\n- ')}`);
+	}
+
+	return 'Workspace validation passed';
+};
+
+const isDirectExecution =
+	process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url);
+
+if (isDirectExecution) {
+	try {
+		console.log(validateWorkspace());
+	} catch (error) {
+		console.error(error instanceof Error ? error.message : String(error));
 		process.exit(1);
 	}
 }
-
-for (const label of requiredLabels) {
-	if (!researchDoc.includes(`\`${label}\``)) {
-		console.error(`Research note is missing preserved terminology: ${label}`);
-		process.exit(1);
-	}
-}
-
-for (const link of requiredPlanningLinks) {
-	if (!researchDoc.includes(link)) {
-		console.error(`Research note is missing planning link: ${link}`);
-		process.exit(1);
-	}
-}
-
-console.log('Workspace validation passed');

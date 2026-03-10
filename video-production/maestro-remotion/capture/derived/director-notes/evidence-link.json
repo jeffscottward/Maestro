@@ -1,0 +1,19 @@
+{
+	"version": 1,
+	"title": "Director Notes Evidence Link",
+	"generatedFrom": [
+		"src/main/ipc/handlers/director-notes.ts",
+		"src/renderer/components/DirectorNotes/UnifiedHistoryTab.tsx",
+		"src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
+		"docs/research/reconstructions/director-notes-evidence-link-reconstruction.md"
+	],
+	"panels": [
+		"History evidence rail",
+		"Generated synopsis card"
+	],
+	"claims": [
+		"History entries are aggregated across agents.",
+		"The synopsis is generated from those history files.",
+		"Results are actionable because the evidence remains navigable."
+	]
+}

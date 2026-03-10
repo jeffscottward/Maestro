@@ -1,0 +1,17 @@
+{
+	"version": 1,
+	"title": "Worktree Terminal Proof",
+	"generatedFrom": [
+		"src/renderer/components/WorktreeRunSection.tsx",
+		"src/renderer/components/WorktreeConfigModal.tsx",
+		"docs/autorun-playbooks.md",
+		"docs/git-worktrees.md",
+		"docs/research/reconstructions/worktree-terminal-proof-reconstruction.md"
+	],
+	"proofPoints": [
+		"Separate worktree path",
+		"Named branch for the run",
+		"Optional automatic PR creation",
+		"Parent checkout stays clean"
+	]
+}

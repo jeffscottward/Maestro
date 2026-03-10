@@ -1,0 +1,19 @@
+{
+	"version": 1,
+	"title": "Symphony Setup Proof",
+	"generatedFrom": [
+		"src/main/services/symphony-runner.ts",
+		"docs/symphony.md",
+		"docs/research/reconstructions/symphony-setup-proof-reconstruction.md"
+	],
+	"proofSteps": [
+		"Clone repository",
+		"Create branch",
+		"Configure git user",
+		"Create empty commit",
+		"Push branch",
+		"Create draft PR",
+		"Stage Auto Run Docs"
+	],
+	"behaviorNote": "Current implementation creates the empty commit and draft PR during setup before Auto Run begins, which differs from the current docs wording about first-commit PR claiming."
+}

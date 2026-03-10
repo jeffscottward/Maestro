@@ -10,6 +10,7 @@ import {
 import { FeatureSurfaceShowcase, getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
 import { ProductionFrame } from '../components/ProductionFrame';
 import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
+import { DirectorNotesStandaloneScene } from './DirectorNotesStandaloneScene';
 import { SymphonyStandaloneScene } from './SymphonyStandaloneScene';
 import { MetaBadge } from '../ui/MetaBadge';
 
@@ -33,6 +34,9 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 	spec,
 	captures,
 }) => {
+	const frame = useCurrentFrame();
+	const { fps } = useVideoConfig();
+
 	if (spec.id === 'SymphonyStandalone') {
 		return (
 			<SymphonyStandaloneScene
@@ -45,9 +49,19 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 		);
 	}
 
+	if (spec.id === 'DirectorNotesStandalone') {
+		return (
+			<DirectorNotesStandaloneScene
+				scene={scene}
+				sceneIndex={sceneIndex}
+				sceneCount={sceneCount}
+				spec={spec}
+				captures={captures}
+			/>
+		);
+	}
+
 	const theme = getSurfaceTheme(scene.surfaceId);
-	const frame = useCurrentFrame();
-	const { fps } = useVideoConfig();
 
 	const primaryEntrance = getEntranceProgress(frame, fps, spec.motion);
 	const secondaryEntrance = getEntranceProgress(frame, fps, spec.motion, 8);

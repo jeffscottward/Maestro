@@ -4,8 +4,6 @@ import { interpolate, useCurrentFrame } from 'remotion';
 import type { CaptureManifestEntry, SceneData, SceneSurfaceId } from '../data/production-schema';
 import {
 	AUTO_RUN_DOCUMENTS,
-	DIRECTOR_NOTES_STATS,
-	DIRECTOR_NOTES_TABS,
 	MAESTRO_SURFACE_THEMES,
 	TERMINAL_PLAN_LINES,
 	VISUAL_FALLBACK_SLOTS,
@@ -19,11 +17,11 @@ import {
 	MaestroAutoRunDocumentList,
 	MaestroFallbackSlot,
 	MaestroModalShell,
-	MaestroStatCard,
 	MaestroTerminalBlock,
 	MaestroWorktreeControls,
 } from '../ui/MaestroPrimitives';
 import { MetaBadge } from '../ui/MetaBadge';
+import { DirectorNotesSurfaceShowcase } from './DirectorNotesSurfaceShowcase';
 import { SymphonySurfaceShowcase } from './SymphonySurfaceShowcase';
 
 type FeatureSurfaceShowcaseProps = {
@@ -42,63 +40,6 @@ const clamp = {
 	extrapolateLeft: 'clamp',
 	extrapolateRight: 'clamp',
 } as const;
-
-const DIRECTOR_HISTORY_ROWS = [
-	{
-		agent: 'PedTome RSSidian',
-		summary:
-			'Queried the RSSidian database to retrieve and synthesize 79 quality-rated articles from the past two days.',
-		tag: 'News Synopsis Request',
-		type: 'USER',
-		meta: '1m 6s',
-		cost: '$0.15',
-		time: '07:11 PM',
-	},
-	{
-		agent: 'Maestro',
-		summary:
-			'Reviewed current git working tree status and identified two files with uncommitted debug logging changes.',
-		tag: 'Git Status Check',
-		type: 'USER',
-		meta: '19s',
-		cost: '$0.20',
-		time: 'Feb 5',
-	},
-	{
-		agent: 'Learned Hand',
-		summary: 'Surveyed repository structure and key components to produce a project synopsis.',
-		tag: 'Project Overview',
-		type: 'USER',
-		meta: '25s',
-		cost: '$0.09',
-		time: 'Feb 4',
-	},
-] as const;
-
-const AI_OVERVIEW_SECTIONS = [
-	{
-		title: 'Accomplishments',
-		lines: [
-			'RSSidian fixed a critical embedding-generation bug and backfilled 223 missing embeddings.',
-			'Podsidian identified unprocessed podcast episodes from recent days.',
-			'Maestro reviewed the quit handler flow across quit-handler.ts and App.tsx.',
-		],
-	},
-	{
-		title: 'Challenges',
-		lines: [
-			'Embedding backfill required a refined query to catch every missing edge case.',
-			'Uncommitted debug instrumentation suggests the quit handler investigation is still in progress.',
-		],
-	},
-	{
-		title: 'Next Steps',
-		lines: [
-			'Productize the seven analytical capabilities demonstrated in the exploratory session.',
-			'Remove temporary logging once the quit flow is validated against production behavior.',
-		],
-	},
-] as const;
 
 const WORKTREE_CHILDREN = [
 	{ name: 'beta-opt-in', status: '10', active: false },
@@ -206,68 +147,6 @@ const ActionButton: React.FC<{
 	);
 };
 
-const HistoryEntry: React.FC<{
-	agent: string;
-	tag: string;
-	type: string;
-	summary: string;
-	meta: string;
-	cost: string;
-	time: string;
-	theme: MaestroVisualTheme;
-	highlighted?: boolean;
-	progress: number;
-}> = ({ agent, tag, type, summary, meta, cost, time, theme, highlighted = false, progress }) => {
-	const barProgress = Math.max(0, Math.min(progress, 1));
-
-	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				gap: 10,
-				padding: '16px 18px',
-				borderRadius: 18,
-				border: `1px solid ${highlighted ? `${theme.colors.accent}88` : theme.colors.border}`,
-				background: highlighted ? `${theme.colors.accentDim}` : theme.colors.bgActivity,
-			}}
-		>
-			<div
-				style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 18 }}
-			>
-				<div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-					<div style={{ fontSize: 22, color: theme.colors.textMain }}>{agent}</div>
-					<MetaBadge label={tag} theme={theme} />
-					<MetaBadge label={type} tone="accent" theme={theme} />
-				</div>
-				<div style={{ fontSize: 16, color: theme.colors.textDim }}>{time}</div>
-			</div>
-			<div style={{ fontSize: 18, lineHeight: 1.42, color: theme.colors.textDim }}>{summary}</div>
-			<div
-				style={{
-					height: 3,
-					borderRadius: 999,
-					background: theme.colors.border,
-					overflow: 'hidden',
-				}}
-			>
-				<div
-					style={{
-						width: `${barProgress * 100}%`,
-						height: '100%',
-						borderRadius: 999,
-						background: theme.colors.accent,
-					}}
-				/>
-			</div>
-			<div style={{ display: 'flex', alignItems: 'center', gap: 12, color: theme.colors.textDim }}>
-				<span>{meta}</span>
-				<span>{cost}</span>
-			</div>
-		</div>
-	);
-};
-
 const WorktreeListPanel: React.FC<{
 	theme: MaestroVisualTheme;
 	progress: number;
@@ -349,191 +228,6 @@ const WorktreeListPanel: React.FC<{
 				9 worktrees
 			</div>
 		</SurfacePanel>
-	);
-};
-
-const renderStats = (
-	stats: readonly {
-		label: string;
-		value: string;
-		tone?: 'accent' | 'neutral' | 'success' | 'warning';
-	}[],
-	theme: MaestroVisualTheme
-) => {
-	return (
-		<div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', gap: 10 }}>
-			{stats.map((stat) => (
-				<MaestroStatCard
-					key={stat.label}
-					label={stat.label}
-					value={stat.value}
-					tone={stat.tone}
-					theme={theme}
-				/>
-			))}
-		</div>
-	);
-};
-
-const DirectorHistorySurface: React.FC<SurfaceProps> = ({ progress, theme }) => {
-	const footer = (
-		<>
-			<span>7 history entries across 4 agents</span>
-			<span>Enter to open detail view</span>
-		</>
-	);
-
-	return (
-		<MaestroModalShell
-			title="Director's Notes"
-			badge="Unified History"
-			tabs={DIRECTOR_NOTES_TABS}
-			activeTab="Unified History"
-			footer={footer}
-			theme={theme}
-		>
-			<div style={{ display: 'grid', gap: 14 }}>
-				<SurfacePanel theme={theme}>
-					<div
-						style={{
-							display: 'flex',
-							alignItems: 'center',
-							justifyContent: 'space-between',
-							gap: 14,
-						}}
-					>
-						<div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-							<MetaBadge label="AUTO" theme={theme} />
-							<MetaBadge label="USER" tone="accent" theme={theme} />
-						</div>
-						<div
-							style={{
-								flex: 1,
-								display: 'grid',
-								gridTemplateColumns: 'repeat(8, minmax(0, 1fr))',
-								gap: 8,
-							}}
-						>
-							{Array.from({ length: 8 }).map((_, index) => (
-								<div
-									key={`bar-${index}`}
-									style={{
-										height: 10 + ((index % 3) + 1) * 4,
-										alignSelf: 'end',
-										borderRadius: 999,
-										background:
-											index === 1
-												? theme.colors.warning
-												: index > 4
-													? theme.colors.accent
-													: `${theme.colors.accent}66`,
-										opacity: index / 10 + 0.4,
-									}}
-								/>
-							))}
-						</div>
-					</div>
-				</SurfacePanel>
-				{renderStats(DIRECTOR_NOTES_STATS, theme)}
-				<div style={{ display: 'grid', gap: 12 }}>
-					{DIRECTOR_HISTORY_ROWS.map((row, index) => (
-						<HistoryEntry
-							key={`${row.agent}-${row.tag}`}
-							agent={row.agent}
-							tag={row.tag}
-							type={row.type}
-							summary={row.summary}
-							meta={row.meta}
-							cost={row.cost}
-							time={row.time}
-							highlighted={index === 0}
-							progress={progress - index * 0.12}
-							theme={theme}
-						/>
-					))}
-				</div>
-			</div>
-		</MaestroModalShell>
-	);
-};
-
-const DirectorAiOverviewSurface: React.FC<SurfaceProps> = ({ theme }) => {
-	const footer = (
-		<>
-			<span>7 history entries analyzed</span>
-			<span>Generated in 1m 11s</span>
-		</>
-	);
-
-	return (
-		<MaestroModalShell
-			title="Director's Notes"
-			badge="AI Overview"
-			tabs={DIRECTOR_NOTES_TABS}
-			activeTab="AI Overview"
-			footer={footer}
-			theme={theme}
-		>
-			<SurfacePanel theme={theme}>
-				<div
-					style={{
-						display: 'grid',
-						gridTemplateColumns: '1.3fr auto',
-						gap: 16,
-						alignItems: 'center',
-					}}
-				>
-					<div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-						<div style={{ fontSize: 18, color: theme.colors.textDim }}>Lookback: 7 days</div>
-						<div
-							style={{
-								height: 10,
-								borderRadius: 999,
-								background: theme.colors.border,
-								overflow: 'hidden',
-							}}
-						>
-							<div
-								style={{
-									width: '24%',
-									height: '100%',
-									borderRadius: 999,
-									background: theme.colors.accent,
-								}}
-							/>
-						</div>
-					</div>
-					<div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-						<ActionButton label="Refresh" theme={theme} />
-						<ActionButton label="Save" tone="neutral" theme={theme} />
-						<ActionButton label="Copy" tone="neutral" theme={theme} />
-					</div>
-				</div>
-			</SurfacePanel>
-			{renderStats(
-				[
-					{ label: 'History Entries', value: '7', tone: 'accent' },
-					{ label: 'Agents', value: '4', tone: 'neutral' },
-					{ label: 'Time', value: '1m 11s', tone: 'warning' },
-				],
-				theme
-			)}
-			<SurfacePanel theme={theme} padding={20}>
-				{AI_OVERVIEW_SECTIONS.map((section) => (
-					<div key={section.title} style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-						<div style={{ fontSize: 30, color: theme.colors.warning }}>{section.title}</div>
-						{section.lines.map((line) => (
-							<div
-								key={line}
-								style={{ fontSize: 18, lineHeight: 1.42, color: theme.colors.textMain }}
-							>
-								- {line}
-							</div>
-						))}
-					</div>
-				))}
-			</SurfacePanel>
-		</MaestroModalShell>
 	);
 };
 
@@ -694,19 +388,11 @@ export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
 				/>
 			);
 		case 'director-history':
-			return (
-				<DirectorHistorySurface
-					captures={captures}
-					fallbackSlots={fallbackSlots}
-					progress={progress}
-					theme={theme}
-				/>
-			);
 		case 'director-ai-overview':
 			return (
-				<DirectorAiOverviewSurface
+				<DirectorNotesSurfaceShowcase
+					scene={scene}
 					captures={captures}
-					fallbackSlots={fallbackSlots}
 					progress={progress}
 					theme={theme}
 				/>

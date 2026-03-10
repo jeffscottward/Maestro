@@ -47,6 +47,7 @@ const requiredPaths = [
 	'renders',
 	'docs/research/project-sources.md',
 	'docs/research/feature-capture-plan.md',
+	'docs/reports/phase-02-capture-readiness.md',
 ];
 
 const requiredSourceReferences = [

@@ -293,6 +293,11 @@ export const buildFeatureCaptureManifest = (spec: VideoSpec): FeatureCaptureMani
 	});
 };
 
+export const getDeclaredCaptureAssetPath = (asset: {
+	capturedPath: string | null;
+	plannedSource: string;
+}) => asset.capturedPath ?? asset.plannedSource;
+
 export const validateFeatureCaptureManifest = (
 	manifest: FeatureCaptureManifest,
 	spec: VideoSpec
@@ -460,6 +465,101 @@ export const validateFeatureCaptureManifest = (
 					`${spec.id}: scene "${scene.id}" source "${source.captureId}" must keep the scene asset fallback list.`
 				);
 			}
+		}
+	}
+
+	return issues;
+};
+
+export const validateFeatureCaptureReadiness = (
+	manifest: FeatureCaptureManifest,
+	spec: VideoSpec
+) => {
+	const issues: string[] = [];
+	const sceneMappingsById = new Map(
+		manifest.sceneMappings.map((sceneMapping) => [sceneMapping.sceneId, sceneMapping])
+	);
+	const assetsById = new Map(manifest.assets.map((asset) => [asset.id, asset]));
+
+	for (const scene of spec.scenes) {
+		const sceneMapping = sceneMappingsById.get(scene.id);
+
+		if (!sceneMapping) {
+			pushIssue(
+				issues,
+				`${spec.id}: scene "${scene.id}" cannot be marked ready because it is missing from the manifest.`
+			);
+			continue;
+		}
+
+		if (sceneMapping.sources.length === 0) {
+			pushIssue(
+				issues,
+				`${spec.id}: scene "${scene.id}" must declare at least one visual source before implementation starts.`
+			);
+			continue;
+		}
+
+		let hasResolvedVisualSource = false;
+		let hasDeclaredFallbackPath = false;
+
+		for (const source of sceneMapping.sources) {
+			if (source.required && source.sourceStatus !== 'resolved') {
+				pushIssue(
+					issues,
+					`${spec.id}: scene "${scene.id}" source "${source.captureId}" must be resolved before implementation starts.`
+				);
+			}
+
+			if (source.resolvedSourcePath) {
+				hasResolvedVisualSource = true;
+			}
+
+			if (source.required && source.fallbackAssetIds.length === 0) {
+				pushIssue(
+					issues,
+					`${spec.id}: scene "${scene.id}" source "${source.captureId}" must declare a fallback asset path.`
+				);
+			}
+
+			for (const fallbackAssetId of source.fallbackAssetIds) {
+				const asset = assetsById.get(fallbackAssetId);
+
+				if (!asset) {
+					pushIssue(
+						issues,
+						`${spec.id}: scene "${scene.id}" source "${source.captureId}" references unknown fallback asset "${fallbackAssetId}".`
+					);
+					continue;
+				}
+
+				if (!sceneMapping.assetPlaceholderIds.includes(fallbackAssetId)) {
+					pushIssue(
+						issues,
+						`${spec.id}: scene "${scene.id}" source "${source.captureId}" fallback "${fallbackAssetId}" must stay aligned with the scene asset placeholders.`
+					);
+				}
+
+				const fallbackPath = getDeclaredCaptureAssetPath(asset);
+
+				if (fallbackPath) {
+					hasDeclaredFallbackPath = true;
+				}
+			}
+		}
+
+		if (!hasResolvedVisualSource) {
+			pushIssue(
+				issues,
+				`${spec.id}: scene "${scene.id}" must declare a resolved visual source path before implementation starts.`
+			);
+		}
+
+		if (!hasDeclaredFallbackPath) {
+			pushIssue(
+				issues,
+				`${spec.id}: scene "${scene.id}" must declare at least one fallback path before implementation starts.`
+			);
 		}
 	}
 

@@ -8,6 +8,7 @@ import { standaloneFeatureSpecs } from '../src/data/specs/index.ts';
 import {
 	CAPTURE_BUCKETS,
 	buildFeatureCaptureManifest,
+	validateFeatureCaptureReadiness,
 	validateFeatureCaptureManifest,
 } from '../src/lib/capture-pipeline.ts';
 
@@ -20,6 +21,7 @@ const requiredPaths = [
 	'capture/manifests',
 	'capture/recordings',
 	'docs/research/feature-capture-plan.md',
+	'docs/reports/phase-02-capture-readiness.md',
 	'scripts/export-capture-manifests.mjs',
 	'scripts/validate-capture-pipeline.mjs',
 	'src/data/capture-schema.ts',
@@ -31,6 +33,15 @@ const requiredDocPhrases = [
 	'[[project-sources]]',
 	'`pnpm capture:manifests`',
 	'`pnpm validate:capture`',
+];
+
+const requiredReadinessPhrases = [
+	'[[symphony-feature-research]]',
+	'[[director-notes-feature-research]]',
+	'[[worktree-spin-offs-feature-research]]',
+	'## Readiness Summary',
+	'## Feature Status',
+	'## Unresolved Capture Gaps',
 ];
 
 const fail = (message) => {
@@ -69,6 +80,14 @@ export const validateCapturePipeline = () => {
 		}
 	}
 
+	const readinessReport = readWorkspaceFile('docs/reports/phase-02-capture-readiness.md');
+
+	for (const phrase of requiredReadinessPhrases) {
+		if (!readinessReport.includes(phrase)) {
+			fail(`Capture readiness report is missing required phrase: ${phrase}`);
+		}
+	}
+
 	const issues = [];
 
 	for (const bucket of CAPTURE_BUCKETS) {
@@ -102,6 +121,21 @@ export const validateCapturePipeline = () => {
 		}
 
 		issues.push(...validateFeatureCaptureManifest(parsedManifest, spec));
+		issues.push(...validateFeatureCaptureReadiness(parsedManifest, spec));
+
+		for (const sceneMapping of parsedManifest.sceneMappings) {
+			for (const source of sceneMapping.sources) {
+				if (
+					source.sourceStatus === 'resolved' &&
+					source.resolvedSourcePath &&
+					!existsSync(resolve(workspaceRoot, source.resolvedSourcePath))
+				) {
+					issues.push(
+						`${spec.id}: scene "${sceneMapping.sceneId}" source "${source.captureId}" must resolve to an existing file.`
+					);
+				}
+			}
+		}
 	}
 
 	if (issues.length > 0) {

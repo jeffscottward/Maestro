@@ -201,12 +201,8 @@
 			"sceneId": "symphony-standalone-projects-browse",
 			"sceneNumber": 1,
 			"purpose": "Establish contribution inventory and repository credibility before any setup begins.",
-			"captureIds": [
-				"symphony-projects-browse"
-			],
-			"assetPlaceholderIds": [
-				"symphony-projects-hero"
-			],
+			"captureIds": ["symphony-projects-browse"],
+			"assetPlaceholderIds": ["symphony-projects-hero"],
 			"recordingPath": "capture/recordings/symphony/s01-symphony-standalone-projects-browse.mov",
 			"cropPlan": [
 				{
@@ -233,9 +229,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/projects-browse-reference.png",
-					"fallbackAssetIds": [
-						"symphony-projects-hero"
-					],
+					"fallbackAssetIds": ["symphony-projects-hero"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Symphony projects screenshot copied into capture/docs/symphony/projects-browse-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -244,14 +238,8 @@
 			"sceneId": "symphony-standalone-issue-detail",
 			"sceneNumber": 2,
 			"purpose": "Show the issue detail and Auto Run document preview before activation so the work feels concrete.",
-			"captureIds": [
-				"symphony-projects-browse",
-				"symphony-issue-detail-preview"
-			],
-			"assetPlaceholderIds": [
-				"symphony-projects-hero",
-				"symphony-doc-preview-inset"
-			],
+			"captureIds": ["symphony-projects-browse", "symphony-issue-detail-preview"],
+			"assetPlaceholderIds": ["symphony-projects-hero", "symphony-doc-preview-inset"],
 			"recordingPath": "capture/recordings/symphony/s02-symphony-standalone-issue-detail.mov",
 			"cropPlan": [
 				{
@@ -278,10 +266,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/projects-browse-reference.png",
-					"fallbackAssetIds": [
-						"symphony-projects-hero",
-						"symphony-doc-preview-inset"
-					],
+					"fallbackAssetIds": ["symphony-projects-hero", "symphony-doc-preview-inset"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Symphony projects screenshot copied into capture/docs/symphony/projects-browse-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				},
 				{
@@ -291,10 +276,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/issue-detail-reference.png",
-					"fallbackAssetIds": [
-						"symphony-projects-hero",
-						"symphony-doc-preview-inset"
-					],
+					"fallbackAssetIds": ["symphony-projects-hero", "symphony-doc-preview-inset"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in issue detail screenshot copied into capture/docs/symphony/issue-detail-reference.png so the document preview remains grounded in shipped UI. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -303,13 +285,8 @@
 			"sceneId": "symphony-standalone-create-agent",
 			"sceneNumber": 3,
 			"purpose": "Turn browsing into a decisive handoff.",
-			"captureIds": [
-				"symphony-issue-detail-preview",
-				"symphony-create-agent-modal"
-			],
-			"assetPlaceholderIds": [
-				"symphony-create-agent-focus"
-			],
+			"captureIds": ["symphony-issue-detail-preview", "symphony-create-agent-modal"],
+			"assetPlaceholderIds": ["symphony-create-agent-focus"],
 			"recordingPath": "capture/recordings/symphony/s03-symphony-standalone-create-agent.mov",
 			"cropPlan": [
 				{
@@ -336,9 +313,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/issue-detail-reference.png",
-					"fallbackAssetIds": [
-						"symphony-create-agent-focus"
-					],
+					"fallbackAssetIds": ["symphony-create-agent-focus"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in issue detail screenshot copied into capture/docs/symphony/issue-detail-reference.png so the document preview remains grounded in shipped UI. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				},
 				{
@@ -348,9 +323,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/create-agent-reference.png",
-					"fallbackAssetIds": [
-						"symphony-create-agent-focus"
-					],
+					"fallbackAssetIds": ["symphony-create-agent-focus"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Create Agent screenshot copied into capture/docs/symphony/create-agent-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -359,14 +332,8 @@
 			"sceneId": "symphony-standalone-setup-proof",
 			"sceneNumber": 4,
 			"purpose": "Prove the orchestration Maestro performs during activation.",
-			"captureIds": [
-				"symphony-create-agent-modal",
-				"symphony-setup-proof"
-			],
-			"assetPlaceholderIds": [
-				"symphony-create-agent-focus",
-				"symphony-automation-checklist"
-			],
+			"captureIds": ["symphony-create-agent-modal", "symphony-setup-proof"],
+			"assetPlaceholderIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
 			"recordingPath": "capture/recordings/symphony/s04-symphony-standalone-setup-proof.mov",
 			"cropPlan": [
 				{
@@ -393,11 +360,8 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/create-agent-reference.png",
-					"fallbackAssetIds": [
-						"symphony-create-agent-focus",
-						"symphony-automation-checklist"
-					],
-					"notes": "Source type: screenshot fallback. Resolved from the checked-in Create Agent screenshot copied into capture/docs/symphony/create-agent-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"fallbackAssetIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
+					"notes": "Source type: screenshot fallback with copy drift. Resolved from the checked-in create-agent screenshot copied into capture/docs/symphony/create-agent-reference.png, but the current dialog title in product code is `Create Symphony Agent` with a `Create Agent` confirmation CTA. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				},
 				{
 					"captureId": "symphony-setup-proof",
@@ -406,10 +370,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "docs/research/reconstructions/symphony-setup-proof-reconstruction.md",
-					"fallbackAssetIds": [
-						"symphony-create-agent-focus",
-						"symphony-automation-checklist"
-					],
+					"fallbackAssetIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
 					"notes": "Source type: reconstructed UI. Resolved to the Symphony setup-proof reconstruction note, with the machine-readable companion asset in capture/derived/symphony/setup-checklist.json."
 				}
 			]
@@ -418,12 +379,8 @@
 			"sceneId": "symphony-standalone-active-proof",
 			"sceneNumber": 5,
 			"purpose": "Show the contribution as a live Maestro object instead of a one-off dialog.",
-			"captureIds": [
-				"symphony-active-proof"
-			],
-			"assetPlaceholderIds": [
-				"symphony-active-card-proof"
-			],
+			"captureIds": ["symphony-active-proof"],
+			"assetPlaceholderIds": ["symphony-active-card-proof"],
 			"recordingPath": "capture/recordings/symphony/s05-symphony-standalone-active-proof.mov",
 			"cropPlan": [
 				{
@@ -450,10 +407,8 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/active-card-reference.png",
-					"fallbackAssetIds": [
-						"symphony-active-card-proof"
-					],
-					"notes": "Source type: screenshot fallback. Resolved from the checked-in active contribution screenshot copied into capture/docs/symphony/active-card-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"fallbackAssetIds": ["symphony-active-card-proof"],
+					"notes": "Source type: screenshot fallback with state drift. Resolved from the checked-in active contribution screenshot copied into capture/docs/symphony/active-card-reference.png, but the current product should render draft PR visibility, sync affordances, progress, and `Ready for Review` behavior from `SymphonyModal.tsx` plus `symphony-runner.ts`. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
 		},
@@ -461,12 +416,8 @@
 			"sceneId": "symphony-standalone-history-stats",
 			"sceneNumber": 6,
 			"purpose": "Close with measurable proof that discovery became contribution history.",
-			"captureIds": [
-				"symphony-history-stats-proof"
-			],
-			"assetPlaceholderIds": [
-				"symphony-stats-proof"
-			],
+			"captureIds": ["symphony-history-stats-proof"],
+			"assetPlaceholderIds": ["symphony-stats-proof"],
 			"recordingPath": "capture/recordings/symphony/s06-symphony-standalone-history-stats.mov",
 			"cropPlan": [
 				{
@@ -493,9 +444,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/stats-proof-reference.png",
-					"fallbackAssetIds": [
-						"symphony-stats-proof"
-					],
+					"fallbackAssetIds": ["symphony-stats-proof"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Symphony stats screenshot copied into capture/docs/symphony/stats-proof-reference.png, with capture/docs/symphony/history-proof-reference.png retained as the supporting review-state fallback. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]

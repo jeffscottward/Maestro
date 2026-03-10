@@ -34,7 +34,8 @@ related:
 ## Source Strategy
 
 - `Symphony`
-  - Use the checked-in screenshots for projects browse, issue detail, create-agent, active, history, and stats states.
+  - Use the checked-in screenshots for projects browse, issue detail, history, and stats states.
+  - Treat the checked-in create-agent and active screenshots as visual fallbacks only; their copy predates the current `Create Symphony Agent` dialog title and the current draft-PR-aware `Active` card state.
   - Use `[[symphony-setup-proof-reconstruction]]` plus `capture/derived/symphony/setup-checklist.json` for the setup-proof beat that combines runtime behavior with the current docs mismatch.
 - `Director's Notes`
   - Use the checked-in Unified History and AI Overview screenshots for visible modal states.

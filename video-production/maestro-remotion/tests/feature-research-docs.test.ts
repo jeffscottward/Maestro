@@ -30,6 +30,7 @@ const featureDocs = [
 			'[[project-sources]]',
 			'`Maestro Symphony`',
 			'`Start Symphony`',
+			'`Create Symphony Agent`',
 			'`Create Agent`',
 			'empty commit',
 		],

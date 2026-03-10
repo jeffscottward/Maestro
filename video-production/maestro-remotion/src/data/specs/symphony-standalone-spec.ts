@@ -5,7 +5,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 	featureName: 'Maestro Symphony',
 	title: 'Maestro Symphony standalone production storyboard',
 	description:
-		'45-second standalone production spec covering the browse-to-claimed-contribution Symphony workflow.',
+		'45-second standalone production spec covering the browse-to-coordinated-contribution Symphony workflow.',
 	fps: 30,
 	runtimeSeconds: 45,
 	aspectRatioIntent: {
@@ -21,7 +21,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			{
 				ratio: '9:16',
 				framing:
-					'Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.',
+					'Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.',
 				safeZone:
 					'Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts.',
 			},
@@ -48,11 +48,11 @@ export const symphonyStandaloneSpec = createProductionSpec({
 		},
 		{
 			id: 'symphony-create-agent-modal',
-			feature: 'Symphony Create Agent',
+			feature: 'Symphony Create Symphony Agent',
 			mode: 'live-capture',
-			sourceRef: 'src/renderer/components/SymphonyModal.tsx',
+			sourceRef: 'src/renderer/components/AgentCreationDialog.tsx',
 			notes:
-				'Capture the `Create Agent` handoff with provider selection and working directory ready to confirm.',
+				'Capture the `Create Symphony Agent` dialog with provider selection, session naming, and working directory ready to confirm.',
 			required: true,
 		},
 		{
@@ -70,7 +70,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			mode: 'live-capture',
 			sourceRef: 'src/renderer/components/SymphonyModal.tsx',
 			notes:
-				'Capture the `Active` contribution card with status badge, elapsed time, token usage, and PR state.',
+				'Capture or reconstruct the current `Active` contribution card with status badge, draft PR state, document progress, token usage, sync affordance, and review readiness.',
 			required: true,
 		},
 		{
@@ -103,7 +103,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 		{
 			id: 'symphony-create-agent-focus',
 			kind: 'live-capture',
-			label: 'Create Agent handoff capture',
+			label: 'Create Symphony Agent handoff capture',
 			plannedSource: 'capture/live/symphony/create-agent.mov',
 			usage: 'Scenes 3 and 4 activation shell and provider-selection beat.',
 			required: true,
@@ -122,7 +122,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			kind: 'live-capture',
 			label: 'Active contribution proof capture',
 			plannedSource: 'capture/live/symphony/active-card.mov',
-			usage: 'Scene 5 hero proof that the contribution became a live Maestro object.',
+			usage: 'Scene 5 hero proof for draft PR state, live progress, and review readiness.',
 			required: true,
 		},
 		{
@@ -140,14 +140,19 @@ export const symphonyStandaloneSpec = createProductionSpec({
 		'History',
 		'Stats',
 		'Start Symphony',
+		'Create Symphony Agent',
 		'Create Agent',
+		'Available Issues',
 		'Blocked',
+		'Draft PR',
 		'Check PR Status',
 		'Finalize PR',
+		'Ready for Review',
 	],
 	sourceRefs: [
 		'SYMPHONY_ISSUES.md',
 		'src/main/services/symphony-runner.ts',
+		'src/renderer/components/AgentCreationDialog.tsx',
 		'src/renderer/hooks/symphony/useSymphony.ts',
 		'src/renderer/hooks/symphony/useSymphonyContribution.ts',
 		'docs/research/features/symphony-feature-research.md',
@@ -160,27 +165,28 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			surfaceId: 'symphony-projects',
 			featureName: 'Maestro Symphony',
 			accentLabel: 'Projects',
-			title: 'Browse contribution-ready issues in real repository context',
-			body: 'Projects, issue counts, and maintainer context establish a live contribution inventory before any setup work begins.',
+			title: 'Browse contribution-ready issues inside one coordinated Symphony surface',
+			body: 'The full tab strip, issue counts, and maintainer context establish a live contribution inventory before any setup work begins.',
 			durationInFrames: 180,
 			captureIds: ['symphony-projects-browse'],
 			assetPlaceholderIds: ['symphony-projects-hero'],
 			storyboard: {
 				sceneNumber: 1,
 				purpose:
-					'Establish contribution inventory and repository credibility before any setup begins.',
+					'Establish the full Symphony surface before any setup begins so the workflow reads as coordinated, not scattered.',
 				onScreenCopy: [
-					'Open-source work, already staged.',
-					'`Projects` keeps issues, docs, and status together.',
+					'`Projects`, `Active`, `History`, and `Stats` live in one place.',
+					'Contribution discovery starts inside Maestro.',
 				],
 				visualComposition:
-					'Wide modal pass across repository cards, category chips, search, and issue counts with one project selected.',
+					'Wide modal pass across the tab strip, search, category chips, and issue-counted repository cards with one project selected.',
 				uiStateShown:
-					'`Maestro Symphony` on the `Projects` tab with repository metadata and issue totals visible.',
-				userAction: 'Open `Maestro Symphony` and select a repository worth contributing to.',
+					'`Maestro Symphony` open on `Projects` with the wider tab structure and repository metadata visible.',
+				userAction: 'Open `Maestro Symphony` and focus a repository worth contributing to.',
 				systemResponse:
-					'The selected project locks in with maintainer context and clear issue volume.',
-				motionStyle: 'Slow lateral drift with a deliberate push-in on the selected repository.',
+					'The selected project locks in with maintainer context and visible contribution inventory.',
+				motionStyle:
+					'Slow lateral drift with a deliberate push-in on the selected repository and tab strip.',
 				durationSeconds: 6,
 			},
 		},
@@ -200,14 +206,15 @@ export const symphonyStandaloneSpec = createProductionSpec({
 				purpose:
 					'Show the issue detail and Auto Run document preview before activation so the work feels concrete.',
 				onScreenCopy: [
-					'`Available Issues` and `Blocked` are visible before commit.',
+					'`Available Issues` and `Blocked` stay visible before commit.',
 					'Auto Run docs preview inside the same modal.',
 				],
 				visualComposition:
-					'Split focus between issue detail, status grouping, and the document preview pane.',
+					'Split focus between issue detail, status grouping, document dropdown, and markdown preview.',
 				uiStateShown: 'Selected project detail with issue sections plus document preview controls.',
 				userAction: 'Choose a specific issue and cycle through its attached documents.',
-				systemResponse: 'The preview updates in place, keeping task context inside the same modal.',
+				systemResponse:
+					'The preview updates in place, keeping scope and status inside the same modal.',
 				motionStyle:
 					'Snap zoom into the selected issue with cursor-tracked emphasis on document changes.',
 				durationSeconds: 7,
@@ -218,25 +225,28 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			type: 'capture-callout',
 			surfaceId: 'symphony-create-agent',
 			featureName: 'Maestro Symphony',
-			accentLabel: 'Start Symphony',
-			title: '`Start Symphony` hands the issue straight into `Create Agent`',
-			body: 'Provider choice and working directory stay attached to the chosen issue so setup feels like continuation, not context switching.',
+			accentLabel: 'Create Symphony Agent',
+			title: '`Start Symphony` clears prerequisites and lands in `Create Symphony Agent`',
+			body: 'Provider choice, session name, and working directory stay attached to the chosen issue so setup feels like continuation, not context switching.',
 			durationInFrames: 240,
 			captureIds: ['symphony-issue-detail-preview', 'symphony-create-agent-modal'],
 			assetPlaceholderIds: ['symphony-create-agent-focus'],
 			storyboard: {
 				sceneNumber: 3,
-				purpose: 'Turn browsing into a decisive handoff.',
+				purpose: 'Turn browsing into a guarded handoff that still feels immediate.',
 				onScreenCopy: [
-					'`Start Symphony` moves straight into `Create Agent`.',
-					'Provider and working directory stay tied to the issue.',
+					'`Start Symphony` clears prerequisites before `Create Symphony Agent`.',
+					'The issue, provider, and working directory stay attached.',
 				],
 				visualComposition:
-					'CTA click resolves into the `Create Agent` dialog with provider list and working directory fields in view.',
-				uiStateShown: '`Start Symphony` transition into `Create Agent`.',
-				userAction: 'Click `Start Symphony` on the chosen issue.',
-				systemResponse: '`Create Agent` opens with issue-specific context already attached.',
-				motionStyle: 'Fast modal morph with a short whip-pan between browse and setup states.',
+					'CTA click resolves through the prerequisite gate and into the `Create Symphony Agent` dialog with provider list, session name, and working directory fields in view.',
+				uiStateShown:
+					'`Start Symphony` transition into the prerequisite checks and `Create Symphony Agent`.',
+				userAction: 'Click `Start Symphony` on the chosen issue and confirm the prerequisites.',
+				systemResponse:
+					'The agent-creation dialog opens with issue-specific context already attached.',
+				motionStyle:
+					'Fast modal morph with a short interlock pause on the prerequisite state before the dialog lands.',
 				durationSeconds: 8,
 			},
 		},
@@ -246,7 +256,7 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			surfaceId: 'symphony-create-agent',
 			featureName: 'Maestro Symphony',
 			accentLabel: 'Setup Proof',
-			title: 'Maestro owns the clone, branch, doc staging, and draft PR setup',
+			title: '`Create Agent` launches clone, branch, `Auto Run Docs`, and draft PR setup',
 			body: 'The activation beat reflects the current implementation path where setup creates an empty commit and draft PR before the run moves forward.',
 			durationInFrames: 210,
 			captureIds: ['symphony-create-agent-modal', 'symphony-setup-proof'],
@@ -255,13 +265,13 @@ export const symphonyStandaloneSpec = createProductionSpec({
 				sceneNumber: 4,
 				purpose: 'Prove the orchestration Maestro performs during activation.',
 				onScreenCopy: [
-					'Clone. branch. stage docs. open draft PR.',
+					'`Create Agent` launches clone, branch, `Auto Run Docs`, and draft PR setup.',
 					'The current setup flow creates an empty commit and draft PR.',
 				],
 				visualComposition:
-					'`Create Agent` confirmation paired with a concise checklist or progress rail showing setup milestones.',
+					'`Create Symphony Agent` confirmation paired with a concise checklist or progress rail showing setup milestones.',
 				uiStateShown:
-					'Setup proof state spanning clone, branch creation, Auto Run doc staging, and draft PR creation.',
+					'Setup proof state spanning dialog confirmation, branch creation, `Auto Run Docs` staging, and draft PR creation.',
 				userAction: 'Confirm the provider and launch the run.',
 				systemResponse:
 					'Maestro performs the setup work and stages the contribution as a live run.',
@@ -275,8 +285,8 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			surfaceId: 'symphony-projects',
 			featureName: 'Maestro Symphony',
 			accentLabel: 'Active',
-			title: '`Active` turns the contribution into a live Maestro object',
-			body: 'Status badges, elapsed time, token usage, and PR state prove the work is underway in product terms.',
+			title: '`Active` turns the contribution into a live Maestro object with draft PR state',
+			body: 'Status badges, draft PR visibility, progress, and token usage prove the work is underway in product terms.',
 			durationInFrames: 270,
 			captureIds: ['symphony-active-proof'],
 			assetPlaceholderIds: ['symphony-active-card-proof'],
@@ -284,15 +294,17 @@ export const symphonyStandaloneSpec = createProductionSpec({
 				sceneNumber: 5,
 				purpose: 'Show the contribution as a live Maestro object instead of a one-off dialog.',
 				onScreenCopy: [
-					'`Active` shows status, elapsed time, tokens, and PR state.',
-					'The handoff is now running, not hypothetical.',
+					'`Active` shows `Running`, draft PR state, progress, and token usage.',
+					'`Check PR Status` keeps the review lane current.',
 				],
 				visualComposition:
-					'Active contribution card hero with badges, progress details, PR state, and supporting metadata.',
-				uiStateShown: '`Active` contribution state with status and progress proof.',
+					'Active contribution card hero with status badge, draft PR link, progress details, elapsed time, token usage, and review-state affordances.',
+				uiStateShown: '`Active` contribution state with current-status and PR proof.',
 				userAction: 'Switch from setup proof into the live contribution view.',
-				systemResponse: 'The issue now exists as a tracked contribution lane inside Maestro.',
-				motionStyle: 'Card stack rise with badge flickers and a restrained progress sweep.',
+				systemResponse:
+					'The issue now exists as a tracked contribution lane with visible PR state and progress.',
+				motionStyle:
+					'Card stack rise with badge flickers, a restrained progress sweep, and a short sync pulse.',
 				durationSeconds: 9,
 			},
 		},
@@ -301,24 +313,24 @@ export const symphonyStandaloneSpec = createProductionSpec({
 			type: 'title-card',
 			surfaceId: 'symphony-projects',
 			featureName: 'Maestro Symphony',
-			accentLabel: 'Stats',
-			title: '`History` and `Stats` close with measurable contribution proof',
-			body: 'Milestones and cumulative contribution metrics make the browse-to-contribute transformation visible without leaving Maestro.',
+			accentLabel: 'History + Stats',
+			title: '`History` and `Stats` keep contribution proof after `Active`',
+			body: 'Completed contribution proof, milestones, and cumulative contribution metrics make the browse-to-contribute transformation visible without leaving Maestro.',
 			durationInFrames: 240,
 			captureIds: ['symphony-history-stats-proof'],
 			assetPlaceholderIds: ['symphony-stats-proof'],
 			storyboard: {
 				sceneNumber: 6,
-				purpose: 'Close with measurable proof that discovery became contribution history.',
+				purpose: 'Close with measurable proof that discovery became durable contribution output.',
 				onScreenCopy: [
-					'`History` and `Stats` turn one start click into measurable progress.',
-					'Discovery became a contribution lane.',
+					'`History` and `Stats` keep contribution proof after `Active`.',
+					'One start click becomes a lasting record.',
 				],
 				visualComposition:
-					'Resolve into milestone stats and history proof with emphasis on contribution continuity.',
+					'Resolve into history totals, completed contribution proof, and achievement or streak stats with emphasis on continuity.',
 				uiStateShown:
-					'`History` or `Stats` proof state showing milestones, contribution totals, or review readiness.',
-				userAction: 'Move to the proof surface that summarizes progress.',
+					'`History` and `Stats` proof state showing milestones, contribution totals, and post-run evidence.',
+				userAction: 'Move to the proof surfaces that summarize the outcome.',
 				systemResponse:
 					'Maestro shows cumulative contribution proof instead of leaving the story at setup.',
 				motionStyle: 'Metric count-up and calm settle to finish on operational credibility.',

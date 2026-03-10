@@ -30,6 +30,7 @@ const storyboardDocs = [
 			'[[symphony-prototype-plan]]',
 			'[[symphony-feature-research]]',
 			'`Start Symphony`',
+			'`Create Symphony Agent`',
 			'`Create Agent`',
 		],
 	},

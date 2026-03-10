@@ -30,6 +30,7 @@ const strategyDocs = [
 			'`45 seconds`',
 			'Discovery -> Activation -> Proof',
 			'`Start Symphony`',
+			'`Create Symphony Agent`',
 			'`Create Agent`',
 			'draft PR',
 		],

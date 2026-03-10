@@ -134,7 +134,7 @@
 			"kind": "live-capture",
 			"label": "Worktree inventory capture",
 			"plannedSource": "capture/live/worktree/inventory-proof.mov",
-			"usage": "Scene 5 proof that the spin-off destination exists inside Maestro.",
+			"usage": "Scene 5 proof that the isolated worktree destination exists inside Maestro.",
 			"required": true,
 			"bucket": "live",
 			"featureSlug": "worktree",
@@ -178,13 +178,9 @@
 		{
 			"sceneId": "worktree-standalone-risk",
 			"sceneNumber": 1,
-			"purpose": "Frame branch contamination risk inside the real Auto Run workflow.",
-			"captureIds": [
-				"worktree-batch-runner"
-			],
-			"assetPlaceholderIds": [
-				"worktree-autorun-context"
-			],
+			"purpose": "Frame the single-branch bottleneck inside the real Auto Run workflow.",
+			"captureIds": ["worktree-batch-runner"],
+			"assetPlaceholderIds": ["worktree-autorun-context"],
 			"recordingPath": "capture/recordings/worktree/s01-worktree-standalone-risk.mov",
 			"cropPlan": [
 				{
@@ -211,9 +207,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/autorun-worktree-reference.png",
-					"fallbackAssetIds": [
-						"worktree-autorun-context"
-					],
+					"fallbackAssetIds": ["worktree-autorun-context"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Auto Run worktree screenshot copied into capture/docs/worktree/autorun-worktree-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -222,12 +216,8 @@
 			"sceneId": "worktree-standalone-toggle",
 			"sceneNumber": 2,
 			"purpose": "Reveal the isolation controls as a native part of Auto Run.",
-			"captureIds": [
-				"worktree-toggle-enabled"
-			],
-			"assetPlaceholderIds": [
-				"worktree-toggle-focus"
-			],
+			"captureIds": ["worktree-toggle-enabled"],
+			"assetPlaceholderIds": ["worktree-toggle-focus"],
 			"recordingPath": "capture/recordings/worktree/s02-worktree-standalone-toggle.mov",
 			"cropPlan": [
 				{
@@ -254,9 +244,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/autorun-worktree-reference.png",
-					"fallbackAssetIds": [
-						"worktree-toggle-focus"
-					],
+					"fallbackAssetIds": ["worktree-toggle-focus"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Auto Run worktree screenshot because it visibly shows Dispatch to a separate worktree enabled. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -265,12 +253,8 @@
 			"sceneId": "worktree-standalone-create-form",
 			"sceneNumber": 3,
 			"purpose": "Show the exact create-new workflow the product ships today.",
-			"captureIds": [
-				"worktree-create-new-form"
-			],
-			"assetPlaceholderIds": [
-				"worktree-create-form"
-			],
+			"captureIds": ["worktree-create-new-form"],
+			"assetPlaceholderIds": ["worktree-create-form"],
 			"recordingPath": "capture/recordings/worktree/s03-worktree-standalone-create-form.mov",
 			"cropPlan": [
 				{
@@ -297,9 +281,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/autorun-worktree-reference.png",
-					"fallbackAssetIds": [
-						"worktree-create-form"
-					],
+					"fallbackAssetIds": ["worktree-create-form"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Auto Run worktree screenshot because it captures Base Branch, Worktree Branch Name, and path-preview context in one frame. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -308,13 +290,8 @@
 			"sceneId": "worktree-standalone-pr-intent",
 			"sceneNumber": 4,
 			"purpose": "Add review handoff proof to the isolation story.",
-			"captureIds": [
-				"worktree-create-new-form",
-				"worktree-pr-intent"
-			],
-			"assetPlaceholderIds": [
-				"worktree-create-form"
-			],
+			"captureIds": ["worktree-create-new-form", "worktree-pr-intent"],
+			"assetPlaceholderIds": ["worktree-create-form"],
 			"recordingPath": "capture/recordings/worktree/s04-worktree-standalone-pr-intent.mov",
 			"cropPlan": [
 				{
@@ -341,9 +318,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/autorun-worktree-reference.png",
-					"fallbackAssetIds": [
-						"worktree-create-form"
-					],
+					"fallbackAssetIds": ["worktree-create-form"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Auto Run worktree screenshot because it captures Base Branch, Worktree Branch Name, and path-preview context in one frame. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				},
 				{
@@ -353,9 +328,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/autorun-worktree-reference.png",
-					"fallbackAssetIds": [
-						"worktree-create-form"
-					],
+					"fallbackAssetIds": ["worktree-create-form"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Auto Run worktree screenshot because it includes the automatic PR control within the same create-new state. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -363,13 +336,9 @@
 		{
 			"sceneId": "worktree-standalone-inventory",
 			"sceneNumber": 5,
-			"purpose": "Prove the spin-off has its own tracked destination inside Maestro.",
-			"captureIds": [
-				"worktree-inventory-proof"
-			],
-			"assetPlaceholderIds": [
-				"worktree-inventory-panel"
-			],
+			"purpose": "Prove the isolated worktree has its own tracked destination inside Maestro.",
+			"captureIds": ["worktree-inventory-proof"],
+			"assetPlaceholderIds": ["worktree-inventory-panel"],
 			"recordingPath": "capture/recordings/worktree/s05-worktree-standalone-inventory.mov",
 			"cropPlan": [
 				{
@@ -396,9 +365,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/worktree/worktree-inventory-reference.png",
-					"fallbackAssetIds": [
-						"worktree-inventory-panel"
-					],
+					"fallbackAssetIds": ["worktree-inventory-panel"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in worktree list screenshot copied into capture/docs/worktree/worktree-inventory-reference.png, with capture/docs/worktree/worktree-configuration-reference.png retained as supporting config context. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -407,12 +374,8 @@
 			"sceneId": "worktree-standalone-terminal-proof",
 			"sceneNumber": 6,
 			"purpose": "Finish on execution proof and a clean parent checkout.",
-			"captureIds": [
-				"worktree-terminal-proof"
-			],
-			"assetPlaceholderIds": [
-				"worktree-terminal-card"
-			],
+			"captureIds": ["worktree-terminal-proof"],
+			"assetPlaceholderIds": ["worktree-terminal-card"],
 			"recordingPath": "capture/recordings/worktree/s06-worktree-standalone-terminal-proof.mov",
 			"cropPlan": [
 				{
@@ -439,9 +402,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "docs/research/reconstructions/worktree-terminal-proof-reconstruction.md",
-					"fallbackAssetIds": [
-						"worktree-terminal-card"
-					],
+					"fallbackAssetIds": ["worktree-terminal-card"],
 					"notes": "Source type: reconstructed UI. Resolved to the worktree terminal-proof reconstruction note, with the machine-readable companion asset in capture/derived/worktree/terminal-proof.json."
 				}
 			]

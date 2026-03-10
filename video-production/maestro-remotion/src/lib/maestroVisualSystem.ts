@@ -69,6 +69,7 @@ export const REQUIRED_PRODUCT_LABELS = [
 	'Base Branch',
 	'Worktree Branch Name',
 	'Automatically create PR when complete',
+	'Create Pull Request',
 ] as const;
 
 export const SYMPHONY_TABS = ['Projects', 'Active', 'History', 'Stats'] as const;

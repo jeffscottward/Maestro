@@ -2,7 +2,11 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
-import { FUTURE_PLANNING_LINKS, MAESTRO_SOURCE_REFERENCES, PRESERVED_TERMINOLOGY } from '../src/lib/projectSources';
+import {
+	FUTURE_PLANNING_LINKS,
+	MAESTRO_SOURCE_REFERENCES,
+	PRESERVED_TERMINOLOGY,
+} from '../src/lib/projectSources';
 
 const workspaceRoot = fileURLToPath(new URL('..', import.meta.url));
 const researchDocPath = resolve(workspaceRoot, 'docs/research/project-sources.md');
@@ -28,6 +32,7 @@ describe('project sources research artifact', () => {
 			"Director's Notes",
 			'Run in Worktree',
 			'Dispatch to a separate worktree',
+			'Create Pull Request',
 		]);
 		expect(FUTURE_PLANNING_LINKS).toEqual([
 			'[[master-production-plan]]',

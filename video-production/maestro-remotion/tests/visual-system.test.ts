@@ -66,6 +66,7 @@ describe('Maestro visual system', () => {
 			'Base Branch',
 			'Worktree Branch Name',
 			'Automatically create PR when complete',
+			'Create Pull Request',
 		]);
 		expect(SYMPHONY_TABS).toEqual(['Projects', 'Active', 'History', 'Stats']);
 		expect(DIRECTOR_NOTES_TABS).toEqual(['Help', 'Unified History', 'AI Overview']);

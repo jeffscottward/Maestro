@@ -76,6 +76,7 @@ Observed patterns worth preserving later:
 - `Base Branch`
 - `Worktree Branch Name`
 - `Automatically create PR when complete`
+- `Create Pull Request`
 - `Create Agent`
 - `Start Symphony`
 - `Playbooks`

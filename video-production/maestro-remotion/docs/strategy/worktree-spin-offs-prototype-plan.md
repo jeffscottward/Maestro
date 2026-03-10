@@ -19,6 +19,7 @@ related:
 
 ## Strategy Snapshot
 
+- Delivery title: `Auto Run Worktree Spin-offs`
 - Runtime target: `35 seconds`
 - Tone: `practical`, `reassuring`, `quietly technical`
 - Copy density: `low-medium`
@@ -30,13 +31,13 @@ Selected structure: `Risk -> Isolation -> Handoff` from `[[approved-feature-vide
 
 Beat breakdown:
 
-1. `Risk`: establish the fear of letting a long Auto Run touch the current checkout and muddy the branch the developer is already using.
-2. `Isolation`: open `Run in Worktree`, enable `Dispatch to a separate worktree`, and show the branch, path, and PR intent becoming explicit.
-3. `Handoff`: resolve into proof that the run now has its own directory, branch, and review path while the parent context stays clean.
+1. `Risk`: establish the single-checkout bottleneck by showing that a long Auto Run would otherwise compete with the branch the developer is already using.
+2. `Isolation`: open `Run in Worktree`, enable `Dispatch to a separate worktree`, and show the branch, path, and PR intent becoming explicit inside Maestro.
+3. `Handoff`: resolve into proof that the run now has its own directory, branch, and cleaner review path while the parent context stays clean for parallel follow-on work.
 
 ## Why This Structure Fits
 
-This feature sells safety and clarity more than spectacle. Developers immediately understand a branch-contamination problem, and they trust the solution when they can see the exact knobs that isolate the run. Ending on branch or PR handoff proof makes the video feel operationally credible instead of sounding like abstract workflow marketing.
+This feature sells safety and clarity more than spectacle. Developers immediately understand a branch bottleneck, and they trust the solution when they can see the exact knobs that isolate the run. Framing the piece as a before/after from one crowded checkout to parallel isolated worktrees keeps the story legible, while ending on branch or PR handoff proof makes the video feel operationally credible instead of sounding like abstract workflow marketing.
 
 ## Platform Plan
 
@@ -46,15 +47,15 @@ This feature sells safety and clarity more than spectacle. Developers immediatel
 
 ## Messaging Guardrails
 
-- Market the piece as `Auto Run Worktree Spin-offs`, but keep all on-screen product labels exact, including `Run in Worktree`, `Dispatch to a separate worktree`, `Create New Worktree`, `Base Branch`, `Worktree Branch Name`, and `Automatically create PR when complete`.
+- Market the piece as `Auto Run Worktree Spin-offs`, but keep all on-screen product labels exact, including `Run in Worktree`, `Dispatch to a separate worktree`, `Create New Worktree`, `Base Branch`, `Worktree Branch Name`, `Automatically create PR when complete`, and `Create Pull Request`.
 - Show the flow only inside a git-backed session; do not imply the worktree controls are always visible.
 - Preserve the create-new default behavior and generated branch naming so the feature reads like Maestro's real workflow, not a generic git form.
 - Do not imply the Auto Run document set moves away from the parent agent; the isolation is execution and branch context, not document ownership.
 
 ## Story Beats
 
-1. Frame the problem as a branch-safety bottleneck: the developer wants Auto Run help without dirtying the current checkout.
+1. Frame the problem as a branch-safety bottleneck: the developer wants Auto Run help without turning the current checkout into the only lane for experimentation and review.
 2. Reveal the `Run in Worktree` section and its toggle so the control surface feels native to Auto Run rather than a separate git utility.
 3. Walk through `Create New Worktree`, `Base Branch`, `Worktree Branch Name`, and optional PR creation as one deliberate isolation step.
-4. Prove the spin-off by showing the isolated path, worktree list or open worktree state, and cleaner review handoff.
-5. End on the outcome: parallel progress with a clean main working tree.
+4. Prove the isolated worktree by showing the path, worktree list or open worktree state, and cleaner review handoff.
+5. End on the outcome: parallel isolated progress with a clean main working tree and a review-ready branch path.

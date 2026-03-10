@@ -15,6 +15,7 @@ export const PRESERVED_TERMINOLOGY = [
 	"Director's Notes",
 	'Run in Worktree',
 	'Dispatch to a separate worktree',
+	'Create Pull Request',
 ] as const;
 
 export const FUTURE_PLANNING_LINKS = [

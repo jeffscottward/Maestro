@@ -3,9 +3,9 @@ import { createProductionSpec } from './shared';
 export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 	id: 'WorktreeSpinOffsStandalone',
 	featureName: 'Run in Worktree',
-	title: 'Run in Worktree standalone production storyboard',
+	title: 'Auto Run Worktree Spin-offs standalone production storyboard',
 	description:
-		'35-second standalone production spec covering Auto Run isolation, branch-safe worktree creation, and review-oriented follow-through.',
+		'35-second standalone production spec covering the single-branch bottleneck, Auto Run worktree isolation, and cleaner review-oriented follow-through.',
 	fps: 30,
 	runtimeSeconds: 35,
 	aspectRatioIntent: {
@@ -113,7 +113,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			kind: 'live-capture',
 			label: 'Worktree inventory capture',
 			plannedSource: 'capture/live/worktree/inventory-proof.mov',
-			usage: 'Scene 5 proof that the spin-off destination exists inside Maestro.',
+			usage: 'Scene 5 proof that the isolated worktree destination exists inside Maestro.',
 			required: true,
 		},
 		{
@@ -135,6 +135,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 		'Base Branch',
 		'Worktree Branch Name',
 		'Automatically create PR when complete',
+		'Create Pull Request',
 		'Worktree Directory',
 	],
 	sourceRefs: [
@@ -143,6 +144,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 		'src/renderer/components/WorktreeConfigModal.tsx',
 		'src/renderer/components/CreateWorktreeModal.tsx',
 		'src/renderer/hooks/batch/useWorktreeManager.ts',
+		'docs/autorun-playbooks.md',
+		'docs/git-worktrees.md',
 		'docs/research/features/worktree-spin-offs-feature-research.md',
 		'docs/strategy/worktree-spin-offs-prototype-plan.md',
 	],
@@ -153,23 +156,24 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-dispatch',
 			featureName: 'Run in Worktree',
 			accentLabel: 'Auto Run',
-			title: 'Auto Run needs isolation before it touches an active checkout',
-			body: 'The opening frames branch safety as a product-level problem inside a real Auto Run flow, not as a generic git lecture.',
+			title: 'One active checkout should not bottleneck Auto Run',
+			body: 'The opening frames the product problem as a single busy branch blocking safe automation, not as a generic git lecture.',
 			durationInFrames: 150,
 			captureIds: ['worktree-batch-runner'],
 			assetPlaceholderIds: ['worktree-autorun-context'],
 			storyboard: {
 				sceneNumber: 1,
-				purpose: 'Frame branch contamination risk inside the real Auto Run workflow.',
+				purpose: 'Frame the single-branch bottleneck inside the real Auto Run workflow.',
 				onScreenCopy: [
-					'Let Auto Run help without touching the current checkout.',
-					'Branch safety is the product promise.',
+					'One active checkout should not bottleneck Auto Run.',
+					'Worktree isolation opens a safer parallel path.',
 				],
 				visualComposition:
 					'Batch runner modal with Auto Run context visible before the worktree section takes focus.',
 				uiStateShown: 'Auto Run run-launch surface in a git-backed session.',
 				userAction: 'Open the Auto Run run launcher for a git-backed repository.',
-				systemResponse: '`Run in Worktree` appears as an available part of the launch flow.',
+				systemResponse:
+					'`Run in Worktree` appears as the built-in way to move the run off the busy parent checkout.',
 				motionStyle: 'Tight reveal from document list into the lower configuration surface.',
 				durationSeconds: 5,
 			},
@@ -271,10 +275,10 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			assetPlaceholderIds: ['worktree-inventory-panel'],
 			storyboard: {
 				sceneNumber: 5,
-				purpose: 'Prove the spin-off has its own tracked destination inside Maestro.',
+				purpose: 'Prove the isolated worktree has its own tracked destination inside Maestro.',
 				onScreenCopy: [
 					'`Open in Maestro` and `Available Worktrees` show the isolated target.',
-					'The parent agent keeps the docs; the run gets its own branch.',
+					'The parent agent keeps the docs; the worktree keeps its own branch.',
 				],
 				visualComposition:
 					'Show worktree inventory and supporting configuration proof without leaving the product frame.',
@@ -292,7 +296,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-terminal',
 			featureName: 'Run in Worktree',
 			accentLabel: 'Follow-Through',
-			title: 'Auto Run executes in the spin-off while the parent checkout stays clean',
+			title: 'Auto Run leaves the parent checkout clean and the review path clearer',
 			body: 'The close resolves on operational follow-through: same repository context, safer parallel work, and no branch contamination in the parent session.',
 			durationInFrames: 180,
 			captureIds: ['worktree-terminal-proof'],
@@ -301,8 +305,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				sceneNumber: 6,
 				purpose: 'Finish on execution proof and a clean parent checkout.',
 				onScreenCopy: [
-					'Auto Run executes in the spin-off while the main checkout stays clean.',
-					'Safer parallel work, same repository context.',
+					'Auto Run executes in the isolated branch while the main checkout stays clean.',
+					'Parallel work moves forward with a cleaner review path.',
 				],
 				visualComposition:
 					'Terminal feedback and worktree proof close the story on operational follow-through.',

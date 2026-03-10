@@ -24,12 +24,14 @@ describe('maestro remotion workspace scaffold', () => {
 		];
 
 		for (const relativePath of requiredDirectories) {
-			expect(existsSync(resolve(workspaceRoot, relativePath)), `${relativePath} should exist`).toBe(true);
+			expect(existsSync(resolve(workspaceRoot, relativePath)), `${relativePath} should exist`).toBe(
+				true
+			);
 		}
 	});
 
 	it('registers the workspace bootstrap composition through the shared registry', () => {
-		expect(compositionDefinitions).toHaveLength(5);
+		expect(compositionDefinitions).toHaveLength(6);
 		expect(compositionDefinitions[0]?.id).toBe(WORKSPACE_COMPOSITION_ID);
 		expect(compositionDefinitions[0]?.width).toBe(1920);
 		expect(compositionDefinitions[0]?.height).toBe(1080);
@@ -41,6 +43,7 @@ describe('maestro remotion workspace scaffold', () => {
 			'SymphonyPrototype',
 			'DirectorNotesPrototype',
 			'WorktreeSpinOffsPrototype',
+			'SymphonyStandalone',
 		]);
 	});
 

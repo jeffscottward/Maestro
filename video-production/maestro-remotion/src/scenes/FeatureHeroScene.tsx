@@ -10,6 +10,7 @@ import {
 import { FeatureSurfaceShowcase, getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
 import { ProductionFrame } from '../components/ProductionFrame';
 import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
+import { SymphonyStandaloneScene } from './SymphonyStandaloneScene';
 import { MetaBadge } from '../ui/MetaBadge';
 
 type FeatureHeroSceneProps = {
@@ -32,6 +33,18 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 	spec,
 	captures,
 }) => {
+	if (spec.id === 'SymphonyStandalone') {
+		return (
+			<SymphonyStandaloneScene
+				scene={scene}
+				sceneIndex={sceneIndex}
+				sceneCount={sceneCount}
+				spec={spec}
+				captures={captures}
+			/>
+		);
+	}
+
 	const theme = getSurfaceTheme(scene.surfaceId);
 	const frame = useCurrentFrame();
 	const { fps } = useVideoConfig();

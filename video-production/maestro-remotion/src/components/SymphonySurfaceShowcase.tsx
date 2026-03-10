@@ -1,6 +1,8 @@
 import type React from 'react';
+import { useCurrentFrame } from 'remotion';
 
 import type { CaptureManifestEntry, SceneData } from '../data/production-schema';
+import { AnimatedReveal, getAnimatedMetricValue } from './SymphonyMotionPrimitives';
 import {
 	SYMPHONY_TABS,
 	VISUAL_FALLBACK_SLOTS,
@@ -766,44 +768,71 @@ const CreateAgentSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	fallbackSlots: VisualFallbackSlot[];
 }> = ({ theme, fallbackSlots }) => {
+	const frame = useCurrentFrame();
+
 	return (
 		<MaestroModalShell title="Create Symphony Agent" badge="Issue #160" theme={theme}>
-			<Panel theme={theme}>
-				<SectionLabel label="Prerequisites cleared" theme={theme} />
-				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-					<MetaBadge label="GitHub CLI authenticated" tone="accent" theme={theme} />
-					<MetaBadge label="I Have the Build Tools" theme={theme} />
-				</div>
-				<div style={{ fontSize: 17, lineHeight: 1.45, color: theme.colors.textDim }}>
-					`Start Symphony` clears the gate before the issue lands in `Create Symphony Agent`.
-				</div>
-			</Panel>
-			<Panel theme={theme}>
-				<SectionLabel label="Contributing to" theme={theme} />
-				<div style={{ fontSize: 30, color: theme.colors.textMain }}>Maestro</div>
-				<div style={{ fontSize: 21, color: theme.colors.textDim }}>
-					#160: Improved Terminal Experience
-				</div>
-				<div style={{ fontSize: 17, color: theme.colors.textDim }}>14 Auto Run documents</div>
-			</Panel>
-			<Panel theme={theme}>
-				<SectionLabel label="Select AI Provider" theme={theme} />
-				{PROVIDER_ROWS.map((provider) => (
-					<ProviderRow key={provider.label} {...provider} theme={theme} />
-				))}
-			</Panel>
+			<AnimatedReveal frame={frame} delayFrames={0} durationFrames={16}>
+				<Panel theme={theme}>
+					<SectionLabel label="Prerequisites cleared" theme={theme} />
+					<div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
+						<MetaBadge label="GitHub CLI authenticated" tone="accent" theme={theme} />
+						<MetaBadge label="I Have the Build Tools" theme={theme} />
+					</div>
+					<div style={{ fontSize: 17, lineHeight: 1.45, color: theme.colors.textDim }}>
+						`Start Symphony` clears the gate before the issue lands in `Create Symphony Agent`.
+					</div>
+				</Panel>
+			</AnimatedReveal>
+			<AnimatedReveal frame={frame} delayFrames={5} durationFrames={16}>
+				<Panel theme={theme}>
+					<SectionLabel label="Contributing to" theme={theme} />
+					<div style={{ fontSize: 30, color: theme.colors.textMain }}>Maestro</div>
+					<div style={{ fontSize: 21, color: theme.colors.textDim }}>
+						#160: Improved Terminal Experience
+					</div>
+					<div style={{ fontSize: 17, color: theme.colors.textDim }}>14 Auto Run documents</div>
+				</Panel>
+			</AnimatedReveal>
+			<AnimatedReveal frame={frame} delayFrames={10} durationFrames={18}>
+				<Panel theme={theme}>
+					<SectionLabel label="Select AI Provider" theme={theme} />
+					{PROVIDER_ROWS.map((provider, index) => (
+						<AnimatedReveal
+							key={provider.label}
+							frame={frame}
+							index={index}
+							delayFrames={14}
+							stepFrames={4}
+							durationFrames={14}
+						>
+							<ProviderRow {...provider} theme={theme} />
+						</AnimatedReveal>
+					))}
+				</Panel>
+			</AnimatedReveal>
 			<div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-				<FieldCard label="Session Name" value="Symphony: pedramamini/Maestro #160" theme={theme} />
-				<FieldCard
-					label="Working Directory"
-					value="~/Maestro-Symphony/pedramamini-Maestro-160"
-					theme={theme}
-				/>
+				<AnimatedReveal frame={frame} delayFrames={18} durationFrames={16}>
+					<FieldCard
+						label="Session Name"
+						value="Symphony: pedramamini/Maestro #160"
+						theme={theme}
+					/>
+				</AnimatedReveal>
+				<AnimatedReveal frame={frame} delayFrames={22} durationFrames={16}>
+					<FieldCard
+						label="Working Directory"
+						value="~/Maestro-Symphony/pedramamini-Maestro-160"
+						theme={theme}
+					/>
+				</AnimatedReveal>
 			</div>
-			<div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-				<ActionButton label="Cancel" theme={theme} tone="neutral" />
-				<ActionButton label="Create Agent" theme={theme} />
-			</div>
+			<AnimatedReveal frame={frame} delayFrames={28} durationFrames={16}>
+				<div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+					<ActionButton label="Cancel" theme={theme} tone="neutral" />
+					<ActionButton label="Create Agent" theme={theme} />
+				</div>
+			</AnimatedReveal>
 			{fallbackSlots[0] ? <MaestroFallbackSlot slot={fallbackSlots[0]} theme={theme} /> : null}
 		</MaestroModalShell>
 	);
@@ -812,42 +841,63 @@ const CreateAgentSurface: React.FC<{
 const SetupProofSurface: React.FC<{
 	theme: MaestroVisualTheme;
 }> = ({ theme }) => {
+	const frame = useCurrentFrame();
+
 	return (
 		<MaestroModalShell title="Create Symphony Agent" badge="Setup Proof" theme={theme}>
 			<div style={{ display: 'grid', gridTemplateColumns: '0.92fr 1.08fr', gap: 16 }}>
 				<div style={{ display: 'grid', gap: 14 }}>
-					<Panel theme={theme}>
-						<SectionLabel label="Launch Context" theme={theme} />
-						<div style={{ fontSize: 28, color: theme.colors.textMain }}>
-							Create Agent launches the contribution lane
-						</div>
-						<div style={{ fontSize: 18, lineHeight: 1.45, color: theme.colors.textDim }}>
-							Clone, branch creation, draft PR setup, and Auto Run Docs staging happen before the
-							run moves into `Active`.
-						</div>
-						<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-							<MetaBadge label="Draft PR created" tone="accent" theme={theme} />
-							<MetaBadge label="Auto Run Docs staged" theme={theme} />
-						</div>
-					</Panel>
-					<Panel theme={theme}>
-						<SectionLabel label="Setup Milestones" theme={theme} />
-						{SETUP_STEPS.map((step) => (
-							<SetupStepRow key={step.label} step={step} theme={theme} />
-						))}
-					</Panel>
+					<AnimatedReveal frame={frame} delayFrames={0} durationFrames={16}>
+						<Panel theme={theme}>
+							<SectionLabel label="Launch Context" theme={theme} />
+							<div style={{ fontSize: 28, color: theme.colors.textMain }}>
+								Create Agent launches the contribution lane
+							</div>
+							<div style={{ fontSize: 18, lineHeight: 1.45, color: theme.colors.textDim }}>
+								Clone, branch creation, draft PR setup, and Auto Run Docs staging happen before the
+								run moves into `Active`.
+							</div>
+							<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+								<MetaBadge label="Draft PR created" tone="accent" theme={theme} />
+								<MetaBadge label="Auto Run Docs staged" theme={theme} />
+							</div>
+						</Panel>
+					</AnimatedReveal>
+					<AnimatedReveal frame={frame} delayFrames={6} durationFrames={16}>
+						<Panel theme={theme}>
+							<SectionLabel label="Setup Milestones" theme={theme} />
+							{SETUP_STEPS.map((step, index) => (
+								<AnimatedReveal
+									key={step.label}
+									frame={frame}
+									index={index}
+									delayFrames={12}
+									stepFrames={4}
+									durationFrames={14}
+								>
+									<SetupStepRow step={step} theme={theme} />
+								</AnimatedReveal>
+							))}
+						</Panel>
+					</AnimatedReveal>
 				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
-					<MaestroTerminalBlock title="Setup Pulse" lines={SETUP_TERMINAL_LINES} theme={theme} />
-					<MaestroAnnotationSurface
-						title="Check PR Status"
-						body="Once the contribution card lands in `Active`, Symphony keeps GitHub state, draft PR status, and review readiness in the same workflow lane."
-						theme={theme}
-					/>
-					<div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-						<ActionButton label="Check PR Status" theme={theme} tone="neutral" />
-						<ActionButton label="Create Agent" theme={theme} />
-					</div>
+					<AnimatedReveal frame={frame} delayFrames={10} durationFrames={18}>
+						<MaestroTerminalBlock title="Setup Pulse" lines={SETUP_TERMINAL_LINES} theme={theme} />
+					</AnimatedReveal>
+					<AnimatedReveal frame={frame} delayFrames={18} durationFrames={16}>
+						<MaestroAnnotationSurface
+							title="Check PR Status"
+							body="Once the contribution card lands in `Active`, Symphony keeps GitHub state, draft PR status, and review readiness in the same workflow lane."
+							theme={theme}
+						/>
+					</AnimatedReveal>
+					<AnimatedReveal frame={frame} delayFrames={24} durationFrames={16}>
+						<div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+							<ActionButton label="Check PR Status" theme={theme} tone="neutral" />
+							<ActionButton label="Create Agent" theme={theme} />
+						</div>
+					</AnimatedReveal>
 				</div>
 			</div>
 		</MaestroModalShell>
@@ -858,6 +908,8 @@ const ActiveProofSurface: React.FC<{
 	theme: MaestroVisualTheme;
 	progress: number;
 }> = ({ theme, progress }) => {
+	const frame = useCurrentFrame();
+
 	return (
 		<MaestroModalShell
 			title="Maestro Symphony"
@@ -872,42 +924,62 @@ const ActiveProofSurface: React.FC<{
 			}
 			theme={theme}
 		>
-			<div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
-				<Panel theme={theme} padding="14px 18px">
-					<div style={{ fontSize: 18, color: theme.colors.textMain }}>
-						2 active contribution lanes
-					</div>
-				</Panel>
-				<ActionButton label="Check PR Status" theme={theme} tone="neutral" />
-			</div>
+			<AnimatedReveal frame={frame} delayFrames={0} durationFrames={14}>
+				<div style={{ display: 'flex', justifyContent: 'space-between', gap: 12 }}>
+					<Panel theme={theme} padding="14px 18px">
+						<div style={{ fontSize: 18, color: theme.colors.textMain }}>
+							2 active contribution lanes
+						</div>
+					</Panel>
+					<ActionButton label="Check PR Status" theme={theme} tone="neutral" />
+				</div>
+			</AnimatedReveal>
 			<div style={{ display: 'grid', gridTemplateColumns: '1.18fr 0.82fr', gap: 16 }}>
 				<div style={{ display: 'grid', gap: 14 }}>
 					{ACTIVE_CONTRIBUTIONS.map((card, index) => (
-						<ContributionCard
+						<AnimatedReveal
 							key={card.issue}
-							card={card}
-							progress={index === 0 ? progress : 1}
-							theme={theme}
-						/>
+							frame={frame}
+							index={index}
+							delayFrames={8}
+							stepFrames={6}
+							durationFrames={16}
+						>
+							<ContributionCard card={card} progress={index === 0 ? progress : 1} theme={theme} />
+						</AnimatedReveal>
 					))}
 				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
-					<div style={statGridStyle}>
-						<MaestroStatCard label="Running" value="1" note="Draft PR active" theme={theme} />
-						<MaestroStatCard label="Ready for Review" value="1" note="Finalize PR" theme={theme} />
-						<MaestroStatCard label="Tokens" value="784K" note="Across active runs" theme={theme} />
-						<MaestroStatCard
-							label="Time"
-							value="35m"
-							note="Visible in product terms"
+					<AnimatedReveal frame={frame} delayFrames={14} durationFrames={16}>
+						<div style={statGridStyle}>
+							<MaestroStatCard label="Running" value="1" note="Draft PR active" theme={theme} />
+							<MaestroStatCard
+								label="Ready for Review"
+								value="1"
+								note="Finalize PR"
+								theme={theme}
+							/>
+							<MaestroStatCard
+								label="Tokens"
+								value="784K"
+								note="Across active runs"
+								theme={theme}
+							/>
+							<MaestroStatCard
+								label="Time"
+								value="35m"
+								note="Visible in product terms"
+								theme={theme}
+							/>
+						</div>
+					</AnimatedReveal>
+					<AnimatedReveal frame={frame} delayFrames={20} durationFrames={16}>
+						<MaestroAnnotationSurface
+							title="Ready for Review"
+							body="The running lane keeps progress visible while the review-ready lane exposes `Finalize PR` without leaving the Active workflow."
 							theme={theme}
 						/>
-					</div>
-					<MaestroAnnotationSurface
-						title="Ready for Review"
-						body="The running lane keeps progress visible while the review-ready lane exposes `Finalize PR` without leaving the Active workflow."
-						theme={theme}
-					/>
+					</AnimatedReveal>
 				</div>
 			</div>
 		</MaestroModalShell>
@@ -917,6 +989,8 @@ const ActiveProofSurface: React.FC<{
 const HistoryStatsSurface: React.FC<{
 	theme: MaestroVisualTheme;
 }> = ({ theme }) => {
+	const frame = useCurrentFrame();
+
 	return (
 		<MaestroModalShell
 			title="Maestro Symphony"
@@ -931,74 +1005,132 @@ const HistoryStatsSurface: React.FC<{
 			}
 			theme={theme}
 		>
-			<div style={statGridStyle}>
-				<MaestroStatCard label="PRs Created" value="12" note="History summary" theme={theme} />
-				<MaestroStatCard
-					label="Merged"
-					value="9"
-					note="Across completed contributions"
-					theme={theme}
-				/>
-				<MaestroStatCard label="Tokens Donated" value="8.7M" note="Worth $184" theme={theme} />
-				<MaestroStatCard
-					label="Time Contributed"
-					value="31h"
-					note="Streak: 4 weeks"
-					theme={theme}
-				/>
-			</div>
+			<AnimatedReveal frame={frame} delayFrames={0} durationFrames={14}>
+				<div style={statGridStyle}>
+					<MaestroStatCard
+						label="PRs Created"
+						value={getAnimatedMetricValue({
+							frame,
+							target: 12,
+							delayFrames: 2,
+							durationFrames: 26,
+						})}
+						note="History summary"
+						theme={theme}
+					/>
+					<MaestroStatCard
+						label="Merged"
+						value={getAnimatedMetricValue({
+							frame,
+							target: 9,
+							delayFrames: 6,
+							durationFrames: 26,
+						})}
+						note="Across completed contributions"
+						theme={theme}
+					/>
+					<MaestroStatCard
+						label="Tokens Donated"
+						value={getAnimatedMetricValue({
+							frame,
+							target: 8.7,
+							suffix: 'M',
+							decimals: 1,
+							delayFrames: 10,
+							durationFrames: 28,
+						})}
+						note="Worth $184"
+						theme={theme}
+					/>
+					<MaestroStatCard
+						label="Time Contributed"
+						value={getAnimatedMetricValue({
+							frame,
+							target: 31,
+							suffix: 'h',
+							delayFrames: 14,
+							durationFrames: 28,
+						})}
+						note="Streak: 4 weeks"
+						theme={theme}
+					/>
+				</div>
+			</AnimatedReveal>
 			<div style={{ display: 'grid', gridTemplateColumns: '1fr 0.92fr', gap: 16 }}>
 				<div style={{ display: 'grid', gap: 14 }}>
-					<Panel theme={theme}>
-						<SectionLabel label="History" theme={theme} />
-						{HISTORY_ROWS.map((row) => (
-							<div
-								key={row.title}
-								style={{
-									display: 'grid',
-									gridTemplateColumns: '1fr auto',
-									gap: 12,
-									padding: '14px 16px',
-									borderRadius: 18,
-									border: `1px solid ${theme.colors.border}`,
-									background: theme.colors.bgMain,
-								}}
-							>
-								<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-									<div style={{ fontSize: 18, color: theme.colors.textMain }}>{row.title}</div>
-									<div style={{ fontSize: 16, color: theme.colors.textDim }}>{row.meta}</div>
-									<div style={{ fontSize: 15, color: theme.colors.textDim }}>
-										{row.documents} • {row.tasks}
+					<AnimatedReveal frame={frame} delayFrames={8} durationFrames={16}>
+						<Panel theme={theme}>
+							<SectionLabel label="History" theme={theme} />
+							{HISTORY_ROWS.map((row, index) => (
+								<AnimatedReveal
+									key={row.title}
+									frame={frame}
+									index={index}
+									delayFrames={14}
+									stepFrames={5}
+									durationFrames={14}
+								>
+									<div
+										style={{
+											display: 'grid',
+											gridTemplateColumns: '1fr auto',
+											gap: 12,
+											padding: '14px 16px',
+											borderRadius: 18,
+											border: `1px solid ${theme.colors.border}`,
+											background: theme.colors.bgMain,
+										}}
+									>
+										<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+											<div style={{ fontSize: 18, color: theme.colors.textMain }}>{row.title}</div>
+											<div style={{ fontSize: 16, color: theme.colors.textDim }}>{row.meta}</div>
+											<div style={{ fontSize: 15, color: theme.colors.textDim }}>
+												{row.documents} • {row.tasks}
+											</div>
+										</div>
+										<MetaBadge
+											label={row.status}
+											tone={row.status === 'Merged' ? 'accent' : 'neutral'}
+											theme={theme}
+										/>
 									</div>
-								</div>
-								<MetaBadge
-									label={row.status}
-									tone={row.status === 'Merged' ? 'accent' : 'neutral'}
-									theme={theme}
-								/>
-							</div>
-						))}
-					</Panel>
+								</AnimatedReveal>
+							))}
+						</Panel>
+					</AnimatedReveal>
 				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
-					<Panel theme={theme}>
-						<SectionLabel label="Stats" theme={theme} />
-						<div style={{ fontSize: 20, lineHeight: 1.45, color: theme.colors.textDim }}>
-							Tokens donated, value created, repository spread, and contribution streak stay visible
-							even after the run leaves Active.
-						</div>
-						<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-							<MetaBadge label="Value" tone="accent" theme={theme} />
-							<MetaBadge label="Streak" theme={theme} />
-							<MetaBadge label="Achievements" theme={theme} />
-						</div>
-					</Panel>
-					<Panel theme={theme}>
-						<SectionLabel label="Achievements" theme={theme} />
-						{ACHIEVEMENTS.map((achievement) => (
-							<AchievementBadge key={achievement.title} {...achievement} theme={theme} />
-						))}
-					</Panel>
+					<AnimatedReveal frame={frame} delayFrames={12} durationFrames={16}>
+						<Panel theme={theme}>
+							<SectionLabel label="Stats" theme={theme} />
+							<div style={{ fontSize: 20, lineHeight: 1.45, color: theme.colors.textDim }}>
+								Tokens donated, value created, repository spread, and contribution streak stay
+								visible even after the run leaves Active.
+							</div>
+							<div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+								<MetaBadge label="Value" tone="accent" theme={theme} />
+								<MetaBadge label="Streak" theme={theme} />
+								<MetaBadge label="Achievements" theme={theme} />
+							</div>
+						</Panel>
+					</AnimatedReveal>
+					<AnimatedReveal frame={frame} delayFrames={18} durationFrames={16}>
+						<Panel theme={theme}>
+							<SectionLabel label="Achievements" theme={theme} />
+							{ACHIEVEMENTS.map((achievement, index) => (
+								<AnimatedReveal
+									key={achievement.title}
+									frame={frame}
+									index={index}
+									delayFrames={24}
+									stepFrames={5}
+									durationFrames={14}
+								>
+									<AchievementBadge {...achievement} theme={theme} />
+								</AnimatedReveal>
+							))}
+						</Panel>
+					</AnimatedReveal>
 				</div>
 			</div>
 		</MaestroModalShell>

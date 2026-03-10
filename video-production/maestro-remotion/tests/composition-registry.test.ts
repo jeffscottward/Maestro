@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import { workspaceBootstrapSpec } from '../src/data/workspace-bootstrap-spec';
 import { VideoCompositionPropsSchema } from '../src/data/production-schema';
+import { symphonyStandaloneSpec } from '../src/data/specs';
 import {
 	WORKSPACE_COMPOSITION_ID,
 	compositionDefinitions,
@@ -10,13 +11,14 @@ import {
 import { getDurationInFrames } from '../src/lib/timeline';
 
 describe('composition registry', () => {
-	it('registers the teaser and all three prototype stubs alongside the workspace bootstrap', () => {
+	it('registers the workspace bootstrap, prototype reel, and Symphony standalone master', () => {
 		expect(compositionDefinitions.map((definition) => definition.id)).toEqual([
 			'MaestroWorkspaceBootstrap',
 			'MaestroFeatureTeaser',
 			'SymphonyPrototype',
 			'DirectorNotesPrototype',
 			'WorktreeSpinOffsPrototype',
+			'SymphonyStandalone',
 		]);
 	});
 
@@ -52,5 +54,15 @@ describe('composition registry', () => {
 			expect(definition?.defaultProps.spec.aspectRatio).toBe('16:9');
 			expect(definition?.defaultProps.spec.scenes.length).toBeGreaterThan(0);
 		}
+	});
+
+	it('registers the Symphony standalone master so it can render as a first-class composition', () => {
+		const definition = getCompositionById('SymphonyStandalone');
+
+		expect(definition).toBeDefined();
+		expect(definition?.fps).toBe(30);
+		expect(definition?.durationInFrames).toBe(getDurationInFrames(symphonyStandaloneSpec));
+		expect(definition?.defaultProps.spec.id).toBe('SymphonyStandalone');
+		expect(definition?.defaultProps.spec.featureName).toBe('Maestro Symphony');
 	});
 });

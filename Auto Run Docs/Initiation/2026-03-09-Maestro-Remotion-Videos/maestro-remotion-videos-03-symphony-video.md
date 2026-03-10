@@ -43,10 +43,14 @@ This phase turns the shared prototype system into a finished standalone video fo
 	- Note: Added targeted coverage in `video-production/maestro-remotion/tests/symphony-standalone-choreography.test.ts`, `video-production/maestro-remotion/tests/symphony-standalone-scene.test.tsx`, and updated registry/workspace tests; re-ran full `pnpm validate` in `video-production/maestro-remotion`, and all `49` tests passed.
 	- Note: Analyzed `6` Symphony reference images under `video-production/maestro-remotion/capture/docs/symphony/` and rendered still checks to `Auto Run Docs/Working/symphony-opening-still-2.png` and `Auto Run Docs/Working/symphony-active-still.png` to tighten the 16:9 framing before closing the task.
 
-- [ ] Write Symphony-specific tests and quality checks:
+- [x] Write Symphony-specific tests and quality checks:
 	- Add tests for Symphony scene ordering, required scene IDs, schema validity, and any helper logic that maps capture states to rendered scenes
 	- Add a render smoke check for the Symphony composition so broken imports, invalid assets, or schema regressions fail early
 	- Keep tests scoped to the isolated video workspace
+	- Note: Added `video-production/maestro-remotion/tests/symphony-standalone-validation.test.ts` to lock the approved Symphony scene order, required scene IDs, schema validity, and `getCapturesForScene()` capture-to-scene mapping against the standalone spec.
+	- Note: Added `video-production/maestro-remotion/tests/symphony-render-smoke.test.ts` to render opening and closing `SymphonyStandalone` frames through the real Remotion CLI, so composition loading and scene-level asset usage fail early in CI.
+	- Note: Analyzed `6` Symphony reference images under `video-production/maestro-remotion/capture/docs/symphony/` to confirm the smoke frames align with the checked-in browse, issue detail, create-agent, active, history, and stats proof states.
+	- Note: Re-ran `pnpm validate` in `video-production/maestro-remotion`; capture validation, workspace validation, typecheck, and all `53` Vitest checks passed.
 
 - [ ] Run Symphony validation and produce the 16:9 master render:
 	- Execute the Symphony tests and any schema or render smoke commands, then fix issues until they pass

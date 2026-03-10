@@ -25,7 +25,11 @@ Director's Notes is an **Encore Feature** — it's disabled by default. Enable i
 
 ## Tabs
 
-Director's Notes has three tabs:
+Director's Notes opens on **Unified History** by default and exposes three tabs in the header:
+
+- **Help** — Built-in reference guide for the feature, entry types, shortcuts, and workflows
+- **Unified History** — The default evidence-first timeline across all agents
+- **AI Overview** — AI-generated synopsis built from the current history dataset
 
 ### Unified History
 
@@ -71,7 +75,7 @@ An AI-generated synopsis of recent activity across all agents. This tab uses a c
 **Controls:**
 
 - **Lookback slider** — Adjust from 1 to 90 days to control the analysis window
-- **Refresh** — Regenerate the synopsis with current settings
+- **Regenerate** — Regenerate the synopsis with current settings
 - **Save** — Export the synopsis as a markdown file
 - **Copy** — Copy the raw markdown to clipboard
 
@@ -95,7 +99,7 @@ The synopsis is rendered as rich markdown with full formatting support.
 Configure which AI provider generates the synopsis in **Settings > Encore Features**. Any installed agent (Claude Code, Codex, OpenCode) can be used. The default lookback window is also configurable there.
 
 <Note>
-The AI Overview tab becomes available once the synopsis has finished generating. A spinning indicator on the tab shows generation is in progress. Results are cached for the session — switching tabs won't trigger a regeneration.
+On a cold open, AI Overview starts generating in the background as soon as Director's Notes opens. The AI Overview tab becomes available once the synopsis has finished generating. A spinning indicator on the tab shows generation is in progress. Results are cached for the session — switching tabs won't trigger a regeneration.
 </Note>
 
 ### Help

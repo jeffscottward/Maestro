@@ -56,7 +56,7 @@ related:
 
 `DirectorNotesModal.tsx` renders a three-tab modal whose tab strip reads `Help`, `Unified History`, and `AI Overview`, but whose default active tab is `Unified History`. The feature is also gated behind `Settings > Encore Features`, where the user enables `Director's Notes`, chooses the `Synopsis Provider`, and sets the `Default Lookback Period`. `UnifiedHistoryTab.tsx` fetches aggregated history across all Maestro sessions through `director-notes:getUnifiedHistory`, paginates in batches of `100`, supports `AUTO` and `USER` filter toggles, real-time search across summary text and agent names, activity-graph lookback changes, keyboard list navigation, and a detail modal that can jump back into the originating agent session.
 
-`AIOverviewTab.tsx` auto-generates a synopsis on first open if no cached result exists, then caches the markdown in module scope so the result survives tab switches and modal reopens during the session. The renderer sends a single IPC request; the main-process handler builds a manifest of history-file paths and asks the selected provider to read those files directly. The resulting `AI Overview` surface combines a lookback slider, `Regenerate`, `Save`, and `Copy` controls with stats for analyzed entries, active agents, and generation time.
+`AIOverviewTab.tsx` auto-generates a synopsis on first open if no cached result exists, then caches the markdown in module scope so the result survives tab switches and modal reopens during the session. Because the tab component mounts with the modal, that generation starts immediately on modal open while `Unified History` remains the active default view. The renderer sends a single IPC request; the main-process handler builds a manifest of history-file paths and asks the selected provider to read those files directly. The resulting `AI Overview` surface combines a lookback slider, `Regenerate`, `Save`, and `Copy` controls with stats for analyzed entries, active agents, and generation time.
 
 ## Before Workflow
 
@@ -94,7 +94,7 @@ The video should show chaos resolving into order: many disconnected agent histor
 
 ## Source-of-Truth Notes
 
-- The docs describe the tabs conceptually as `Unified History`, `AI Overview`, and `Help`, while the live tab strip order in `DirectorNotesModal.tsx` is `Help`, `Unified History`, then `AI Overview`. For capture planning, preserve the visible tab order but start the story in the default `Unified History` view.
-- `docs/director-notes.md` still says `Refresh`, but the current `AI Overview` action label is `Regenerate`. Video copy and captions should match the live UI.
-- `AI Overview` is intentionally not immediately interactive on cold open; the tab shows generation state first and only becomes enabled once a synopsis exists or a cached result is restored.
+- The live tab strip order in `DirectorNotesModal.tsx` is `Help`, `Unified History`, then `AI Overview`, even though the modal opens on `Unified History` by default. Preserve that visible order in the video framing.
+- `AI Overview` is intentionally not immediately interactive on cold open; generation starts when the modal mounts, the tab shows progress while `Unified History` stays active, and the tab only becomes enabled once a synopsis exists or a cached result is restored.
+- `docs/director-notes.md` and the current UI use `Regenerate`, but the checked-in ready-state screenshot still shows `Refresh`. Treat that screenshot as layout reference only and reconstruct the live control label from source when needed.
 - The synopsis pipeline reads history files by path in the main process, so the feature narrative should emphasize “grounded in your actual activity history” rather than a loose chat summary.

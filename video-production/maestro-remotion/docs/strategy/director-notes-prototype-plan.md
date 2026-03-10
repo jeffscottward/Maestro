@@ -30,8 +30,8 @@ Selected structure: `Fragmentation -> Visibility -> Synthesis` from `[[approved-
 Beat breakdown:
 
 1. `Fragmentation`: imply the old workflow of checking multiple agent histories to answer a simple status question.
-2. `Visibility`: open `Director's Notes` in `Unified History` and show filters, search, stats, and jump-back affordances as the central control surface.
-3. `Synthesis`: transition into `AI Overview` so the viewer sees the same evidence compressed into a reusable synopsis with export controls.
+2. `Visibility`: open `Director's Notes` in `Unified History`, keep `Help`, `Unified History`, and `AI Overview` visible in the tab strip, and show filters, search, stats, and jump-back affordances as the central control surface.
+3. `Synthesis`: let `AI Overview` start in the background while the viewer stays on evidence, then switch only after the synopsis is ready so the summary feels grounded instead of conjured.
 
 ## Why This Structure Fits
 
@@ -47,13 +47,15 @@ Director's Notes is not a creation workflow; it is an observability workflow. De
 
 - Preserve visible tab order as `Help`, `Unified History`, and `AI Overview`, even though the story should begin in the default `Unified History` state.
 - Use current labels from the implementation, including `Regenerate`, `Save`, and `Copy`, rather than older doc wording such as `Refresh`.
+- Do not show the user clicking into `AI Overview` to start generation; on cold open it starts when the modal opens and the tab remains disabled until the synopsis is ready.
 - Emphasize that the synopsis is grounded in actual history files and unified activity data, not a freeform chat guess.
+- Treat the checked-in ready-state screenshot as a layout reference, not literal UI text, because the live control label is `Regenerate`.
 - Keep the jump-back-to-session affordance visible somewhere in the story so the feature reads as actionable, not passive reporting.
 
 ## Story Beats
 
 1. Start with the burden of fragmented agent oversight, then reveal `Director's Notes` as the single place to inspect activity.
-2. Showcase `Unified History` with `AUTO` and `USER` filters, search, stats, and a dense but navigable activity list.
+2. Showcase `Unified History` with `AUTO` and `USER` filters, search, stats, and a dense but navigable activity list while `AI Overview` warms in the background.
 3. Prove the list is actionable by surfacing the detail modal or session jump-back behavior.
-4. Move into `AI Overview` generation and resolve to the ready state with synopsis sections plus `Save` and `Copy`.
+4. Let the tab-strip generation state resolve, then switch into the ready `AI Overview` with synopsis sections plus `Regenerate`, `Save`, and `Copy`.
 5. End on the promise of faster project check-ins: one timeline first, one grounded summary second.

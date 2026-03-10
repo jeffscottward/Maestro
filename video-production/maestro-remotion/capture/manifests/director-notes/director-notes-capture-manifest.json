@@ -42,7 +42,7 @@
 			"feature": "Director's Notes AI Overview Loading",
 			"mode": "live-capture",
 			"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
-			"notes": "Capture the cold-open or generating state so the synopsis feels grounded in actual history processing.",
+			"notes": "Capture the background generation state so the synopsis feels grounded in actual history processing before the user leaves `Unified History`.",
 			"required": true
 		},
 		{
@@ -50,7 +50,7 @@
 			"feature": "Director's Notes AI Overview Ready",
 			"mode": "live-capture",
 			"sourceRef": "src/renderer/components/DirectorNotes/AIOverviewTab.tsx",
-			"notes": "Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible.",
+			"notes": "Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible; if using the checked-in screenshot fallback, reconstruct the current control label from source.",
 			"required": true
 		},
 		{
@@ -201,12 +201,8 @@
 			"sceneId": "director-notes-standalone-open",
 			"sceneNumber": 1,
 			"purpose": "Frame fragmented agent oversight as a real operational burden before the feature resolves it.",
-			"captureIds": [
-				"director-modal-open"
-			],
-			"assetPlaceholderIds": [
-				"director-modal-shell"
-			],
+			"captureIds": ["director-modal-open"],
+			"assetPlaceholderIds": ["director-modal-shell"],
 			"recordingPath": "capture/recordings/director-notes/s01-director-notes-standalone-open.mov",
 			"cropPlan": [
 				{
@@ -233,9 +229,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/director-notes/unified-history-reference.png",
-					"fallbackAssetIds": [
-						"director-modal-shell"
-					],
+					"fallbackAssetIds": ["director-modal-shell"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Unified History screenshot copied into capture/docs/director-notes/unified-history-reference.png because it already shows the modal shell and tab strip. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -244,12 +238,8 @@
 			"sceneId": "director-notes-standalone-history",
 			"sceneNumber": 2,
 			"purpose": "Show `Unified History` as the central operational control surface.",
-			"captureIds": [
-				"director-unified-history"
-			],
-			"assetPlaceholderIds": [
-				"director-history-controls"
-			],
+			"captureIds": ["director-unified-history"],
+			"assetPlaceholderIds": ["director-history-controls"],
 			"recordingPath": "capture/recordings/director-notes/s02-director-notes-standalone-history.mov",
 			"cropPlan": [
 				{
@@ -276,9 +266,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/director-notes/unified-history-reference.png",
-					"fallbackAssetIds": [
-						"director-history-controls"
-					],
+					"fallbackAssetIds": ["director-history-controls"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Unified History screenshot copied into capture/docs/director-notes/unified-history-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
@@ -287,14 +275,8 @@
 			"sceneId": "director-notes-standalone-detail",
 			"sceneNumber": 3,
 			"purpose": "Prove the history is actionable, not passive reporting.",
-			"captureIds": [
-				"director-unified-history",
-				"director-history-detail"
-			],
-			"assetPlaceholderIds": [
-				"director-history-controls",
-				"director-history-detail-card"
-			],
+			"captureIds": ["director-unified-history", "director-history-detail"],
+			"assetPlaceholderIds": ["director-history-controls", "director-history-detail-card"],
 			"recordingPath": "capture/recordings/director-notes/s03-director-notes-standalone-detail.mov",
 			"cropPlan": [
 				{
@@ -321,10 +303,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/director-notes/unified-history-reference.png",
-					"fallbackAssetIds": [
-						"director-history-controls",
-						"director-history-detail-card"
-					],
+					"fallbackAssetIds": ["director-history-controls", "director-history-detail-card"],
 					"notes": "Source type: screenshot fallback. Resolved from the checked-in Unified History screenshot copied into capture/docs/director-notes/unified-history-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				},
 				{
@@ -334,10 +313,7 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "docs/research/reconstructions/director-notes-history-detail-reconstruction.md",
-					"fallbackAssetIds": [
-						"director-history-controls",
-						"director-history-detail-card"
-					],
+					"fallbackAssetIds": ["director-history-controls", "director-history-detail-card"],
 					"notes": "Source type: reconstructed UI. Resolved to the History Detail reconstruction note because no checked-in screenshot shows the detail modal state."
 				}
 			]
@@ -345,13 +321,9 @@
 		{
 			"sceneId": "director-notes-standalone-ai-loading",
 			"sceneNumber": 4,
-			"purpose": "Acknowledge the grounded generation step before showing the summary.",
-			"captureIds": [
-				"director-ai-overview-loading"
-			],
-			"assetPlaceholderIds": [
-				"director-ai-overview-loading-card"
-			],
+			"purpose": "Show that synthesis starts from the same evidence before the user even leaves the timeline.",
+			"captureIds": ["director-ai-overview-loading"],
+			"assetPlaceholderIds": ["director-ai-overview-loading-card"],
 			"recordingPath": "capture/recordings/director-notes/s04-director-notes-standalone-ai-loading.mov",
 			"cropPlan": [
 				{
@@ -378,10 +350,8 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "docs/research/reconstructions/director-notes-ai-overview-loading-reconstruction.md",
-					"fallbackAssetIds": [
-						"director-ai-overview-loading-card"
-					],
-					"notes": "Source type: reconstructed UI. Resolved to the AI Overview loading reconstruction note because only the ready-state screenshot exists in the repo."
+					"fallbackAssetIds": ["director-ai-overview-loading-card"],
+					"notes": "Source type: reconstructed UI. Resolved to the AI Overview loading reconstruction note because the shipped planning story needs the background generation state while `Unified History` remains active."
 				}
 			]
 		},
@@ -389,12 +359,8 @@
 			"sceneId": "director-notes-standalone-ai-ready",
 			"sceneNumber": 5,
 			"purpose": "Resolve into the ready synopsis with export controls.",
-			"captureIds": [
-				"director-ai-overview-ready"
-			],
-			"assetPlaceholderIds": [
-				"director-ai-overview-ready-card"
-			],
+			"captureIds": ["director-ai-overview-ready"],
+			"assetPlaceholderIds": ["director-ai-overview-ready-card"],
 			"recordingPath": "capture/recordings/director-notes/s05-director-notes-standalone-ai-ready.mov",
 			"cropPlan": [
 				{
@@ -421,10 +387,8 @@
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/director-notes/ai-overview-ready-reference.png",
-					"fallbackAssetIds": [
-						"director-ai-overview-ready-card"
-					],
-					"notes": "Source type: screenshot fallback. Resolved from the checked-in AI Overview screenshot copied into capture/docs/director-notes/ai-overview-ready-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"fallbackAssetIds": ["director-ai-overview-ready-card"],
+					"notes": "Source type: screenshot fallback. Resolved from the checked-in AI Overview screenshot copied into capture/docs/director-notes/ai-overview-ready-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture. The screenshot still shows `Refresh`, so scene implementation should reconstruct the current `Regenerate` label from source."
 				}
 			]
 		},
@@ -487,7 +451,7 @@
 						"director-ai-overview-ready-card",
 						"director-grounded-synthesis-overlay"
 					],
-					"notes": "Source type: screenshot fallback. Resolved from the checked-in AI Overview screenshot copied into capture/docs/director-notes/ai-overview-ready-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"notes": "Source type: screenshot fallback. Resolved from the checked-in AI Overview screenshot copied into capture/docs/director-notes/ai-overview-ready-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture. The screenshot still shows `Refresh`, so scene implementation should reconstruct the current `Regenerate` label from source."
 				},
 				{
 					"captureId": "director-evidence-link",

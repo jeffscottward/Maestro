@@ -5,7 +5,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 	featureName: "Director's Notes",
 	title: "Director's Notes standalone production storyboard",
 	description:
-		'40-second standalone production spec covering the move from fragmented agent oversight to unified history and grounded AI synopsis.',
+		'40-second standalone production spec covering the move from fragmented agent oversight to unified history and grounded AI synopsis, with AI Overview warming in the background before the ready summary resolves.',
 	fps: 30,
 	runtimeSeconds: 40,
 	aspectRatioIntent: {
@@ -61,7 +61,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			mode: 'live-capture',
 			sourceRef: 'src/renderer/components/DirectorNotes/AIOverviewTab.tsx',
 			notes:
-				'Capture the cold-open or generating state so the synopsis feels grounded in actual history processing.',
+				'Capture the background generation state so the synopsis feels grounded in actual history processing before the user leaves `Unified History`.',
 			required: true,
 		},
 		{
@@ -70,7 +70,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			mode: 'live-capture',
 			sourceRef: 'src/renderer/components/DirectorNotes/AIOverviewTab.tsx',
 			notes:
-				'Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible.',
+				'Capture the ready synopsis with lookback, `Regenerate`, `Save`, and `Copy` controls visible; if using the checked-in screenshot fallback, reconstruct the current control label from source.',
 			required: true,
 		},
 		{
@@ -146,9 +146,11 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 	],
 	sourceRefs: [
 		'src/main/ipc/handlers/director-notes.ts',
+		'src/renderer/components/DirectorNotes/DirectorNotesModal.tsx',
 		'src/renderer/components/DirectorNotes/UnifiedHistoryTab.tsx',
 		'src/renderer/components/DirectorNotes/AIOverviewTab.tsx',
 		'src/renderer/components/HistoryDetailModal.tsx',
+		'docs/director-notes.md',
 		'docs/research/features/director-notes-feature-research.md',
 		'docs/strategy/director-notes-prototype-plan.md',
 	],
@@ -174,7 +176,8 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				],
 				visualComposition:
 					'Blur or compress background agent clutter, then bring the modal header and tabs into sharp focus.',
-				uiStateShown: "`Director's Notes` opening into the default `Unified History` state.",
+				uiStateShown:
+					"`Director's Notes` opening into the default `Unified History` state with `Help`, `Unified History`, and `AI Overview` visible in the tab strip.",
 				userAction: "Open `Director's Notes` from Maestro.",
 				systemResponse:
 					'The modal lands directly in `Unified History` with the evidence-first view ready.',
@@ -241,29 +244,32 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 		{
 			id: 'director-notes-standalone-ai-loading',
 			type: 'capture-callout',
-			surfaceId: 'director-ai-overview',
+			surfaceId: 'director-history',
 			featureName: "Director's Notes",
-			accentLabel: 'AI Overview',
-			title: '`AI Overview` begins with a grounded generation step',
-			body: 'The transition into synthesis stays credible because the feature first shows it is reading the underlying activity history.',
+			accentLabel: 'Warmup',
+			title: '`AI Overview` starts building before the user leaves `Unified History`',
+			body: 'The transition into synthesis stays credible because the feature shows background progress while the user is still reviewing the raw evidence.',
 			durationInFrames: 180,
 			captureIds: ['director-ai-overview-loading'],
 			assetPlaceholderIds: ['director-ai-overview-loading-card'],
 			storyboard: {
 				sceneNumber: 4,
-				purpose: 'Acknowledge the grounded generation step before showing the summary.',
+				purpose:
+					'Show that synthesis starts from the same evidence before the user even leaves the timeline.',
 				onScreenCopy: [
-					'`AI Overview` is grounded in actual history files.',
-					'Generation shows its work before the summary appears.',
+					'While you review the timeline, `AI Overview` is already building in the background.',
+					'The summary is earned before it is opened.',
 				],
 				visualComposition:
-					'Transition from list view into `AI Overview` with loading or disabled-ready affordances visible.',
+					'Keep `Unified History` active while the tab-strip spinner and light loading cues telegraph background synthesis from the same evidence set.',
 				uiStateShown:
-					'`AI Overview` cold-open or generating state with lookback controls in frame.',
-				userAction: 'Switch from `Unified History` to `AI Overview`.',
+					'`Unified History` remains active while `AI Overview` shows generating state in the tab strip.',
+				userAction:
+					'Continue reviewing `Unified History` while `AI Overview` generates in the background.',
 				systemResponse:
-					'The synopsis pipeline begins from the underlying activity history rather than a blank prompt.',
-				motionStyle: 'Controlled tab-slide transition with a subtle loading pulse.',
+					'The tab strip shows background progress and only enables `AI Overview` after the synopsis exists.',
+				motionStyle:
+					'Hold on evidence rows, then rack focus to the tab-strip spinner and loading feedback.',
 				durationSeconds: 6,
 			},
 		},
@@ -288,8 +294,9 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				visualComposition:
 					'Markdown synopsis hero with controls, lookback setting, and summary stats kept on screen together.',
 				uiStateShown: 'Ready `AI Overview` state with synopsis sections and export controls.',
-				userAction: 'Let the generation finish, then review or copy the result.',
-				systemResponse: 'The modal presents a grounded summary that is ready to share or save.',
+				userAction: 'Select the now-ready `AI Overview` tab.',
+				systemResponse:
+					'The modal switches to a grounded summary that is ready to review, save, or copy.',
 				motionStyle:
 					'Section-by-section reveal with steady camera framing to preserve readability.',
 				durationSeconds: 7,

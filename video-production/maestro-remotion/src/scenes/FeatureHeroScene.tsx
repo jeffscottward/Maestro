@@ -12,6 +12,7 @@ import { ProductionFrame } from '../components/ProductionFrame';
 import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
 import { DirectorNotesStandaloneScene } from './DirectorNotesStandaloneScene';
 import { SymphonyStandaloneScene } from './SymphonyStandaloneScene';
+import { WorktreeStandaloneScene } from './WorktreeStandaloneScene';
 import { MetaBadge } from '../ui/MetaBadge';
 
 type FeatureHeroSceneProps = {
@@ -52,6 +53,18 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 	if (spec.id === 'DirectorNotesStandalone') {
 		return (
 			<DirectorNotesStandaloneScene
+				scene={scene}
+				sceneIndex={sceneIndex}
+				sceneCount={sceneCount}
+				spec={spec}
+				captures={captures}
+			/>
+		);
+	}
+
+	if (spec.id === 'WorktreeSpinOffsStandalone') {
+		return (
+			<WorktreeStandaloneScene
 				scene={scene}
 				sceneIndex={sceneIndex}
 				sceneCount={sceneCount}

@@ -2,7 +2,11 @@ import { describe, expect, it } from 'vitest';
 
 import { workspaceBootstrapSpec } from '../src/data/workspace-bootstrap-spec';
 import { VideoCompositionPropsSchema } from '../src/data/production-schema';
-import { directorNotesStandaloneSpec, symphonyStandaloneSpec } from '../src/data/specs';
+import {
+	directorNotesStandaloneSpec,
+	symphonyStandaloneSpec,
+	worktreeSpinOffsStandaloneSpec,
+} from '../src/data/specs';
 import {
 	WORKSPACE_COMPOSITION_ID,
 	compositionDefinitions,
@@ -11,7 +15,7 @@ import {
 import { getDurationInFrames } from '../src/lib/timeline';
 
 describe('composition registry', () => {
-	it("registers the workspace bootstrap, prototype reel, Symphony standalone master, and Director's Notes standalone master", () => {
+	it("registers the workspace bootstrap, prototype reel, Symphony standalone master, Director's Notes standalone master, and the worktree standalone master", () => {
 		expect(compositionDefinitions.map((definition) => definition.id)).toEqual([
 			'MaestroWorkspaceBootstrap',
 			'MaestroFeatureTeaser',
@@ -20,6 +24,7 @@ describe('composition registry', () => {
 			'WorktreeSpinOffsPrototype',
 			'SymphonyStandalone',
 			'DirectorNotesStandalone',
+			'WorktreeSpinOffsStandalone',
 		]);
 	});
 
@@ -75,5 +80,15 @@ describe('composition registry', () => {
 		expect(definition?.durationInFrames).toBe(getDurationInFrames(directorNotesStandaloneSpec));
 		expect(definition?.defaultProps.spec.id).toBe('DirectorNotesStandalone');
 		expect(definition?.defaultProps.spec.featureName).toBe("Director's Notes");
+	});
+
+	it('registers the Worktree Spin-offs standalone master so the dedicated worktree scenes can render as a first-class composition', () => {
+		const definition = getCompositionById('WorktreeSpinOffsStandalone');
+
+		expect(definition).toBeDefined();
+		expect(definition?.fps).toBe(30);
+		expect(definition?.durationInFrames).toBe(getDurationInFrames(worktreeSpinOffsStandaloneSpec));
+		expect(definition?.defaultProps.spec.id).toBe('WorktreeSpinOffsStandalone');
+		expect(definition?.defaultProps.spec.featureName).toBe('Run in Worktree');
 	});
 });

@@ -31,7 +31,7 @@ describe('maestro remotion workspace scaffold', () => {
 	});
 
 	it('registers the workspace bootstrap composition alongside the standalone feature masters', () => {
-		expect(compositionDefinitions).toHaveLength(7);
+		expect(compositionDefinitions).toHaveLength(8);
 		expect(compositionDefinitions[0]?.id).toBe(WORKSPACE_COMPOSITION_ID);
 		expect(compositionDefinitions[0]?.width).toBe(1920);
 		expect(compositionDefinitions[0]?.height).toBe(1080);
@@ -45,6 +45,7 @@ describe('maestro remotion workspace scaffold', () => {
 			'WorktreeSpinOffsPrototype',
 			'SymphonyStandalone',
 			'DirectorNotesStandalone',
+			'WorktreeSpinOffsStandalone',
 		]);
 	});
 

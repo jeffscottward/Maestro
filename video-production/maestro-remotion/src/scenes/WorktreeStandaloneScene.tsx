@@ -2,17 +2,31 @@ import type React from 'react';
 import { interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
 
 import {
+	getWorktreeCursorPose,
+	getWorktreeFlowStage,
+	getWorktreeFocusFrame,
+	getWorktreeStagePose,
+} from '../animations/worktree-choreography';
+import {
 	getEntranceProgress,
+	getProgressInRange,
 	getSceneOpacity,
 	translateXFromProgress,
 	translateYFromProgress,
 } from '../animations/motion';
-import { AnimatedReveal } from '../components/SymphonyMotionPrimitives';
+import { getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
+import { AnimatedReveal, GuidedCursor } from '../components/SymphonyMotionPrimitives';
+import {
+	getWorktreeComparisonCopy,
+	StoryNote,
+	WorktreeBranchBackdrop,
+	WorktreeComparisonBoard,
+	WorktreeFlowStrip,
+	WorktreeFocusOverlay,
+} from '../components/WorktreeStandalonePrimitives';
 import { WorktreeSurfaceShowcase } from '../components/WorktreeSurfaceShowcase';
 import { ProductionFrame } from '../components/ProductionFrame';
 import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
-import { getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
-import type { MaestroVisualTheme } from '../lib/maestroVisualSystem';
 import { MetaBadge } from '../ui/MetaBadge';
 
 type WorktreeStandaloneSceneProps = {
@@ -28,174 +42,7 @@ const clamp = {
 	extrapolateRight: 'clamp',
 } as const;
 
-const WORKTREE_FLOW_STAGES = ['Risk', 'Toggle', 'Branch', 'Inventory', 'Proof'] as const;
-
 const formatNarrativeCopy = (value: string) => value.replaceAll('`', '');
-
-const getStageForScene = (sceneId: string) => {
-	switch (sceneId) {
-		case 'worktree-standalone-risk':
-			return 'Risk';
-		case 'worktree-standalone-toggle':
-			return 'Toggle';
-		case 'worktree-standalone-create-form':
-		case 'worktree-standalone-pr-intent':
-			return 'Branch';
-		case 'worktree-standalone-inventory':
-			return 'Inventory';
-		case 'worktree-standalone-terminal-proof':
-		default:
-			return 'Proof';
-	}
-};
-
-const getComparisonCopy = (sceneId: string) => {
-	switch (sceneId) {
-		case 'worktree-standalone-risk':
-			return {
-				before: 'One checkout carries manual edits, review work, and the pending Auto Run lane.',
-				after:
-					'Run in Worktree keeps the Auto Run queue on the parent agent while opening a separate execution path.',
-			};
-		case 'worktree-standalone-toggle':
-			return {
-				before: 'Isolation is easy to skip when the toggle is hidden or implied.',
-				after:
-					'Dispatch to a separate worktree turns the safer lane into an explicit decision inside Auto Run.',
-			};
-		case 'worktree-standalone-create-form':
-			return {
-				before: 'The developer still has to guess how the separate branch and path will land.',
-				after:
-					'Base branch, worktree branch name, and path preview explain the exact isolation step before launch.',
-			};
-		case 'worktree-standalone-pr-intent':
-			return {
-				before: 'Review handoff is still something the user has to reconstruct after the run.',
-				after:
-					'Automatically create PR when complete keeps the branch, execution lane, and review path attached.',
-			};
-		case 'worktree-standalone-inventory':
-			return {
-				before: 'A separate lane feels abstract until the destination is visible inside Maestro.',
-				after:
-					'Open in Maestro and Available Worktrees prove the isolated branch is a tracked destination, not a hidden folder.',
-			};
-		case 'worktree-standalone-terminal-proof':
-		default:
-			return {
-				before:
-					'The main checkout absorbs long-running automation and becomes a review bottleneck.',
-				after:
-					'The worktree branch carries execution and PR handoff while the parent checkout stays clean for parallel work.',
-			};
-	}
-};
-
-const StoryNote: React.FC<{
-	label: string;
-	body: string;
-	theme: MaestroVisualTheme;
-	compact?: boolean;
-}> = ({ label, body, theme, compact = false }) => {
-	return (
-		<div
-			style={{
-				display: 'flex',
-				flexDirection: 'column',
-				gap: compact ? 8 : 12,
-				padding: compact ? '14px 16px' : '18px 20px',
-				borderRadius: 22,
-				border: `1px solid ${theme.colors.border}`,
-				background: theme.colors.bgActivity,
-			}}
-		>
-			<div
-				style={{
-					fontSize: 15,
-					letterSpacing: 1.1,
-					textTransform: 'uppercase',
-					color: theme.colors.textDim,
-				}}
-			>
-				{label}
-			</div>
-			<div
-				style={{
-					fontSize: compact ? 18 : 20,
-					lineHeight: compact ? 1.42 : 1.46,
-					color: theme.colors.textMain,
-				}}
-			>
-				{body}
-			</div>
-		</div>
-	);
-};
-
-const WorktreeFlowStrip: React.FC<{
-	activeStage: (typeof WORKTREE_FLOW_STAGES)[number];
-	frame: number;
-	theme: MaestroVisualTheme;
-}> = ({ activeStage, frame, theme }) => {
-	return (
-		<div
-			style={{
-				display: 'grid',
-				gridTemplateColumns: `repeat(${WORKTREE_FLOW_STAGES.length}, minmax(0, 1fr))`,
-				gap: 10,
-			}}
-		>
-			{WORKTREE_FLOW_STAGES.map((stage, index) => {
-				const reveal = interpolate(frame, [index * 3, index * 3 + 16], [0, 1], clamp);
-				const isActive = stage === activeStage;
-
-				return (
-					<div
-						key={stage}
-						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: 6,
-							padding: '10px 12px',
-							borderRadius: 16,
-							border: `1px solid ${isActive ? `${theme.colors.accent}88` : theme.colors.border}`,
-							background: isActive ? theme.colors.accentDim : theme.colors.bgActivity,
-							opacity: interpolate(reveal, [0, 1], [0.32, 1], clamp),
-							transform: `translate3d(0, ${translateYFromProgress(reveal, 18, 0)}px, 0)`,
-						}}
-					>
-						<div
-							style={{
-								fontSize: 13,
-								letterSpacing: 1.1,
-								textTransform: 'uppercase',
-								color: theme.colors.textDim,
-							}}
-						>
-							{String(index + 1).padStart(2, '0')}
-						</div>
-						<div
-							style={{
-								fontSize: 18,
-								color: isActive ? theme.colors.accentText : theme.colors.textMain,
-							}}
-						>
-							{stage}
-						</div>
-						<div
-							style={{
-								height: 4,
-								borderRadius: 999,
-								background: isActive ? `${theme.colors.accent}66` : theme.colors.border,
-							}}
-						/>
-					</div>
-				);
-			})}
-		</div>
-	);
-};
 
 export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = ({
 	scene,
@@ -212,8 +59,13 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 	const copyEntrance = getEntranceProgress(frame, fps, spec.motion, 6);
 	const supportEntrance = getEntranceProgress(frame, fps, spec.motion, 12);
 	const sceneOpacity = getSceneOpacity(frame, scene.durationInFrames, spec.motion);
-	const activeStage = getStageForScene(scene.id);
-	const comparisonCopy = getComparisonCopy(scene.id);
+	const sceneProgress = getProgressInRange(frame, 0, Math.max(scene.durationInFrames - 1, 1));
+	const surfaceProgress = interpolate(sceneProgress, [0, 0.14, 0.92], [0, 0.16, 1], clamp);
+	const stagePose = getWorktreeStagePose(scene.id, frame, scene.durationInFrames);
+	const cursorPose = getWorktreeCursorPose(scene.id, frame, scene.durationInFrames);
+	const focusFrame = getWorktreeFocusFrame(scene.id, frame, scene.durationInFrames);
+	const activeStage = getWorktreeFlowStage(scene.id);
+	const comparisonCopy = getWorktreeComparisonCopy(scene.id);
 	const title = formatNarrativeCopy(scene.title);
 	const body = formatNarrativeCopy(scene.body);
 	const currentBeat = formatNarrativeCopy(storyboard?.uiStateShown ?? scene.accentLabel);
@@ -223,6 +75,12 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 	const titleLift = translateYFromProgress(titleEntrance, 56, 0);
 	const copyLift = translateYFromProgress(copyEntrance, 36, 0);
 	const stageSlide = translateXFromProgress(supportEntrance, 48, 0);
+	const surfaceShadowOpacity = interpolate(
+		supportEntrance,
+		[0, 1],
+		[0.08, stagePose.glowOpacity],
+		clamp
+	);
 
 	return (
 		<ProductionFrame theme={theme}>
@@ -326,66 +184,127 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 
 					<div
 						style={{
-							display: 'flex',
-							flexDirection: 'column',
-							gap: 16,
+							position: 'relative',
 							minHeight: 0,
 							transform: `translateX(${stageSlide}px)`,
 						}}
 					>
-						<AnimatedReveal frame={frame} delayFrames={8} durationFrames={16}>
-							<WorktreeFlowStrip activeStage={activeStage} frame={frame} theme={theme} />
-						</AnimatedReveal>
+						<div
+							style={{
+								display: 'flex',
+								flexDirection: 'column',
+								gap: 16,
+								height: '100%',
+							}}
+						>
+							<AnimatedReveal frame={frame} delayFrames={8} durationFrames={16}>
+								<WorktreeFlowStrip activeStage={activeStage} frame={frame} theme={theme} />
+							</AnimatedReveal>
 
-						<AnimatedReveal frame={frame} delayFrames={12} durationFrames={16}>
-							<div
-								style={{
-									display: 'flex',
-									alignItems: 'center',
-									justifyContent: 'space-between',
-									gap: 14,
-									padding: '16px 20px',
-									borderRadius: 22,
-									border: `1px solid ${theme.colors.border}`,
-									background: theme.colors.bgActivity,
-								}}
-							>
-								<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+							<AnimatedReveal frame={frame} delayFrames={12} durationFrames={16}>
+								<div
+									style={{
+										display: 'flex',
+										alignItems: 'center',
+										justifyContent: 'space-between',
+										gap: 14,
+										padding: '16px 20px',
+										borderRadius: 22,
+										border: `1px solid ${theme.colors.border}`,
+										background: theme.colors.bgActivity,
+									}}
+								>
+									<div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+										<div
+											style={{
+												fontSize: 15,
+												letterSpacing: 1.1,
+												textTransform: 'uppercase',
+												color: theme.colors.textDim,
+											}}
+										>
+											Current Beat
+										</div>
+										<div style={{ fontSize: 22, color: theme.colors.textMain }}>{currentBeat}</div>
+									</div>
+									<MetaBadge label={activeStage} tone="accent" theme={theme} />
+								</div>
+							</AnimatedReveal>
+
+							<div style={{ position: 'relative', minHeight: 0, flex: 1 }}>
+								<div
+									style={{
+										position: 'absolute',
+										inset: 0,
+										borderRadius: 34,
+										background: `radial-gradient(circle at 24% 16%, ${theme.colors.accent}22, transparent 46%)`,
+										opacity: surfaceShadowOpacity,
+									}}
+								/>
+								<div
+									style={{
+										position: 'absolute',
+										inset: 0,
+										borderRadius: 34,
+										border: `1px solid ${theme.colors.border}`,
+										background: `linear-gradient(180deg, ${theme.colors.bgSidebar}, ${theme.colors.bgMain})`,
+										overflow: 'hidden',
+										boxShadow: `0 28px 80px ${theme.colors.accent}10`,
+									}}
+								>
 									<div
 										style={{
-											fontSize: 15,
-											letterSpacing: 1.1,
-											textTransform: 'uppercase',
-											color: theme.colors.textDim,
+											position: 'absolute',
+											inset: 0,
+											background: `radial-gradient(circle at 74% 16%, transparent, ${theme.colors.bgMain})`,
+											opacity: stagePose.vignetteOpacity,
+										}}
+									/>
+									<WorktreeBranchBackdrop
+										progress={sceneProgress}
+										theme={theme}
+										opacity={stagePose.glowOpacity}
+									/>
+									<div
+										style={{
+											position: 'absolute',
+											inset: 0,
+											transform: `translate3d(${stagePose.translateX}px, ${stagePose.translateY}px, 0) scale(${stagePose.scale}) rotate(${stagePose.rotate}deg)`,
+											transformOrigin: 'center center',
 										}}
 									>
-										Current Beat
+										<WorktreeSurfaceShowcase
+											scene={scene}
+											captures={captures}
+											progress={surfaceProgress}
+											theme={theme}
+										/>
 									</div>
-									<div style={{ fontSize: 22, color: theme.colors.textMain }}>{currentBeat}</div>
+									<WorktreeFocusOverlay
+										label={focusFrame.label}
+										opacity={focusFrame.opacity}
+										theme={theme}
+										x={focusFrame.x}
+										y={focusFrame.y}
+										width={focusFrame.width}
+										height={focusFrame.height}
+									/>
+									<GuidedCursor cursor={cursorPose} theme={theme} />
 								</div>
-								<MetaBadge label={activeStage} tone="accent" theme={theme} />
 							</div>
-						</AnimatedReveal>
-
-						<div style={{ minHeight: 0, flex: 1 }}>
-							<WorktreeSurfaceShowcase
-								scene={scene}
-								captures={captures}
-								progress={copyEntrance}
-								theme={theme}
-							/>
 						</div>
 					</div>
 				</div>
 
-				<div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, minmax(0, 1fr))', gap: 16 }}>
-					<AnimatedReveal frame={frame} delayFrames={18} durationFrames={18}>
-						<StoryNote label="Before" body={comparisonCopy.before} theme={theme} />
-					</AnimatedReveal>
-					<AnimatedReveal frame={frame} delayFrames={22} durationFrames={18}>
-						<StoryNote label="After" body={comparisonCopy.after} theme={theme} />
-					</AnimatedReveal>
-				</div>
+				<AnimatedReveal frame={frame} delayFrames={20} durationFrames={20}>
+					<WorktreeComparisonBoard
+						sceneId={scene.id}
+						comparisonCopy={comparisonCopy}
+						theme={theme}
+						frame={frame}
+						progress={sceneProgress}
+					/>
+				</AnimatedReveal>
 			</div>
 		</ProductionFrame>
 	);

@@ -23,7 +23,7 @@ vi.mock('remotion', async () => {
 });
 
 describe('Worktree standalone scene shell', () => {
-	it('renders the worktree-specific stage rail and comparison lane for the opener', () => {
+	it('renders the worktree-specific stage rail, focus treatment, and animated comparison board for the opener', () => {
 		const scene = worktreeSpinOffsStandaloneSpec.scenes[0];
 		const markup = renderToStaticMarkup(
 			createElement(FeatureHeroScene, {
@@ -38,6 +38,8 @@ describe('Worktree standalone scene shell', () => {
 		expect(markup).toContain('Current Beat');
 		expect(markup).toContain('Before');
 		expect(markup).toContain('After');
+		expect(markup).toContain('Single checkout pressure');
+		expect(markup).toContain('Parallel isolated lanes');
 		expect(markup).toContain('Risk');
 		expect(markup).toContain('Inventory');
 		expect(markup).toContain('Proof');

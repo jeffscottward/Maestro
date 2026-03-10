@@ -8,6 +8,7 @@ import worktreeTerminalProofJson from '../../capture/derived/worktree/terminal-p
 import worktreeCaptureManifestJson from '../../capture/manifests/worktree/worktree-capture-manifest.json';
 import { FeatureCaptureManifestSchema, type CaptureMediaType } from '../data/capture-schema';
 import type { CaptureManifestEntry, SceneData } from '../data/production-schema';
+import { translateYFromProgress } from '../animations/motion';
 import { getDeclaredCaptureAssetPath } from '../lib/capture-pipeline';
 import {
 	AUTO_RUN_DOCUMENTS,
@@ -448,9 +449,13 @@ const FieldCard: React.FC<{
 };
 
 const ToggleIndicator: React.FC<{
-	enabled: boolean;
+	progress: number;
 	theme: MaestroVisualTheme;
-}> = ({ enabled, theme }) => {
+}> = ({ progress, theme }) => {
+	const clampedProgress = Math.max(0, Math.min(1, progress));
+	const knobOffset = interpolate(clampedProgress, [0, 1], [4, 32], clamp);
+	const enabled = clampedProgress > 0.5;
+
 	return (
 		<div
 			style={{
@@ -465,7 +470,7 @@ const ToggleIndicator: React.FC<{
 				style={{
 					position: 'absolute',
 					top: 4,
-					left: enabled ? 32 : 4,
+					left: knobOffset,
 					width: 26,
 					height: 26,
 					borderRadius: 999,
@@ -478,10 +483,14 @@ const ToggleIndicator: React.FC<{
 
 const CheckboxRow: React.FC<{
 	label: string;
-	checked: boolean;
+	progress: number;
 	theme: MaestroVisualTheme;
 	highlighted?: boolean;
-}> = ({ label, checked, theme, highlighted = false }) => {
+}> = ({ label, progress, theme, highlighted = false }) => {
+	const clampedProgress = Math.max(0, Math.min(1, progress));
+	const checked = clampedProgress > 0.55;
+	const emphasis = interpolate(clampedProgress, [0, 1], [0, 1], clamp);
+
 	return (
 		<div
 			style={{
@@ -506,14 +515,22 @@ const CheckboxRow: React.FC<{
 					background: checked || highlighted ? theme.colors.accentDim : theme.colors.bgMain,
 					color: checked || highlighted ? theme.colors.accentText : theme.colors.textDim,
 					fontSize: 18,
+					transform: `scale(${interpolate(emphasis, [0, 1], [0.92, 1], clamp)})`,
 				}}
 			>
-				✓
+				<div
+					style={{
+						opacity: interpolate(emphasis, [0, 0.4, 1], [0, 0, 1], clamp),
+						transform: `translateY(${interpolate(emphasis, [0, 1], [4, 0], clamp)}px)`,
+					}}
+				>
+					✓
+				</div>
 			</div>
 			<div
 				style={{
 					fontSize: 18,
-					color: highlighted ? theme.colors.textMain : theme.colors.textDim,
+					color: highlighted || checked ? theme.colors.textMain : theme.colors.textDim,
 				}}
 			>
 				{label}
@@ -551,8 +568,18 @@ const AutoRunSetupContextCard: React.FC<{
 const WorktreeRunPanel: React.FC<{
 	variant: Exclude<WorktreeSceneVariant, 'inventory-proof' | 'terminal-proof'>;
 	theme: MaestroVisualTheme;
-}> = ({ variant, theme }) => {
-	const isExpanded = variant !== 'dispatch-overview';
+	progress: number;
+}> = ({ variant, theme, progress }) => {
+	const toggleProgress =
+		variant === 'dispatch-overview' ? 0 : variant === 'toggle-focus' ? progress : 1;
+	const formProgress =
+		variant === 'dispatch-overview'
+			? 0
+			: variant === 'toggle-focus'
+				? interpolate(progress, [0.28, 0.92], [0, 1], clamp)
+				: 1;
+	const reviewProgress = variant === 'pr-intent' ? progress : 0;
+	const isExpanded = toggleProgress > 0.12;
 	const showCreateForm =
 		variant === 'create-form' || variant === 'pr-intent' || variant === 'toggle-focus';
 	const showReviewPath = variant === 'pr-intent';
@@ -604,11 +631,18 @@ const WorktreeRunPanel: React.FC<{
 							Run the selected Auto Run documents away from the parent checkout.
 						</div>
 					</div>
-					<ToggleIndicator enabled={isExpanded} theme={theme} />
+					<ToggleIndicator progress={toggleProgress} theme={theme} />
 				</div>
 
 				{isExpanded ? (
-					<>
+					<div
+						style={{
+							display: 'grid',
+							gap: 14,
+							opacity: formProgress,
+							transform: `translateY(${translateYFromProgress(formProgress, 20, 0)}px)`,
+						}}
+					>
 						<FieldCard
 							label="Create New Worktree"
 							value="Create New Worktree"
@@ -642,11 +676,11 @@ const WorktreeRunPanel: React.FC<{
 						</div>
 						<CheckboxRow
 							label="Automatically create PR when complete"
-							checked={variant === 'pr-intent'}
+							progress={reviewProgress}
 							highlighted={variant === 'pr-intent'}
 							theme={theme}
 						/>
-					</>
+					</div>
 				) : (
 					<Panel theme={theme} padding={16} gap={10}>
 						<div style={{ fontSize: 19, color: theme.colors.textMain }}>Current checkout</div>
@@ -794,7 +828,7 @@ const WorktreeInventorySurface: React.FC<{
 									Auto-detect worktrees created outside Maestro
 								</div>
 							</div>
-							<ToggleIndicator enabled theme={theme} />
+							<ToggleIndicator progress={1} theme={theme} />
 						</div>
 						<div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: 12 }}>
 							<FieldCard label="Create New Worktree" value="feature-xyz" theme={theme} />
@@ -906,7 +940,8 @@ const DispatchStorySurface: React.FC<{
 	variant: Exclude<WorktreeSceneVariant, 'inventory-proof' | 'terminal-proof'>;
 	theme: MaestroVisualTheme;
 	captureEvidence: React.ReactNode;
-}> = ({ variant, theme, captureEvidence }) => {
+	progress: number;
+}> = ({ variant, theme, captureEvidence, progress }) => {
 	const summaryBody =
 		variant === 'dispatch-overview'
 			? 'The worktree lane is available inside Auto Run before the parent checkout becomes the only place long-running automation can land.'
@@ -940,7 +975,7 @@ const DispatchStorySurface: React.FC<{
 					<MaestroAnnotationSurface title="Auto Run context" body={summaryBody} theme={theme} />
 				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
-					<WorktreeRunPanel variant={variant} theme={theme} />
+					<WorktreeRunPanel variant={variant} theme={theme} progress={progress} />
 					{captureEvidence}
 				</div>
 			</div>
@@ -988,7 +1023,12 @@ export const WorktreeSurfaceShowcase: React.FC<WorktreeSurfaceShowcaseProps> = (
 		case 'create-form':
 		case 'pr-intent':
 			surface = (
-				<DispatchStorySurface variant={variant} theme={theme} captureEvidence={captureEvidence} />
+				<DispatchStorySurface
+					variant={variant}
+					theme={theme}
+					captureEvidence={captureEvidence}
+					progress={progress}
+				/>
 			);
 			break;
 		case 'inventory-proof':

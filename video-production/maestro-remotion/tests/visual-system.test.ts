@@ -3,10 +3,13 @@ import { describe, expect, it } from 'vitest';
 import { THEMES } from '../../../src/shared/themes';
 import {
 	DEFAULT_VISUAL_THEME_ID,
+	DIRECTOR_NOTES_TABS,
 	MAESTRO_SURFACE_THEMES,
 	MAESTRO_VISUAL_PRIMITIVE_IDS,
 	REQUIRED_PRODUCT_LABELS,
+	SYMPHONY_TABS,
 	VISUAL_FALLBACK_SLOTS,
+	WORKTREE_TABS,
 	maestroVisualTheme,
 } from '../src/lib/maestroVisualSystem';
 
@@ -51,7 +54,10 @@ describe('Maestro visual system', () => {
 			'Worktree Branch Name',
 			'Automatically create PR when complete',
 		]);
-		expect(VISUAL_FALLBACK_SLOTS).toHaveLength(3);
+		expect(SYMPHONY_TABS).toEqual(['Projects', 'Active', 'History', 'Stats']);
+		expect(DIRECTOR_NOTES_TABS).toEqual(['Help', 'Unified History', 'AI Overview']);
+		expect(WORKTREE_TABS).toEqual(['Auto Run', 'Run in Worktree', 'History']);
+		expect(VISUAL_FALLBACK_SLOTS).toHaveLength(7);
 		expect(
 			VISUAL_FALLBACK_SLOTS.every((slot) => slot.sourcePath.startsWith('docs/screenshots/'))
 		).toBe(true);

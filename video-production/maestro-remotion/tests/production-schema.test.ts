@@ -6,11 +6,16 @@ import {
 	type VideoSpec,
 	validateVideoSpec,
 } from '../src/data/production-schema';
+import { prototypeSpecs } from '../src/data/specs';
 import { workspaceBootstrapSpec } from '../src/data/workspace-bootstrap-spec';
 
 describe('production schema', () => {
-	it('parses the workspace bootstrap spec and composition props', () => {
+	it('parses the workspace bootstrap spec, prototype specs, and composition props', () => {
 		expect(() => validateVideoSpec(workspaceBootstrapSpec)).not.toThrow();
+		for (const spec of prototypeSpecs) {
+			expect(() => validateVideoSpec(spec)).not.toThrow();
+			expect(spec.scenes.every((scene) => scene.surfaceId.length > 0)).toBe(true);
+		}
 		expect(VideoCompositionPropsSchema.parse({ spec: workspaceBootstrapSpec }).spec.id).toBe(
 			'MaestroWorkspaceBootstrap'
 		);

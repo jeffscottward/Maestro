@@ -37,7 +37,7 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 			required: true,
 		},
 		{
-			id: 'director-notes-history-fallback',
+			id: 'director-notes-history',
 			feature: "Director's Notes Unified History",
 			mode: 'fallback-slot',
 			sourceRef: 'docs/screenshots/directors-notes-history.png',
@@ -46,7 +46,7 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 			required: true,
 		},
 		{
-			id: 'autorun-worktree-fallback',
+			id: 'autorun-worktree',
 			feature: 'Run in Worktree',
 			mode: 'fallback-slot',
 			sourceRef: 'docs/screenshots/autorun-worktree.png',
@@ -59,6 +59,7 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 		{
 			id: 'foundation-intro',
 			type: 'title-card',
+			surfaceId: 'symphony-projects',
 			featureName: 'Workspace Foundation',
 			accentLabel: 'Foundation',
 			title: 'Schema-backed Remotion workspace',
@@ -69,16 +70,13 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 		{
 			id: 'foundation-schema',
 			type: 'feature-spotlight',
+			surfaceId: 'worktree-dispatch',
 			featureName: 'Production Schema',
 			accentLabel: 'Data Model',
 			title: 'Scenes, captures, and motion stay in validated specs',
 			body: "Each video can now declare source refs, required capture slots, and motion behavior in Zod-validated data before deeper Symphony, Director's Notes, and worktree productions land.",
 			durationInFrames: 90,
-			captureIds: [
-				'project-sources',
-				'director-notes-history-fallback',
-				'autorun-worktree-fallback',
-			],
+			captureIds: ['project-sources', 'director-notes-history', 'autorun-worktree'],
 		},
 	],
 });

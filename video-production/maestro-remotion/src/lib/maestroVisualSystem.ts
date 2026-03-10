@@ -59,6 +59,8 @@ export const REQUIRED_PRODUCT_LABELS = [
 ] as const;
 
 export const SYMPHONY_TABS = ['Projects', 'Active', 'History', 'Stats'] as const;
+export const DIRECTOR_NOTES_TABS = ['Help', 'Unified History', 'AI Overview'] as const;
+export const WORKTREE_TABS = ['Auto Run', 'Run in Worktree', 'History'] as const;
 
 export const DIRECTOR_NOTES_STATS = [
 	{ label: 'Agents', value: '27', tone: 'accent' as const },
@@ -84,6 +86,14 @@ export const TERMINAL_PLAN_LINES = [
 	'wraps xterm.js with proper lifecycle management.',
 ] as const;
 
+export type VisualFallbackSlot = {
+	id: string;
+	label: string;
+	sourcePath: string;
+	mediaType: 'screenshot' | 'video';
+	reason: string;
+};
+
 export const VISUAL_FALLBACK_SLOTS = [
 	{
 		id: 'director-notes-history',
@@ -91,6 +101,13 @@ export const VISUAL_FALLBACK_SLOTS = [
 		sourcePath: 'docs/screenshots/directors-notes-history.png',
 		mediaType: 'screenshot',
 		reason: 'Use the exact Unified History density until the full history table is reconstructed.',
+	},
+	{
+		id: 'director-notes-ai-overview',
+		label: 'AI Overview',
+		sourcePath: 'docs/screenshots/directors-notes-ai-overview.png',
+		mediaType: 'screenshot',
+		reason: 'Preserves the rendered markdown synopsis until the AI Overview panel is rebuilt exactly.',
 	},
 	{
 		id: 'autorun-worktree',
@@ -101,6 +118,20 @@ export const VISUAL_FALLBACK_SLOTS = [
 			'Keeps the worktree form exact while later phases replace this slot with a live rebuild.',
 	},
 	{
+		id: 'git-worktree-configuration',
+		label: 'Git Worktree Configuration',
+		sourcePath: 'docs/screenshots/git-worktree-configuration.png',
+		mediaType: 'screenshot',
+		reason: 'Anchors the exact worktree configuration density until the later feature pass deepens it.',
+	},
+	{
+		id: 'git-worktree-list',
+		label: 'Git Worktree List',
+		sourcePath: 'docs/screenshots/git-worktree-list.png',
+		mediaType: 'screenshot',
+		reason: 'Keeps the worktree inventory exact until the list view is reconstructed row-for-row.',
+	},
+	{
 		id: 'symphony-details',
 		label: 'Maestro Symphony',
 		sourcePath: 'docs/screenshots/symphony-details.png',
@@ -108,9 +139,15 @@ export const VISUAL_FALLBACK_SLOTS = [
 		reason:
 			'Preserves the issue detail layout until the full split view is recreated from structured data.',
 	},
-] as const;
+	{
+		id: 'symphony-create-agent',
+		label: 'Create Agent',
+		sourcePath: 'docs/screenshots/symphony-create-agent.png',
+		mediaType: 'screenshot',
+		reason: 'Keeps the agent creation sheet exact while the form layout remains a later-phase rebuild.',
+	},
+] as const satisfies readonly VisualFallbackSlot[];
 
-export type VisualFallbackSlot = (typeof VISUAL_FALLBACK_SLOTS)[number];
 export type MaestroVisualTheme = Theme;
 
 export const createFallbackSlot = (slot: VisualFallbackSlot): VisualFallbackSlot => slot;

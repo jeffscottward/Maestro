@@ -7,10 +7,9 @@ import {
 	translateXFromProgress,
 	translateYFromProgress,
 } from '../animations/motion';
-import { FeatureSurfaceShowcase } from '../components/FeatureSurfaceShowcase';
+import { FeatureSurfaceShowcase, getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
 import { ProductionFrame } from '../components/ProductionFrame';
 import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
-import { MAESTRO_SURFACE_THEMES } from '../lib/maestroVisualSystem';
 import { MetaBadge } from '../ui/MetaBadge';
 
 type FeatureHeroSceneProps = {
@@ -33,8 +32,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 	spec,
 	captures,
 }) => {
-	const theme =
-		scene.type === 'title-card' ? MAESTRO_SURFACE_THEMES.symphony : MAESTRO_SURFACE_THEMES.worktree;
+	const theme = getSurfaceTheme(scene.surfaceId);
 	const frame = useCurrentFrame();
 	const { fps } = useVideoConfig();
 

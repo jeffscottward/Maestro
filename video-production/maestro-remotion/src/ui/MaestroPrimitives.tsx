@@ -272,8 +272,9 @@ export const MaestroAutoRunDocumentList: React.FC<
 	PrimitiveProps & {
 		title?: string;
 		documents: readonly { name: string; tasks: string; active: boolean }[];
+		summaryPillLabel?: string;
 	}
-> = ({ title = 'Auto Run', documents, theme = maestroVisualTheme }) => {
+> = ({ title = 'Auto Run', documents, summaryPillLabel = '20 tasks', theme = maestroVisualTheme }) => {
 	return (
 		<div
 			style={{
@@ -307,7 +308,7 @@ export const MaestroAutoRunDocumentList: React.FC<
 					</div>
 					<div style={{ fontSize: 15, color: theme.colors.textDim }}>Documents to Run</div>
 				</div>
-				<Pill label="20 tasks" tone="warning" theme={theme} />
+				<Pill label={summaryPillLabel} tone="warning" theme={theme} />
 			</div>
 			{documents.map((document) => (
 				<div

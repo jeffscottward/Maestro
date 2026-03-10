@@ -5,7 +5,7 @@ import type { VideoCompositionProps } from '../data/production-schema';
 import { getCapturesForScene, getSceneOffsets } from '../lib/timeline';
 import { FeatureHeroScene } from '../scenes/FeatureHeroScene';
 
-export const MaestroWorkspaceBootstrapComposition: React.FC<VideoCompositionProps> = ({ spec }) => {
+export const MaestroFeatureComposition: React.FC<VideoCompositionProps> = ({ spec }) => {
 	const scenes = getSceneOffsets(spec);
 
 	return (
@@ -24,3 +24,5 @@ export const MaestroWorkspaceBootstrapComposition: React.FC<VideoCompositionProp
 		</AbsoluteFill>
 	);
 };
+
+export const MaestroWorkspaceBootstrapComposition = MaestroFeatureComposition;

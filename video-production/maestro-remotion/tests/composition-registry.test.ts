@@ -10,6 +10,16 @@ import {
 import { getDurationInFrames } from '../src/lib/timeline';
 
 describe('composition registry', () => {
+	it('registers the teaser and all three prototype stubs alongside the workspace bootstrap', () => {
+		expect(compositionDefinitions.map((definition) => definition.id)).toEqual([
+			'MaestroWorkspaceBootstrap',
+			'MaestroFeatureTeaser',
+			'SymphonyPrototype',
+			'DirectorNotesPrototype',
+			'WorktreeSpinOffsPrototype',
+		]);
+	});
+
 	it('derives composition timing from the structured video spec instead of hardcoded timelines', () => {
 		const definition = getCompositionById(WORKSPACE_COMPOSITION_ID);
 
@@ -24,5 +34,23 @@ describe('composition registry', () => {
 
 		expect(definition?.schema).toBe(VideoCompositionPropsSchema);
 		expect(() => definition?.schema.parse(definition.defaultProps)).not.toThrow();
+	});
+
+	it('assigns explicit 30 fps timing to the teaser and each prototype stub because the current motion density is moderate', () => {
+		const prototypeIds = [
+			'MaestroFeatureTeaser',
+			'SymphonyPrototype',
+			'DirectorNotesPrototype',
+			'WorktreeSpinOffsPrototype',
+		] as const;
+
+		for (const compositionId of prototypeIds) {
+			const definition = getCompositionById(compositionId);
+
+			expect(definition?.fps).toBe(30);
+			expect(definition?.defaultProps.spec.fps).toBe(30);
+			expect(definition?.defaultProps.spec.aspectRatio).toBe('16:9');
+			expect(definition?.defaultProps.spec.scenes.length).toBeGreaterThan(0);
+		}
 	});
 });

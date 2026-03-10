@@ -5,6 +5,8 @@ Work\ Trees/
 community-data/
 .mcp.json
 specs/
+!video-production/maestro-remotion/src/data/specs/
+!video-production/maestro-remotion/src/data/specs/**
 
 # Tests
 coverage/

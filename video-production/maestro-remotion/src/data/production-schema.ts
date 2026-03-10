@@ -27,9 +27,19 @@ export const CaptureManifestEntrySchema = z.object({
 	required: z.boolean(),
 });
 
+export const SceneSurfaceIdSchema = z.enum([
+	'symphony-projects',
+	'symphony-create-agent',
+	'director-history',
+	'director-ai-overview',
+	'worktree-dispatch',
+	'worktree-terminal',
+]);
+
 export const SceneDataSchema = z.object({
 	id: z.string().min(1),
 	type: z.enum(['title-card', 'feature-spotlight', 'capture-callout']),
+	surfaceId: SceneSurfaceIdSchema,
 	featureName: z.string().min(1),
 	accentLabel: z.string().min(1),
 	title: z.string().min(1),
@@ -88,6 +98,7 @@ export const VideoCompositionPropsSchema = z.object({
 export type FrameDimensions = z.infer<typeof FrameDimensionsSchema>;
 export type MotionSettings = z.infer<typeof MotionSettingsSchema>;
 export type CaptureManifestEntry = z.infer<typeof CaptureManifestEntrySchema>;
+export type SceneSurfaceId = z.infer<typeof SceneSurfaceIdSchema>;
 export type SceneData = z.infer<typeof SceneDataSchema>;
 export type VideoSpec = z.infer<typeof VideoSpecSchema>;
 export type VideoCompositionProps = z.infer<typeof VideoCompositionPropsSchema>;

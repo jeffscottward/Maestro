@@ -1,8 +1,10 @@
 import type { ComponentType } from 'react';
 import type { z } from 'zod';
 
-import { WorkspaceBootstrap } from '../WorkspaceBootstrap';
-import { VideoCompositionPropsSchema, type VideoCompositionProps } from '../data/production-schema';
+import { MaestroFeatureComposition } from '../compositions/MaestroWorkspaceBootstrapComposition';
+import { VideoCompositionPropsSchema, type VideoCompositionProps, type VideoSpec } from '../data/production-schema';
+import { prototypeSpecs } from '../data/specs';
+import { getDurationInFrames } from './timeline';
 import {
 	WORKSPACE_COMPOSITION_ID,
 	WORKSPACE_DIMENSIONS,
@@ -22,10 +24,23 @@ type RegisteredComposition = {
 	schema: z.ZodType<VideoCompositionProps>;
 };
 
+const createRegisteredComposition = (spec: VideoSpec): RegisteredComposition => ({
+	id: spec.id,
+	component: MaestroFeatureComposition,
+	width: spec.dimensions.width,
+	height: spec.dimensions.height,
+	fps: spec.fps,
+	durationInFrames: getDurationInFrames(spec),
+	defaultProps: {
+		spec,
+	},
+	schema: VideoCompositionPropsSchema,
+});
+
 export const compositionDefinitions = [
 	{
 		id: WORKSPACE_COMPOSITION_ID,
-		component: WorkspaceBootstrap,
+		component: MaestroFeatureComposition,
 		width: WORKSPACE_DIMENSIONS.width,
 		height: WORKSPACE_DIMENSIONS.height,
 		fps: WORKSPACE_FPS,
@@ -33,6 +48,7 @@ export const compositionDefinitions = [
 		defaultProps: workspaceBootstrapDefaults,
 		schema: VideoCompositionPropsSchema,
 	},
+	...prototypeSpecs.map((spec) => createRegisteredComposition(spec)),
 ] satisfies RegisteredComposition[];
 
 export const getCompositionById = (compositionId: string) => {

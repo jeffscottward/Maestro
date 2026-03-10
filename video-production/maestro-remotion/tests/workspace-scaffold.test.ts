@@ -17,6 +17,7 @@ describe('maestro remotion workspace scaffold', () => {
 			'src/ui',
 			'src/animations',
 			'src/data',
+			'src/data/specs',
 			'src/assets',
 			'src/lib',
 			'renders',
@@ -28,12 +29,19 @@ describe('maestro remotion workspace scaffold', () => {
 	});
 
 	it('registers the workspace bootstrap composition through the shared registry', () => {
-		expect(compositionDefinitions).toHaveLength(1);
+		expect(compositionDefinitions).toHaveLength(5);
 		expect(compositionDefinitions[0]?.id).toBe(WORKSPACE_COMPOSITION_ID);
 		expect(compositionDefinitions[0]?.width).toBe(1920);
 		expect(compositionDefinitions[0]?.height).toBe(1080);
 		expect(compositionDefinitions[0]?.fps).toBe(30);
 		expect(compositionDefinitions[0]?.durationInFrames).toBe(180);
+		expect(compositionDefinitions.map((composition) => composition.id)).toEqual([
+			'MaestroWorkspaceBootstrap',
+			'MaestroFeatureTeaser',
+			'SymphonyPrototype',
+			'DirectorNotesPrototype',
+			'WorktreeSpinOffsPrototype',
+		]);
 	});
 
 	it('keeps the source research artifact linked into the workspace', () => {

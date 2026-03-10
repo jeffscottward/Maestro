@@ -13,6 +13,13 @@ const readJson = (relativePath: string) =>
 	JSON.parse(readFileSync(resolve(workspaceRoot, relativePath), 'utf8'));
 
 describe('Symphony capture asset integration', () => {
+	it('keeps the checked-in capture definitions synchronized with the standalone spec', () => {
+		const scaffold = buildFeatureCaptureManifest(symphonyStandaloneSpec);
+		const manifest = FeatureCaptureManifestSchema.parse(readJson(scaffold.manifestPath));
+
+		expect(manifest.captures).toEqual(symphonyStandaloneSpec.capturePlan);
+	});
+
 	it('promotes each Symphony fallback asset to a concrete checked-in source path', () => {
 		const scaffold = buildFeatureCaptureManifest(symphonyStandaloneSpec);
 		const manifest = FeatureCaptureManifestSchema.parse(readJson(scaffold.manifestPath));

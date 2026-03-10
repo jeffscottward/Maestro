@@ -31,10 +31,10 @@
 		},
 		{
 			"id": "symphony-create-agent-modal",
-			"feature": "Symphony Create Agent",
+			"feature": "Symphony Create Symphony Agent",
 			"mode": "live-capture",
-			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
-			"notes": "Capture the `Create Agent` handoff with provider selection and working directory ready to confirm.",
+			"sourceRef": "src/renderer/components/AgentCreationDialog.tsx",
+			"notes": "Capture the `Create Symphony Agent` dialog with provider selection, session naming, and working directory ready to confirm.",
 			"required": true
 		},
 		{
@@ -50,7 +50,7 @@
 			"feature": "Symphony Active Contribution",
 			"mode": "live-capture",
 			"sourceRef": "src/renderer/components/SymphonyModal.tsx",
-			"notes": "Capture the `Active` contribution card with status badge, elapsed time, token usage, and PR state.",
+			"notes": "Capture or reconstruct the current `Active` contribution card with status badge, draft PR state, document progress, token usage, sync affordance, and review readiness.",
 			"required": true
 		},
 		{
@@ -239,7 +239,7 @@
 				},
 				{
 					"ratio": "9:16",
-					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 				}
 			],
@@ -276,7 +276,7 @@
 				},
 				{
 					"ratio": "9:16",
-					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 				}
 			],
@@ -323,7 +323,7 @@
 				},
 				{
 					"ratio": "9:16",
-					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 				}
 			],
@@ -341,12 +341,12 @@
 				{
 					"captureId": "symphony-create-agent-modal",
 					"plannedMode": "live-capture",
-					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"sourceRef": "src/renderer/components/AgentCreationDialog.tsx",
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/create-agent-reference.png",
 					"fallbackAssetIds": ["symphony-create-agent-focus"],
-					"notes": "Source type: screenshot fallback. Resolved from the checked-in Create Agent screenshot copied into capture/docs/symphony/create-agent-reference.png. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"notes": "Source type: screenshot fallback with copy drift. Resolved from the checked-in `Create Symphony Agent` reference screenshot copied into capture/docs/symphony/create-agent-reference.png, but the current dialog should keep the shipped `Create Symphony Agent` title and current provider, session, and working-directory fields from `AgentCreationDialog.tsx`. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				}
 			]
 		},
@@ -370,7 +370,7 @@
 				},
 				{
 					"ratio": "9:16",
-					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 				}
 			],
@@ -378,12 +378,12 @@
 				{
 					"captureId": "symphony-create-agent-modal",
 					"plannedMode": "live-capture",
-					"sourceRef": "src/renderer/components/SymphonyModal.tsx",
+					"sourceRef": "src/renderer/components/AgentCreationDialog.tsx",
 					"required": true,
 					"sourceStatus": "resolved",
 					"resolvedSourcePath": "capture/docs/symphony/create-agent-reference.png",
 					"fallbackAssetIds": ["symphony-create-agent-focus", "symphony-automation-checklist"],
-					"notes": "Source type: screenshot fallback with copy drift. Resolved from the checked-in create-agent screenshot copied into capture/docs/symphony/create-agent-reference.png, but the current dialog title in product code is `Create Symphony Agent` with a `Create Agent` confirmation CTA. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
+					"notes": "Source type: screenshot fallback with copy drift. Resolved from the checked-in `Create Symphony Agent` reference screenshot copied into capture/docs/symphony/create-agent-reference.png, but the current dialog should keep the shipped `Create Symphony Agent` title and current provider, session, and working-directory fields from `AgentCreationDialog.tsx`. A safe live attempt succeeded via `pnpm dev:demo` on 2026-03-10, but the fresh demo profile did not expose seeded feature data rich enough for autonomous end-to-end capture."
 				},
 				{
 					"captureId": "symphony-setup-proof",
@@ -417,7 +417,7 @@
 				},
 				{
 					"ratio": "9:16",
-					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 				}
 			],
@@ -454,7 +454,7 @@
 				},
 				{
 					"ratio": "9:16",
-					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+					"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 					"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 				}
 			],
@@ -482,7 +482,7 @@
 			},
 			{
 				"ratio": "9:16",
-				"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Agent` handoff rather than showing the entire modal width at once.",
+				"framing": "Use vertical camera moves from project list to issue detail and then into the `Create Symphony Agent` handoff rather than showing the entire modal width at once.",
 				"safeZone": "Protect the selected issue, document preview label, and activation controls inside a stacked vertical safe zone with supporting details demoted to inserts."
 			}
 		]

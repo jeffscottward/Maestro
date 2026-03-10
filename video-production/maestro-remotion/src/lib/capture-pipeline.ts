@@ -60,6 +60,17 @@ const formatSceneNumber = (sceneNumber: number) => String(sceneNumber).padStart(
 const arraysMatch = (left: readonly string[], right: readonly string[]) =>
 	left.length === right.length && left.every((value, index) => value === right[index]);
 
+const captureEntriesMatch = (
+	left: VideoSpec['capturePlan'][number],
+	right: VideoSpec['capturePlan'][number]
+) =>
+	left.id === right.id &&
+	left.feature === right.feature &&
+	left.mode === right.mode &&
+	left.sourceRef === right.sourceRef &&
+	left.notes === right.notes &&
+	left.required === right.required;
+
 const getCapturePathSegments = (relativePath: string) => {
 	const segments = relativePath.split('/').filter(Boolean);
 
@@ -348,6 +359,25 @@ export const validateFeatureCaptureManifest = (
 		pushIssue(issues, `${spec.id}: manifest capture count must match the source spec.`);
 	}
 
+	for (const [index, capture] of spec.capturePlan.entries()) {
+		const manifestCapture = manifest.captures[index];
+
+		if (!manifestCapture) {
+			pushIssue(
+				issues,
+				`${spec.id}: manifest capture "${capture.id}" is missing from the checked-in manifest.`
+			);
+			continue;
+		}
+
+		if (!captureEntriesMatch(manifestCapture, capture)) {
+			pushIssue(
+				issues,
+				`${spec.id}: manifest capture "${capture.id}" must stay synchronized with the source spec metadata.`
+			);
+		}
+	}
+
 	if (manifest.assets.length !== (spec.assetPlaceholders?.length ?? 0)) {
 		pushIssue(issues, `${spec.id}: manifest asset count must match the source spec.`);
 	}
@@ -371,6 +401,18 @@ export const validateFeatureCaptureManifest = (
 
 		if (asset.plannedSource !== sourceAsset.plannedSource) {
 			pushIssue(issues, `${spec.id}: asset "${asset.id}" must preserve its plannedSource path.`);
+		}
+
+		if (
+			asset.kind !== sourceAsset.kind ||
+			asset.label !== sourceAsset.label ||
+			asset.usage !== sourceAsset.usage ||
+			asset.required !== sourceAsset.required
+		) {
+			pushIssue(
+				issues,
+				`${spec.id}: asset "${asset.id}" metadata must stay synchronized with the source spec.`
+			);
 		}
 
 		if (asset.bucket !== expectedBucket) {

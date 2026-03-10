@@ -45,6 +45,15 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 				'Use the exact Unified History screenshot until the dense history table is rebuilt as a data-driven surface.',
 			required: true,
 		},
+		{
+			id: 'autorun-worktree-fallback',
+			feature: 'Run in Worktree',
+			mode: 'fallback-slot',
+			sourceRef: 'docs/screenshots/autorun-worktree.png',
+			notes:
+				'Keep the worktree dispatch form exact until the dedicated flow is reconstructed from structured controls.',
+			required: true,
+		},
 	],
 	scenes: [
 		{
@@ -65,7 +74,11 @@ export const workspaceBootstrapSpec = validateVideoSpec({
 			title: 'Scenes, captures, and motion stay in validated specs',
 			body: "Each video can now declare source refs, required capture slots, and motion behavior in Zod-validated data before deeper Symphony, Director's Notes, and worktree productions land.",
 			durationInFrames: 90,
-			captureIds: ['project-sources', 'director-notes-history-fallback'],
+			captureIds: [
+				'project-sources',
+				'director-notes-history-fallback',
+				'autorun-worktree-fallback',
+			],
 		},
 	],
 });

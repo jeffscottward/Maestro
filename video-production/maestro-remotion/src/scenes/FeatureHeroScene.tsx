@@ -128,7 +128,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 							style={{
 								height: 10,
 								borderRadius: 999,
-								backgroundColor: 'rgba(149, 115, 193, 0.2)',
+								backgroundColor: theme.colors.accentDim,
 								overflow: 'hidden',
 							}}
 						>

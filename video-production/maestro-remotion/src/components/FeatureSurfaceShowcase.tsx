@@ -32,6 +32,20 @@ export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
 }) => {
 	const symphonyTheme = MAESTRO_SURFACE_THEMES.symphony;
 	const worktreeTheme = MAESTRO_SURFACE_THEMES.worktree;
+	const fallbackSlots = captures
+		.filter((capture) => capture.mode === 'fallback-slot')
+		.map((capture) => {
+			return (
+				VISUAL_FALLBACK_SLOTS.find((slot) => slot.id === capture.id) ??
+				createFallbackSlot({
+					id: capture.id,
+					label: capture.feature,
+					sourcePath: capture.sourceRef,
+					mediaType: 'screenshot',
+					reason: capture.notes,
+				})
+			);
+		});
 	const footer = (
 		<>
 			<span>Arrow keys to navigate • Enter to select</span>
@@ -106,10 +120,15 @@ export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
 						pathPreview="/Users/jeff/Projects/Maestro-WorkTrees/autorun-spinout"
 						theme={worktreeTheme}
 					/>
-					<MaestroFallbackSlot
-						slot={createFallbackSlot(VISUAL_FALLBACK_SLOTS[0])}
-						theme={worktreeTheme}
-					/>
+					{fallbackSlots[0] ? (
+						<MaestroFallbackSlot slot={fallbackSlots[0]} theme={worktreeTheme} />
+					) : (
+						<MaestroAnnotationSurface
+							title="Fallback Slot"
+							body="Any surface that cannot be matched exactly stays explicit as a screenshot or video slot instead of a loose approximation."
+							theme={worktreeTheme}
+						/>
+					)}
 				</div>
 				<div style={{ display: 'grid', gap: 14 }}>
 					<MaestroTerminalBlock
@@ -117,10 +136,15 @@ export const FeatureSurfaceShowcase: React.FC<FeatureSurfaceShowcaseProps> = ({
 						lines={TERMINAL_PLAN_LINES}
 						theme={worktreeTheme}
 					/>
-					<MaestroFallbackSlot
-						slot={createFallbackSlot(VISUAL_FALLBACK_SLOTS[1])}
-						theme={worktreeTheme}
-					/>
+					{fallbackSlots[1] ? (
+						<MaestroFallbackSlot slot={fallbackSlots[1]} theme={worktreeTheme} />
+					) : (
+						<MaestroAnnotationSurface
+							title="Capture Coverage"
+							body="This surface is now driven by the scene capture manifest, so later prototype specs can swap in exact screenshot or video references without touching layout code."
+							theme={worktreeTheme}
+						/>
+					)}
 				</div>
 			</div>
 		</MaestroModalShell>

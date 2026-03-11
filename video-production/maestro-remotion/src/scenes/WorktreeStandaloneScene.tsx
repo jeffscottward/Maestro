@@ -26,7 +26,13 @@ import {
 } from '../components/WorktreeStandalonePrimitives';
 import { WorktreeSurfaceShowcase } from '../components/WorktreeSurfaceShowcase';
 import { ProductionFrame } from '../components/ProductionFrame';
-import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
+import type {
+	CaptureManifestEntry,
+	SceneData,
+	VideoCompositionMetadata,
+	VideoSpec,
+} from '../data/production-schema';
+import { getSceneShellLayout } from '../lib/aspect-ratio-adaptation';
 import { MetaBadge } from '../ui/MetaBadge';
 
 type WorktreeStandaloneSceneProps = {
@@ -34,6 +40,7 @@ type WorktreeStandaloneSceneProps = {
 	sceneIndex: number;
 	sceneCount: number;
 	spec: VideoSpec;
+	composition: VideoCompositionMetadata;
 	captures: CaptureManifestEntry[];
 };
 
@@ -49,11 +56,17 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 	sceneIndex,
 	sceneCount,
 	spec,
+	composition,
 	captures,
 }) => {
 	const theme = getSurfaceTheme(scene.surfaceId);
 	const frame = useCurrentFrame();
 	const { fps } = useVideoConfig();
+	const layout = getSceneShellLayout({
+		specId: spec.id,
+		sceneId: scene.id,
+		aspectRatio: composition.aspectRatio,
+	});
 	const storyboard = scene.storyboard;
 	const titleEntrance = getEntranceProgress(frame, fps, spec.motion);
 	const copyEntrance = getEntranceProgress(frame, fps, spec.motion, 6);
@@ -74,7 +87,7 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 	const systemResponse = formatNarrativeCopy(storyboard?.systemResponse ?? scene.body);
 	const titleLift = translateYFromProgress(titleEntrance, 56, 0);
 	const copyLift = translateYFromProgress(copyEntrance, 36, 0);
-	const stageSlide = translateXFromProgress(supportEntrance, 48, 0);
+	const stageSlide = layout.mode === 'split' ? translateXFromProgress(supportEntrance, 48, 0) : 0;
 	const surfaceShadowOpacity = interpolate(
 		supportEntrance,
 		[0, 1],
@@ -83,12 +96,16 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 	);
 
 	return (
-		<ProductionFrame theme={theme}>
+		<ProductionFrame theme={theme} composition={composition}>
 			<div
+				data-aspect-ratio={composition.aspectRatio}
+				data-layout-mode={layout.mode}
+				data-story-note-columns={String(layout.noteColumns)}
+				data-surface-priority={layout.surfacePriority}
 				style={{
 					display: 'grid',
-					gridTemplateRows: '1fr auto',
-					gap: 28,
+					gridTemplateRows: layout.mode === 'split' ? '1fr auto' : 'auto auto',
+					gap: layout.frameGap,
 					height: '100%',
 					opacity: sceneOpacity,
 				}}
@@ -96,8 +113,8 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 				<div
 					style={{
 						display: 'grid',
-						gridTemplateColumns: '0.88fr 1.12fr',
-						gap: 40,
+						gridTemplateColumns: layout.mode === 'split' ? '0.88fr 1.12fr' : '1fr',
+						gap: layout.contentGap,
 						minHeight: 0,
 					}}
 				>
@@ -105,7 +122,7 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
-							gap: 18,
+							gap: layout.sectionGap,
 							transform: `translateY(${titleLift}px)`,
 						}}
 					>
@@ -121,20 +138,20 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 							<div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 								<h1
 									style={{
-										fontSize: 66,
+										fontSize: layout.titleFontSize,
 										lineHeight: 0.96,
 										margin: 0,
-										maxWidth: 820,
+										maxWidth: layout.headlineMaxWidth,
 									}}
 								>
 									{title}
 								</h1>
 								<p
 									style={{
-										fontSize: 24,
+										fontSize: layout.bodyFontSize,
 										lineHeight: 1.44,
 										margin: 0,
-										maxWidth: 840,
+										maxWidth: layout.bodyMaxWidth,
 										color: theme.colors.textDim,
 										opacity: interpolate(copyEntrance, [0, 1], [0.18, 1], clamp),
 									}}
@@ -147,7 +164,7 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 						<div
 							style={{
 								display: 'grid',
-								gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+								gridTemplateColumns: `repeat(${layout.noteColumns}, minmax(0, 1fr))`,
 								gap: 14,
 								transform: `translateY(${copyLift}px)`,
 							}}
@@ -161,7 +178,12 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 									stepFrames={5}
 									durationFrames={16}
 								>
-									<StoryNote label={`Hook ${index + 1}`} body={line} theme={theme} compact />
+									<StoryNote
+										label={`Hook ${index + 1}`}
+										body={line}
+										theme={theme}
+										compact={layout.compactStoryCards}
+									/>
 								</AnimatedReveal>
 							))}
 						</div>
@@ -169,15 +191,25 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 						<div
 							style={{
 								display: 'grid',
-								gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+								gridTemplateColumns: `repeat(${layout.supportColumns}, minmax(0, 1fr))`,
 								gap: 14,
 							}}
 						>
 							<AnimatedReveal frame={frame} delayFrames={18} durationFrames={18}>
-								<StoryNote label="User Action" body={userAction} theme={theme} compact />
+								<StoryNote
+									label="User Action"
+									body={userAction}
+									theme={theme}
+									compact={layout.compactStoryCards}
+								/>
 							</AnimatedReveal>
 							<AnimatedReveal frame={frame} delayFrames={22} durationFrames={18}>
-								<StoryNote label="System Response" body={systemResponse} theme={theme} compact />
+								<StoryNote
+									label="System Response"
+									body={systemResponse}
+									theme={theme}
+									compact={layout.compactStoryCards}
+								/>
 							</AnimatedReveal>
 						</div>
 					</div>
@@ -185,7 +217,7 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 					<div
 						style={{
 							position: 'relative',
-							minHeight: 0,
+							minHeight: layout.mode === 'split' ? 0 : layout.stageMinHeight,
 							transform: `translateX(${stageSlide}px)`,
 						}}
 					>
@@ -193,8 +225,8 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
-								gap: 16,
-								height: '100%',
+								gap: layout.stageGap,
+								height: layout.mode === 'split' ? '100%' : 'auto',
 							}}
 						>
 							<AnimatedReveal frame={frame} delayFrames={8} durationFrames={16}>
@@ -231,7 +263,13 @@ export const WorktreeStandaloneScene: React.FC<WorktreeStandaloneSceneProps> = (
 								</div>
 							</AnimatedReveal>
 
-							<div style={{ position: 'relative', minHeight: 0, flex: 1 }}>
+							<div
+								style={{
+									position: 'relative',
+									minHeight: layout.mode === 'split' ? 0 : layout.stageMinHeight,
+									flex: layout.mode === 'split' ? 1 : undefined,
+								}}
+							>
 								<div
 									style={{
 										position: 'absolute',

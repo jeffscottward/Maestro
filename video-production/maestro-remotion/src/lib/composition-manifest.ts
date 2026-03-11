@@ -1,10 +1,5 @@
 import type { VideoCompositionProps, VideoSpec } from '../data/production-schema';
-import {
-	directorNotesStandaloneSpec,
-	prototypeSpecs,
-	symphonyStandaloneSpec,
-	worktreeSpinOffsStandaloneSpec,
-} from '../data/specs';
+import { prototypeSpecs, standaloneFeatureSpecs } from '../data/specs';
 import {
 	WORKSPACE_COMPOSITION_ID,
 	WORKSPACE_DIMENSIONS,
@@ -12,6 +7,10 @@ import {
 	WORKSPACE_FPS,
 	workspaceBootstrapDefaults,
 } from '../workspace-metadata';
+import {
+	createVideoCompositionMetadata,
+	getStandaloneCompositionMetadata,
+} from './aspect-ratio-adaptation';
 import { getDurationInFrames } from './timeline';
 
 export type CompositionManifestEntry = {
@@ -23,14 +22,18 @@ export type CompositionManifestEntry = {
 	defaultProps: VideoCompositionProps;
 };
 
-const createCompositionManifestEntry = (spec: VideoSpec): CompositionManifestEntry => ({
-	id: spec.id,
-	width: spec.dimensions.width,
-	height: spec.dimensions.height,
+const createCompositionManifestEntry = (
+	spec: VideoSpec,
+	composition = createVideoCompositionMetadata(spec, '16:9')
+): CompositionManifestEntry => ({
+	id: composition.compositionId,
+	width: composition.dimensions.width,
+	height: composition.dimensions.height,
 	fps: spec.fps,
 	durationInFrames: getDurationInFrames(spec),
 	defaultProps: {
 		spec,
+		composition,
 	},
 });
 
@@ -44,9 +47,11 @@ export const compositionManifest = [
 		defaultProps: workspaceBootstrapDefaults,
 	},
 	...prototypeSpecs.map((spec) => createCompositionManifestEntry(spec)),
-	createCompositionManifestEntry(symphonyStandaloneSpec),
-	createCompositionManifestEntry(directorNotesStandaloneSpec),
-	createCompositionManifestEntry(worktreeSpinOffsStandaloneSpec),
+	...standaloneFeatureSpecs.flatMap((spec) =>
+		getStandaloneCompositionMetadata(spec).map((composition) =>
+			createCompositionManifestEntry(spec, composition)
+		)
+	),
 ] satisfies CompositionManifestEntry[];
 
 export const prototypeCompositionManifest = compositionManifest.filter(

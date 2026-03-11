@@ -9,7 +9,16 @@ import {
 } from '../animations/motion';
 import { FeatureSurfaceShowcase, getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
 import { ProductionFrame } from '../components/ProductionFrame';
-import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
+import type {
+	CaptureManifestEntry,
+	SceneData,
+	VideoCompositionMetadata,
+	VideoSpec,
+} from '../data/production-schema';
+import {
+	createVideoCompositionMetadata,
+	inferAspectRatioFromDimensions,
+} from '../lib/aspect-ratio-adaptation';
 import { DirectorNotesStandaloneScene } from './DirectorNotesStandaloneScene';
 import { SymphonyStandaloneScene } from './SymphonyStandaloneScene';
 import { WorktreeStandaloneScene } from './WorktreeStandaloneScene';
@@ -20,6 +29,7 @@ type FeatureHeroSceneProps = {
 	sceneIndex: number;
 	sceneCount: number;
 	spec: VideoSpec;
+	composition?: VideoCompositionMetadata;
 	captures: CaptureManifestEntry[];
 };
 
@@ -33,10 +43,14 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 	sceneIndex,
 	sceneCount,
 	spec,
+	composition,
 	captures,
 }) => {
 	const frame = useCurrentFrame();
-	const { fps } = useVideoConfig();
+	const { fps, width, height } = useVideoConfig();
+	const resolvedComposition =
+		composition ??
+		createVideoCompositionMetadata(spec, inferAspectRatioFromDimensions(width, height));
 
 	if (spec.id === 'SymphonyStandalone') {
 		return (
@@ -45,6 +59,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 				sceneIndex={sceneIndex}
 				sceneCount={sceneCount}
 				spec={spec}
+				composition={resolvedComposition}
 				captures={captures}
 			/>
 		);
@@ -57,6 +72,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 				sceneIndex={sceneIndex}
 				sceneCount={sceneCount}
 				spec={spec}
+				composition={resolvedComposition}
 				captures={captures}
 			/>
 		);
@@ -69,6 +85,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 				sceneIndex={sceneIndex}
 				sceneCount={sceneCount}
 				spec={spec}
+				composition={resolvedComposition}
 				captures={captures}
 			/>
 		);
@@ -86,7 +103,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 	const cardSlide = translateXFromProgress(secondaryEntrance, 84, 0);
 
 	return (
-		<ProductionFrame theme={theme}>
+		<ProductionFrame theme={theme} composition={resolvedComposition}>
 			<div
 				style={{
 					display: 'grid',
@@ -160,7 +177,7 @@ export const FeatureHeroScene: React.FC<FeatureHeroSceneProps> = ({
 							}}
 						>
 							<span>Validated Production Spec</span>
-							<span>{spec.aspectRatio} master</span>
+							<span>{resolvedComposition.label}</span>
 						</div>
 						<div
 							style={{

@@ -2,6 +2,9 @@ import { z } from 'zod';
 
 const positiveInt = z.number().int().positive();
 
+export const SupportedAspectRatioSchema = z.enum(['16:9', '1:1', '9:16']);
+export const CompositionVariantKeySchema = z.enum(['16x9', '1x1', '9x16']);
+
 export const FrameDimensionsSchema = z.object({
 	width: positiveInt,
 	height: positiveInt,
@@ -179,10 +182,31 @@ export const VideoSpecSchema = z
 		}
 	});
 
-export const VideoCompositionPropsSchema = z.object({
-	spec: VideoSpecSchema,
+export const SafeAreaInsetsSchema = z.object({
+	top: z.number().nonnegative(),
+	right: z.number().nonnegative(),
+	bottom: z.number().nonnegative(),
+	left: z.number().nonnegative(),
 });
 
+export const VideoCompositionMetadataSchema = z.object({
+	compositionId: z.string().min(1),
+	aspectRatio: SupportedAspectRatioSchema,
+	variantKey: CompositionVariantKeySchema,
+	label: z.string().min(1),
+	dimensions: FrameDimensionsSchema,
+	safeArea: SafeAreaInsetsSchema,
+	framing: z.string().min(1),
+	safeZone: z.string().min(1),
+});
+
+export const VideoCompositionPropsSchema = z.object({
+	spec: VideoSpecSchema,
+	composition: VideoCompositionMetadataSchema,
+});
+
+export type SupportedAspectRatio = z.infer<typeof SupportedAspectRatioSchema>;
+export type CompositionVariantKey = z.infer<typeof CompositionVariantKeySchema>;
 export type FrameDimensions = z.infer<typeof FrameDimensionsSchema>;
 export type MotionSettings = z.infer<typeof MotionSettingsSchema>;
 export type CaptureManifestEntry = z.infer<typeof CaptureManifestEntrySchema>;
@@ -192,6 +216,8 @@ export type AspectRatioIntent = z.infer<typeof AspectRatioIntentSchema>;
 export type AssetPlaceholder = z.infer<typeof AssetPlaceholderSchema>;
 export type SceneData = z.infer<typeof SceneDataSchema>;
 export type VideoSpec = z.infer<typeof VideoSpecSchema>;
+export type SafeAreaInsets = z.infer<typeof SafeAreaInsetsSchema>;
+export type VideoCompositionMetadata = z.infer<typeof VideoCompositionMetadataSchema>;
 export type VideoCompositionProps = z.infer<typeof VideoCompositionPropsSchema>;
 
 export const validateVideoSpec = (spec: VideoSpec) => VideoSpecSchema.parse(spec);

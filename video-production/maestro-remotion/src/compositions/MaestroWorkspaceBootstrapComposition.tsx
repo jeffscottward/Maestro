@@ -5,7 +5,10 @@ import type { VideoCompositionProps } from '../data/production-schema';
 import { getCapturesForScene, getSceneOffsets } from '../lib/timeline';
 import { FeatureHeroScene } from '../scenes/FeatureHeroScene';
 
-export const MaestroFeatureComposition: React.FC<VideoCompositionProps> = ({ spec }) => {
+export const MaestroFeatureComposition: React.FC<VideoCompositionProps> = ({
+	spec,
+	composition,
+}) => {
 	const scenes = getSceneOffsets(spec);
 
 	return (
@@ -17,6 +20,7 @@ export const MaestroFeatureComposition: React.FC<VideoCompositionProps> = ({ spe
 						sceneIndex={index}
 						sceneCount={scenes.length}
 						spec={spec}
+						composition={composition}
 						captures={getCapturesForScene(spec, scene)}
 					/>
 				</Sequence>

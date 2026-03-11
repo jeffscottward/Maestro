@@ -8,6 +8,7 @@ import {
 } from '../src/data/production-schema';
 import { prototypeSpecs } from '../src/data/specs';
 import { workspaceBootstrapSpec } from '../src/data/workspace-bootstrap-spec';
+import { createVideoCompositionMetadata } from '../src/lib/aspect-ratio-adaptation';
 
 describe('production schema', () => {
 	it('parses the workspace bootstrap spec, prototype specs, and composition props', () => {
@@ -16,9 +17,12 @@ describe('production schema', () => {
 			expect(() => validateVideoSpec(spec)).not.toThrow();
 			expect(spec.scenes.every((scene) => scene.surfaceId.length > 0)).toBe(true);
 		}
-		expect(VideoCompositionPropsSchema.parse({ spec: workspaceBootstrapSpec }).spec.id).toBe(
-			'MaestroWorkspaceBootstrap'
-		);
+		expect(
+			VideoCompositionPropsSchema.parse({
+				spec: workspaceBootstrapSpec,
+				composition: createVideoCompositionMetadata(workspaceBootstrapSpec, '16:9'),
+			}).spec.id
+		).toBe('MaestroWorkspaceBootstrap');
 	});
 
 	it('rejects specs missing required timeline and capture metadata', () => {

@@ -1,17 +1,23 @@
 import type React from 'react';
 import { AbsoluteFill } from 'remotion';
 
+import type { VideoCompositionMetadata } from '../data/production-schema';
+import { getFrameChrome } from '../lib/aspect-ratio-adaptation';
 import { maestroVisualTheme, type MaestroVisualTheme } from '../lib/maestroVisualSystem';
 
 type ProductionFrameProps = {
 	children: React.ReactNode;
 	theme?: MaestroVisualTheme;
+	composition?: VideoCompositionMetadata;
 };
 
 export const ProductionFrame: React.FC<ProductionFrameProps> = ({
 	children,
 	theme = maestroVisualTheme,
+	composition,
 }) => {
+	const chrome = getFrameChrome(composition?.aspectRatio ?? '16:9');
+
 	return (
 		<AbsoluteFill
 			style={{
@@ -31,7 +37,7 @@ export const ProductionFrame: React.FC<ProductionFrameProps> = ({
 			<div
 				style={{
 					position: 'absolute',
-					inset: 40,
+					inset: chrome.borderInset,
 					borderRadius: 34,
 					border: `1px solid ${theme.colors.border}`,
 					backgroundColor: `${theme.colors.bgMain}cc`,
@@ -41,7 +47,7 @@ export const ProductionFrame: React.FC<ProductionFrameProps> = ({
 			<div
 				style={{
 					position: 'absolute',
-					inset: 72,
+					inset: chrome.contentInset,
 					display: 'flex',
 					flexDirection: 'column',
 				}}

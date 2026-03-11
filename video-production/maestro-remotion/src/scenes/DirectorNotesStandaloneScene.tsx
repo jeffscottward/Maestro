@@ -18,7 +18,13 @@ import {
 import { DirectorNotesSurfaceShowcase } from '../components/DirectorNotesSurfaceShowcase';
 import { AnimatedReveal, GuidedCursor } from '../components/SymphonyMotionPrimitives';
 import { ProductionFrame } from '../components/ProductionFrame';
-import type { CaptureManifestEntry, SceneData, VideoSpec } from '../data/production-schema';
+import type {
+	CaptureManifestEntry,
+	SceneData,
+	VideoCompositionMetadata,
+	VideoSpec,
+} from '../data/production-schema';
+import { getSceneShellLayout } from '../lib/aspect-ratio-adaptation';
 import { getSurfaceTheme } from '../components/FeatureSurfaceShowcase';
 import type { MaestroVisualTheme } from '../lib/maestroVisualSystem';
 import { MetaBadge } from '../ui/MetaBadge';
@@ -28,6 +34,7 @@ type DirectorNotesStandaloneSceneProps = {
 	sceneIndex: number;
 	sceneCount: number;
 	spec: VideoSpec;
+	composition: VideoCompositionMetadata;
 	captures: CaptureManifestEntry[];
 };
 
@@ -42,14 +49,15 @@ const StoryNote: React.FC<{
 	label: string;
 	body: string;
 	theme: MaestroVisualTheme;
-}> = ({ label, body, theme }) => {
+	compact?: boolean;
+}> = ({ label, body, theme, compact = false }) => {
 	return (
 		<div
 			style={{
 				display: 'flex',
 				flexDirection: 'column',
-				gap: 10,
-				padding: '16px 18px',
+				gap: compact ? 8 : 10,
+				padding: compact ? '14px 16px' : '16px 18px',
 				borderRadius: 22,
 				border: `1px solid ${theme.colors.border}`,
 				background: theme.colors.bgActivity,
@@ -57,7 +65,7 @@ const StoryNote: React.FC<{
 		>
 			<div
 				style={{
-					fontSize: 14,
+					fontSize: compact ? 13 : 14,
 					letterSpacing: 1.1,
 					textTransform: 'uppercase',
 					color: theme.colors.textDim,
@@ -65,7 +73,15 @@ const StoryNote: React.FC<{
 			>
 				{label}
 			</div>
-			<div style={{ fontSize: 20, lineHeight: 1.44, color: theme.colors.textMain }}>{body}</div>
+			<div
+				style={{
+					fontSize: compact ? 18 : 20,
+					lineHeight: compact ? 1.42 : 1.44,
+					color: theme.colors.textMain,
+				}}
+			>
+				{body}
+			</div>
 		</div>
 	);
 };
@@ -235,11 +251,17 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 	sceneIndex,
 	sceneCount,
 	spec,
+	composition,
 	captures,
 }) => {
 	const theme = getSurfaceTheme(scene.surfaceId);
 	const frame = useCurrentFrame();
 	const { fps } = useVideoConfig();
+	const layout = getSceneShellLayout({
+		specId: spec.id,
+		sceneId: scene.id,
+		aspectRatio: composition.aspectRatio,
+	});
 	const storyboard = scene.storyboard;
 	const titleEntrance = getEntranceProgress(frame, fps, spec.motion);
 	const copyEntrance = getEntranceProgress(frame, fps, spec.motion, 6);
@@ -258,16 +280,20 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 	const systemResponse = formatNarrativeCopy(storyboard?.systemResponse ?? scene.body);
 	const titleLift = translateYFromProgress(titleEntrance, 56, 0);
 	const copyLift = translateYFromProgress(copyEntrance, 36, 0);
-	const surfaceSlide = translateXFromProgress(supportEntrance, 54, 0);
+	const surfaceSlide = layout.mode === 'split' ? translateXFromProgress(supportEntrance, 54, 0) : 0;
 	const backdropOpacity = interpolate(supportEntrance, [0, 1], [0, 0.78], clamp);
 
 	return (
-		<ProductionFrame theme={theme}>
+		<ProductionFrame theme={theme} composition={composition}>
 			<div
+				data-aspect-ratio={composition.aspectRatio}
+				data-layout-mode={layout.mode}
+				data-story-note-columns={String(layout.noteColumns)}
+				data-surface-priority={layout.surfacePriority}
 				style={{
 					display: 'grid',
-					gridTemplateRows: '1fr auto',
-					gap: 28,
+					gridTemplateRows: layout.mode === 'split' ? '1fr auto' : 'auto auto',
+					gap: layout.frameGap,
 					height: '100%',
 					opacity: sceneOpacity,
 				}}
@@ -275,8 +301,8 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 				<div
 					style={{
 						display: 'grid',
-						gridTemplateColumns: '0.88fr 1.12fr',
-						gap: 42,
+						gridTemplateColumns: layout.mode === 'split' ? '0.88fr 1.12fr' : '1fr',
+						gap: layout.contentGap,
 						minHeight: 0,
 					}}
 				>
@@ -284,7 +310,7 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 						style={{
 							display: 'flex',
 							flexDirection: 'column',
-							gap: 18,
+							gap: layout.sectionGap,
 							transform: `translateY(${titleLift}px)`,
 						}}
 					>
@@ -301,20 +327,20 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 							<div style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
 								<h1
 									style={{
-										fontSize: 66,
+										fontSize: layout.titleFontSize,
 										lineHeight: 0.96,
 										margin: 0,
-										maxWidth: 820,
+										maxWidth: layout.headlineMaxWidth,
 									}}
 								>
 									{title}
 								</h1>
 								<p
 									style={{
-										fontSize: 24,
+										fontSize: layout.bodyFontSize,
 										lineHeight: 1.46,
 										margin: 0,
-										maxWidth: 840,
+										maxWidth: layout.bodyMaxWidth,
 										color: theme.colors.textDim,
 									}}
 								>
@@ -326,7 +352,7 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 						<div
 							style={{
 								display: 'grid',
-								gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+								gridTemplateColumns: `repeat(${layout.noteColumns}, minmax(0, 1fr))`,
 								gap: 14,
 								transform: `translateY(${copyLift}px)`,
 							}}
@@ -340,7 +366,12 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 									stepFrames={4}
 									durationFrames={14}
 								>
-									<StoryNote label={`Hook ${index + 1}`} body={line} theme={theme} />
+									<StoryNote
+										label={`Hook ${index + 1}`}
+										body={line}
+										theme={theme}
+										compact={layout.compactStoryCards}
+									/>
 								</AnimatedReveal>
 							))}
 						</div>
@@ -348,15 +379,25 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 						<div
 							style={{
 								display: 'grid',
-								gridTemplateColumns: 'repeat(2, minmax(0, 1fr))',
+								gridTemplateColumns: `repeat(${layout.supportColumns}, minmax(0, 1fr))`,
 								gap: 14,
 							}}
 						>
 							<AnimatedReveal frame={frame} delayFrames={18} durationFrames={18}>
-								<StoryNote label="User Action" body={userAction} theme={theme} />
+								<StoryNote
+									label="User Action"
+									body={userAction}
+									theme={theme}
+									compact={layout.compactStoryCards}
+								/>
 							</AnimatedReveal>
 							<AnimatedReveal frame={frame} delayFrames={22} durationFrames={18}>
-								<StoryNote label="System Response" body={systemResponse} theme={theme} />
+								<StoryNote
+									label="System Response"
+									body={systemResponse}
+									theme={theme}
+									compact={layout.compactStoryCards}
+								/>
 							</AnimatedReveal>
 						</div>
 
@@ -365,6 +406,7 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 								label="Grounding"
 								body="History evidence stays visible before AI synthesis takes over."
 								theme={theme}
+								compact={layout.compactStoryCards}
 							/>
 						</AnimatedReveal>
 					</div>
@@ -372,7 +414,7 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 					<div
 						style={{
 							position: 'relative',
-							minHeight: 0,
+							minHeight: layout.mode === 'split' ? 0 : layout.stageMinHeight,
 							transform: `translateX(${surfaceSlide}px)`,
 						}}
 					>
@@ -380,8 +422,8 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 							style={{
 								display: 'flex',
 								flexDirection: 'column',
-								gap: 16,
-								height: '100%',
+								gap: layout.stageGap,
+								height: layout.mode === 'split' ? '100%' : 'auto',
 								position: 'relative',
 							}}
 						>
@@ -418,8 +460,8 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 							<div
 								style={{
 									position: 'relative',
-									flex: 1,
-									minHeight: 0,
+									flex: layout.mode === 'split' ? 1 : undefined,
+									minHeight: layout.mode === 'split' ? 0 : layout.stageMinHeight,
 									borderRadius: 34,
 									border: `1px solid ${theme.colors.border}`,
 									background: `linear-gradient(180deg, ${theme.colors.bgSidebar}, ${theme.colors.bgMain})`,

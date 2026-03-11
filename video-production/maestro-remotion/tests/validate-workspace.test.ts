@@ -18,6 +18,8 @@ describe('workspace validation script', () => {
 		).toBeDefined();
 		expect(packageJson.dependencies?.tsx ?? packageJson.devDependencies?.tsx).toBeDefined();
 		expect(packageJson.packageManager).toMatch(/^pnpm@/);
+		expect(packageJson.scripts?.['render:matrix:plan']).toBeDefined();
+		expect(packageJson.scripts?.['render:matrix']).toBeDefined();
 	});
 
 	it('passes for the scaffolded standalone Remotion workspace', () => {

@@ -8,6 +8,8 @@
 		"capture:manifests": "tsx scripts/export-capture-manifests.mjs",
 		"studio": "remotion studio src/index.ts --port 7101",
 		"render": "remotion render src/index.ts MaestroWorkspaceBootstrap renders/maestro-workspace-bootstrap.mp4",
+		"render:matrix:plan": "tsx scripts/render-delivery-matrix.mjs plan",
+		"render:matrix": "tsx scripts/render-delivery-matrix.mjs render",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
 		"validate:capture": "tsx scripts/validate-capture-pipeline.mjs",

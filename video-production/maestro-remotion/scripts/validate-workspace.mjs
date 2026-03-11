@@ -24,6 +24,7 @@ const requiredPaths = [
 	'src/assets',
 	'src/lib',
 	'src/lib/capture-pipeline.ts',
+	'src/lib/render-orchestration.ts',
 	'src/compositions/MaestroWorkspaceBootstrapComposition.tsx',
 	'src/scenes/FeatureHeroScene.tsx',
 	'src/components/ProductionFrame.tsx',
@@ -38,6 +39,7 @@ const requiredPaths = [
 	'src/ui/MaestroPrimitives.tsx',
 	'src/components/FeatureSurfaceShowcase.tsx',
 	'scripts/export-capture-manifests.mjs',
+	'scripts/render-delivery-matrix.mjs',
 	'scripts/validate-capture-pipeline.mjs',
 	'capture/live',
 	'capture/docs',
@@ -109,6 +111,14 @@ export const validateWorkspace = () => {
 
 	if (!packageJson.scripts?.['validate:capture']) {
 		fail('Workspace must expose a validate:capture script for capture pipeline validation.');
+	}
+
+	if (!packageJson.scripts?.['render:matrix:plan']) {
+		fail('Workspace must expose a render:matrix:plan script for delivery matrix planning.');
+	}
+
+	if (!packageJson.scripts?.['render:matrix']) {
+		fail('Workspace must expose a render:matrix script for full delivery renders.');
 	}
 
 	const remotionCliVersion =

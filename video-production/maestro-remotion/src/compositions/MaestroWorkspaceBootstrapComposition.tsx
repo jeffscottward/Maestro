@@ -14,7 +14,12 @@ export const MaestroFeatureComposition: React.FC<VideoCompositionProps> = ({
 	return (
 		<AbsoluteFill>
 			{scenes.map(({ scene, startFrame, index }) => (
-				<Sequence key={scene.id} from={startFrame} durationInFrames={scene.durationInFrames}>
+				<Sequence
+					key={scene.id}
+					from={startFrame}
+					durationInFrames={scene.durationInFrames}
+					premountFor={Math.min(scene.durationInFrames, spec.motion.entranceDurationFrames)}
+				>
 					<FeatureHeroScene
 						scene={scene}
 						sceneIndex={index}

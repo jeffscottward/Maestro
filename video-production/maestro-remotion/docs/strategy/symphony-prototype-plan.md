@@ -20,8 +20,8 @@ related:
 
 - Runtime target: `45 seconds`
 - Tone: `confident`, `systems-minded`, `developer-pragmatic`
-- Copy density: `medium`
-- Voiceover vs text: `muted-safe hybrid`; on-screen text must carry the workflow on its own, while optional sparse voiceover can sharpen pacing in the master export
+- Copy density: `medium-low`
+- Voiceover vs text: `text-led final`; no voiceover, music, or SFX planned in the isolated workspace, so CTA timing and proof beats must carry the story on muted playback
 
 ## Narrative Structure
 
@@ -51,6 +51,12 @@ Symphony is strongest when it starts as an open-source opportunity browser and e
 - Use the `Active` card semantics from the current product code: draft PR visibility, progress, token usage, `Check PR Status`, and `Finalize PR` on `Ready for Review`.
 - Show blocked or claimed issue context only as browsing information; do not imply those states can proceed straight into `Start Symphony`.
 - Keep the feature framed as guided contribution orchestration, not as generic multi-agent collaboration with no repository context or PR outcome.
+
+## Final Edit Decisions
+
+- Keep the v1 export fully text-led; no audio layers are planned inside the isolated workspace for this pass.
+- Separate `Start Symphony`, `Create Symphony Agent`, and `Create Agent` into distinct readable beats instead of compressing the activation into one flash.
+- Let the `Active` proof beat run longer than the opening overview so draft PR state, progress, and review controls land clearly before the close.
 
 ## Story Beats
 

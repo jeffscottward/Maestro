@@ -20,8 +20,8 @@ related:
 
 - Runtime target: `40 seconds`
 - Tone: `calm`, `authoritative`, `operational`
-- Copy density: `medium-high`
-- Voiceover vs text: `light-voiceover hybrid`; the edit should read cleanly with text only, but short voiceover can help pace the shift from raw history to AI synopsis in the 16:9 master
+- Copy density: `medium`
+- Voiceover vs text: `text-led final`; no voiceover, music, or SFX planned in the isolated workspace, so the evidence-to-summary transition must read entirely on muted playback
 
 ## Narrative Structure
 
@@ -51,6 +51,12 @@ Director's Notes is not a creation workflow; it is an observability workflow. De
 - Emphasize that the synopsis is grounded in actual history files and unified activity data, not a freeform chat guess.
 - Treat the checked-in ready-state screenshot as a layout reference, not literal UI text, because the live control label is `Regenerate`.
 - Keep the jump-back-to-session affordance visible somewhere in the story so the feature reads as actionable, not passive reporting.
+
+## Final Edit Decisions
+
+- Keep the v1 export fully text-led; no audio layers are planned inside the isolated workspace for this pass.
+- Hold `Unified History` and the ready `AI Overview` longer than the modal-open and warmup beats because the shipped UI already carries dense text.
+- Keep `Regenerate`, `Save`, and `Copy` on the same readable beat as lookback context and the grounded summary so the export controls do not flash by.
 
 ## Story Beats
 

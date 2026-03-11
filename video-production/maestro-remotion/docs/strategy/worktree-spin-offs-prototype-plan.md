@@ -22,8 +22,8 @@ related:
 - Delivery title: `Auto Run Worktree Spin-offs`
 - Runtime target: `35 seconds`
 - Tone: `practical`, `reassuring`, `quietly technical`
-- Copy density: `low-medium`
-- Voiceover vs text: `text-first`; no required voiceover, with optional short narration only if it does not carry essential meaning for muted playback
+- Copy density: `low`
+- Voiceover vs text: `text-led final`; no voiceover, music, or SFX planned in the isolated workspace, so the form and follow-through beats must explain the feature on muted playback
 
 ## Narrative Structure
 
@@ -51,6 +51,12 @@ This feature sells safety and clarity more than spectacle. Developers immediatel
 - Show the flow only inside a git-backed session; do not imply the worktree controls are always visible.
 - Preserve the create-new default behavior and generated branch naming so the feature reads like Maestro's real workflow, not a generic git form.
 - Do not imply the Auto Run document set moves away from the parent agent; the isolation is execution and branch context, not document ownership.
+
+## Final Edit Decisions
+
+- Keep the v1 export fully text-led; no audio layers are planned inside the isolated workspace for this pass.
+- Give `Create New Worktree` and `Automatically create PR when complete` longer holds than the problem setup so branch, path, and review intent can be read without narration.
+- Treat `Dispatch to a separate worktree` and the PR option as separate CTA beats instead of collapsing the whole form into one rapid move.
 
 ## Story Beats
 

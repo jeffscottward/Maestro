@@ -119,6 +119,7 @@ describe('storyboard production artifacts', () => {
 			expect(spec.featureName).toBe(specModule.featureName);
 			expect(spec.runtimeSeconds).toBe(specModule.runtimeSeconds);
 			expect(spec.fps).toBe(30);
+			expect(spec.description).toContain('text-led final edit');
 			expect(spec.scenes.length).toBeGreaterThanOrEqual(6);
 			expect(spec.scenes.length).toBeLessThanOrEqual(10);
 			expect(spec.aspectRatioIntent.primary).toBe('16:9');
@@ -126,6 +127,12 @@ describe('storyboard production artifacts', () => {
 				spec.aspectRatioIntent.adaptations.map((entry: { ratio: string }) => entry.ratio)
 			).toEqual(['1:1', '9:16']);
 			expect(spec.assetPlaceholders.length).toBeGreaterThan(0);
+			expect(
+				spec.assetPlaceholders.every(
+					(placeholder: { kind: string }) =>
+						!['voiceover', 'music', 'sfx'].includes(placeholder.kind)
+				)
+			).toBe(true);
 			expect(() => validateVideoSpec(spec)).not.toThrow();
 
 			for (const scene of spec.scenes) {

@@ -5,7 +5,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 	featureName: "Director's Notes",
 	title: "Director's Notes standalone production storyboard",
 	description:
-		'40-second standalone production spec covering the move from fragmented agent oversight to unified history and grounded AI synopsis, with AI Overview warming in the background before the ready summary resolves.',
+		'40-second standalone production spec covering the move from fragmented agent oversight to unified history and grounded AI synopsis in a text-led final edit.',
 	fps: 30,
 	runtimeSeconds: 40,
 	aspectRatioIntent: {
@@ -166,9 +166,9 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			surfaceId: 'director-history',
 			featureName: "Director's Notes",
 			accentLabel: 'Unified History',
-			title: "`Director's Notes` replaces fragmented agent status hunting",
-			body: 'The story opens by collapsing scattered agent context into one evidence-first surface that is ready for operational review.',
-			durationInFrames: 180,
+			title: "`Director's Notes` turns tab sprawl into one status surface",
+			body: 'The open collapses scattered agent context into one evidence-first surface that is ready for operational review.',
+			durationInFrames: 150,
 			captureIds: ['director-modal-open'],
 			assetPlaceholderIds: ['director-modal-shell'],
 			storyboard: {
@@ -176,8 +176,8 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				purpose:
 					'Frame fragmented agent oversight as a real operational burden before the feature resolves it.',
 				onScreenCopy: [
-					'Too many agent tabs, not enough shared context.',
-					"`Director's Notes` becomes the single status surface.",
+					'Too many agent tabs. Not enough shared context.',
+					"`Director's Notes` becomes the shared status surface.",
 				],
 				visualComposition:
 					'Blur or compress background agent clutter, then bring the modal header and tabs into sharp focus.',
@@ -187,7 +187,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				systemResponse:
 					'The modal lands directly in `Unified History` with the evidence-first view ready.',
 				motionStyle: 'Pull focus from surrounding agent clutter into the centered modal shell.',
-				durationSeconds: 6,
+				durationSeconds: 5,
 			},
 		},
 		{
@@ -196,9 +196,9 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			surfaceId: 'director-history',
 			featureName: "Director's Notes",
 			accentLabel: 'Filters',
-			title: '`Unified History` makes project-wide activity legible',
-			body: 'Stats, filters, search, and dense rows stay visible together so the user can understand multiple agents without tab-hopping.',
-			durationInFrames: 210,
+			title: '`Unified History` keeps filters, stats, and activity in one view',
+			body: 'Stats, filters, search, and dense rows stay visible together so the project-wide story reads without tab-hopping.',
+			durationInFrames: 240,
 			captureIds: ['director-unified-history'],
 			assetPlaceholderIds: ['director-history-controls'],
 			storyboard: {
@@ -206,7 +206,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				purpose: 'Show `Unified History` as the central operational control surface.',
 				onScreenCopy: [
 					'`Unified History` merges `AUTO` and `USER` work.',
-					'Search, filters, and stats stay in view.',
+					'Search, filters, and stats stay visible.',
 				],
 				visualComposition:
 					'Wide list-first composition with stats row, filter pills, search, and timeline entries all readable together.',
@@ -215,7 +215,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				systemResponse:
 					'The list narrows while the overview still reads as one project-wide timeline.',
 				motionStyle: 'Horizontal parallax across controls and list rows with precise cursor beats.',
-				durationSeconds: 7,
+				durationSeconds: 8,
 			},
 		},
 		{
@@ -224,8 +224,8 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			surfaceId: 'director-history',
 			featureName: "Director's Notes",
 			accentLabel: 'Detail',
-			title: 'The timeline stays actionable through history detail and session return paths',
-			body: "The viewer sees that `Director's Notes` is not passive reporting: the detailed evidence still routes back to the originating work.",
+			title: 'History detail keeps the timeline actionable',
+			body: 'The viewer sees that the evidence can still route back to the originating session instead of becoming static reporting.',
 			durationInFrames: 210,
 			captureIds: ['director-unified-history', 'director-history-detail'],
 			assetPlaceholderIds: ['director-history-controls', 'director-history-detail-card'],
@@ -233,8 +233,8 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				sceneNumber: 3,
 				purpose: 'Prove the history is actionable, not passive reporting.',
 				onScreenCopy: [
-					'Open the detail view, then jump back to the agent.',
-					'This is observability with a return path.',
+					'Open detail, then jump back to the agent.',
+					'The timeline stays actionable.',
 				],
 				visualComposition:
 					'Layer the detail modal over the list and keep the originating session context visible.',
@@ -252,9 +252,9 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			surfaceId: 'director-history',
 			featureName: "Director's Notes",
 			accentLabel: 'Warmup',
-			title: '`AI Overview` starts building before the user leaves `Unified History`',
-			body: 'The transition into synthesis stays credible because the feature shows background progress while the user is still reviewing the raw evidence.',
-			durationInFrames: 180,
+			title: '`AI Overview` starts warming while the timeline stays visible',
+			body: 'The shift into synthesis stays credible because progress appears before the user leaves the raw evidence.',
+			durationInFrames: 150,
 			captureIds: ['director-ai-overview-loading'],
 			assetPlaceholderIds: ['director-ai-overview-loading-card'],
 			storyboard: {
@@ -262,8 +262,8 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				purpose:
 					'Show that synthesis starts from the same evidence before the user even leaves the timeline.',
 				onScreenCopy: [
-					'While you review the timeline, `AI Overview` is already building in the background.',
-					'The summary is earned before it is opened.',
+					'Keep reviewing the timeline while `AI Overview` builds.',
+					'The summary is earned before it opens.',
 				],
 				visualComposition:
 					'Keep `Unified History` active while the tab-strip spinner and light loading cues telegraph background synthesis from the same evidence set.',
@@ -275,7 +275,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 					'The tab strip shows background progress and only enables `AI Overview` after the synopsis exists.',
 				motionStyle:
 					'Hold on evidence rows, then rack focus to the tab-strip spinner and loading feedback.',
-				durationSeconds: 6,
+				durationSeconds: 5,
 			},
 		},
 		{
@@ -284,9 +284,9 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			surfaceId: 'director-ai-overview',
 			featureName: "Director's Notes",
 			accentLabel: 'Synopsis',
-			title: '`Regenerate`, `Save`, and `Copy` stay attached to the ready summary',
-			body: 'The synopsis resolves as a shareable artifact, but it remains visibly tied to lookback controls and the grounded generation context.',
-			durationInFrames: 210,
+			title: '`Regenerate`, `Save`, and `Copy` stay beside the ready summary',
+			body: 'The synopsis resolves as a shareable artifact while lookback and grounded generation context remain visible.',
+			durationInFrames: 240,
 			captureIds: ['director-ai-overview-ready'],
 			assetPlaceholderIds: ['director-ai-overview-ready-card'],
 			storyboard: {
@@ -294,7 +294,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 				purpose: 'Resolve into the ready synopsis with export controls.',
 				onScreenCopy: [
 					'`Regenerate`, `Save`, and `Copy` stay next to the summary.',
-					'Raw history becomes a shareable update.',
+					'Raw history becomes a shareable check-in.',
 				],
 				visualComposition:
 					'Markdown synopsis hero with controls, lookback setting, and summary stats kept on screen together.',
@@ -304,7 +304,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 					'The modal switches to a grounded summary that is ready to review, save, or copy.',
 				motionStyle:
 					'Section-by-section reveal with steady camera framing to preserve readability.',
-				durationSeconds: 7,
+				durationSeconds: 8,
 			},
 		},
 		{
@@ -313,8 +313,8 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 			surfaceId: 'director-ai-overview',
 			featureName: "Director's Notes",
 			accentLabel: 'Check-In',
-			title: 'One timeline first, one grounded summary second',
-			body: 'The close pairs raw evidence with synthesis so the feature lands as a repeatable status workflow instead of a one-off summary trick.',
+			title: 'One evidence timeline leads to one grounded summary',
+			body: 'The close pairs raw evidence with synthesis so the feature lands as a repeatable status workflow.',
 			durationInFrames: 210,
 			captureIds: [
 				'director-unified-history',
@@ -332,7 +332,7 @@ export const directorNotesStandaloneSpec = createProductionSpec({
 					'Close on faster project check-ins built from evidence first and synthesis second.',
 				onScreenCopy: [
 					'One timeline first. One grounded summary second.',
-					'No more tab-by-tab status hunting.',
+					'Project check-ins stop requiring tab-by-tab hunting.',
 				],
 				visualComposition:
 					'End on a relationship shot between timeline evidence and final synopsis output.',

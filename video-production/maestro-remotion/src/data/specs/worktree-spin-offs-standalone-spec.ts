@@ -5,7 +5,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 	featureName: 'Run in Worktree',
 	title: 'Auto Run Worktree Spin-offs standalone production storyboard',
 	description:
-		'35-second standalone production spec covering the single-branch bottleneck, Auto Run worktree isolation, and cleaner review-oriented follow-through.',
+		'35-second standalone production spec covering the single-branch bottleneck, Auto Run worktree isolation, and cleaner review-oriented follow-through in a text-led final edit.',
 	fps: 30,
 	runtimeSeconds: 35,
 	aspectRatioIntent: {
@@ -165,8 +165,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-dispatch',
 			featureName: 'Run in Worktree',
 			accentLabel: 'Auto Run',
-			title: 'One active checkout should not bottleneck Auto Run',
-			body: 'The opening frames the product problem as a single busy branch blocking safe automation, not as a generic git lecture.',
+			title: 'One busy checkout should not bottleneck Auto Run',
+			body: 'The open frames the product problem as a live branch bottleneck, not a generic git lecture.',
 			durationInFrames: 150,
 			captureIds: ['worktree-batch-runner'],
 			assetPlaceholderIds: ['worktree-autorun-context'],
@@ -174,8 +174,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				sceneNumber: 1,
 				purpose: 'Frame the single-branch bottleneck inside the real Auto Run workflow.',
 				onScreenCopy: [
-					'One active checkout should not bottleneck Auto Run.',
-					'Worktree isolation opens a safer parallel path.',
+					'One busy checkout should not bottleneck Auto Run.',
+					'Worktree isolation opens a safer parallel lane.',
 				],
 				visualComposition:
 					'Batch runner modal with Auto Run context visible before the worktree section takes focus.',
@@ -193,9 +193,9 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-dispatch',
 			featureName: 'Run in Worktree',
 			accentLabel: 'Dispatch',
-			title: '`Dispatch to a separate worktree` makes isolation explicit',
+			title: '`Dispatch to a separate worktree` makes the isolation choice explicit',
 			body: 'The control surface feels native to Auto Run because the isolation toggle lives inside the same launch flow.',
-			durationInFrames: 180,
+			durationInFrames: 150,
 			captureIds: ['worktree-toggle-enabled'],
 			assetPlaceholderIds: ['worktree-toggle-focus'],
 			storyboard: {
@@ -203,7 +203,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				purpose: 'Reveal the isolation controls as a native part of Auto Run.',
 				onScreenCopy: [
 					'`Run in Worktree` lives inside Auto Run.',
-					'`Dispatch to a separate worktree` makes isolation explicit.',
+					'`Dispatch to a separate worktree` makes the isolation choice explicit.',
 				],
 				visualComposition:
 					'Center the toggle row and section expansion so the control change reads instantly.',
@@ -211,7 +211,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				userAction: 'Enable `Dispatch to a separate worktree`.',
 				systemResponse: 'The section opens and defaults into `Create New Worktree`.',
 				motionStyle: 'Short vertical expansion with a crisp control-state flash.',
-				durationSeconds: 6,
+				durationSeconds: 5,
 			},
 		},
 		{
@@ -220,9 +220,9 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-dispatch',
 			featureName: 'Run in Worktree',
 			accentLabel: 'Create New',
-			title: '`Create New Worktree` ships with clear branch and path defaults',
-			body: 'The exact product flow matters here: base branch, generated worktree branch name, and path preview should all read as real Maestro behavior.',
-			durationInFrames: 180,
+			title: '`Create New Worktree` starts with clear branch and path defaults',
+			body: 'Base branch, generated worktree branch name, and path preview stay readable enough to trust the default flow.',
+			durationInFrames: 210,
 			captureIds: ['worktree-create-new-form'],
 			assetPlaceholderIds: ['worktree-create-form'],
 			storyboard: {
@@ -230,7 +230,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				purpose: 'Show the exact create-new workflow the product ships today.',
 				onScreenCopy: [
 					'`Create New Worktree` defaults on.',
-					'`Base Branch` and `Worktree Branch Name` are prefilled, then editable.',
+					'`Base Branch`, `Worktree Branch Name`, and path preview stay readable.',
 				],
 				visualComposition:
 					'Keep the branch fields, generated name, and path preview all readable at once.',
@@ -240,7 +240,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				systemResponse:
 					'Maestro proposes a sane starting branch, generated worktree branch name, and target path.',
 				motionStyle: 'Guided pan across the form with inline field highlights.',
-				durationSeconds: 6,
+				durationSeconds: 7,
 			},
 		},
 		{
@@ -249,7 +249,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-dispatch',
 			featureName: 'Run in Worktree',
 			accentLabel: 'PR Ready',
-			title: '`Automatically create PR when complete` finishes the handoff story',
+			title: '`Automatically create PR when complete` keeps review attached',
 			body: 'Isolation is more credible when the viewer can see branch, directory, and review intent in one frame before the run starts.',
 			durationInFrames: 180,
 			captureIds: ['worktree-create-new-form', 'worktree-pr-intent'],
@@ -258,8 +258,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				sceneNumber: 4,
 				purpose: 'Add review handoff proof to the isolation story.',
 				onScreenCopy: [
-					'`Automatically create PR when complete` keeps review ready.',
-					'Path, branch, and PR intent are all visible now.',
+					'`Automatically create PR when complete` keeps review attached.',
+					'Branch, path, and PR intent stay visible together.',
 				],
 				visualComposition:
 					'Stay on the same form but shift emphasis to the PR checkbox and resulting configuration clarity.',
@@ -287,7 +287,7 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				purpose: 'Prove the isolated worktree has its own tracked destination inside Maestro.',
 				onScreenCopy: [
 					'`Open in Maestro` and `Available Worktrees` show the isolated target.',
-					'The parent agent keeps the docs; the worktree keeps its own branch.',
+					'Docs stay with the parent agent; the branch moves to the worktree.',
 				],
 				visualComposition:
 					'Show worktree inventory and supporting configuration proof without leaving the product frame.',
@@ -305,8 +305,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 			surfaceId: 'worktree-terminal',
 			featureName: 'Run in Worktree',
 			accentLabel: 'Follow-Through',
-			title: 'Auto Run leaves the parent checkout clean and the review path clearer',
-			body: 'The close resolves on operational follow-through: same repository context, safer parallel work, and no branch contamination in the parent session.',
+			title: 'Auto Run keeps the parent checkout clean and the review path clearer',
+			body: 'The close resolves on safer parallel work: same repo context, isolated execution, and no branch contamination in the parent session.',
 			durationInFrames: 180,
 			captureIds: ['worktree-terminal-proof'],
 			assetPlaceholderIds: ['worktree-terminal-card'],
@@ -314,8 +314,8 @@ export const worktreeSpinOffsStandaloneSpec = createProductionSpec({
 				sceneNumber: 6,
 				purpose: 'Finish on execution proof and a clean parent checkout.',
 				onScreenCopy: [
-					'Auto Run executes in the isolated branch while the main checkout stays clean.',
-					'Parallel work moves forward with a cleaner review path.',
+					'Auto Run runs in the isolated branch while the main checkout stays clean.',
+					'Parallel work keeps a cleaner review path.',
 				],
 				visualComposition:
 					'Terminal feedback and worktree proof close the story on operational follow-through.',

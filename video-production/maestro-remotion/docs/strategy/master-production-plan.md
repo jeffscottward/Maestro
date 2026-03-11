@@ -69,4 +69,5 @@ The structured scene-delivery record that backs this matrix lives in `src/data/s
 - Dense Maestro screens still rely on screenshot-based capture fallback while later phases reconstruct more of the product row-for-row.
 - The current prototype compositions are intentionally `30` fps because the motion density is UI-led and does not yet justify `60` fps.
 - No ratio-specific compositions exist yet for `1:1` or `9:16`; those should wrap the current structured specs rather than fork feature copy or scene IDs.
-- Live product capture, final voiceover timing, and rendered artifact QA remain deferred to later phases and should link back to `[[phase-01-prototype-report]]`.
+- The final standalone edits now remain text-led, with no voiceover, music, or SFX assets planned inside the isolated workspace for v1.
+- Live product capture and rendered artifact QA remain deferred to later phases and should link back to `[[phase-01-prototype-report]]`.

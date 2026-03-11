@@ -22,10 +22,12 @@ The `DirectorNotesStandalone` validation and 16:9 master render completed succes
 
 The final export was rendered to `renders/director-notes-standalone-16x9-master.mp4` from the isolated Remotion workspace, then spot-checked against the checked-in `Unified History` and `AI Overview` reference captures plus two extracted master frames from this run.
 
+The feature-targeted `pnpm test -- ...` invocation still exercised the full workspace suite through the package script, so this run reconfirmed all `42` test files / `112` tests before the final render.
+
 ## Validation Commands
 
 - `git up`
-- `pnpm test -- tests/director-notes-capture-assets.test.ts tests/director-notes-planning-alignment.test.ts tests/director-notes-render-smoke.test.ts tests/director-notes-standalone-choreography.test.ts tests/director-notes-standalone-scene.test.tsx tests/director-notes-standalone-validation.test.ts tests/director-notes-surface-showcase.test.ts`
+- `pnpm test -- tests/director-notes-capture-assets.test.ts tests/director-notes-master-composition.test.tsx tests/director-notes-planning-alignment.test.ts tests/director-notes-render-smoke.test.ts tests/director-notes-standalone-choreography.test.ts tests/director-notes-standalone-scene.test.tsx tests/director-notes-standalone-validation.test.ts tests/director-notes-surface-showcase.test.ts`
 - `pnpm validate`
 
 ## Render Command
@@ -45,8 +47,8 @@ The final export was rendered to `renders/director-notes-standalone-16x9-master.
 | Observed file duration | `40.042667s` |
 | Video codec | `h264` |
 | Audio codec | `aac` |
-| Output size | `20,327,808 bytes` (`20.3 MB`) |
-| Average bit rate | `4,061,229` |
+| Output size | `20,335,173 bytes` (`20.3 MB`) |
+| Average bit rate | `4,062,701` |
 
 ## Output Locations
 

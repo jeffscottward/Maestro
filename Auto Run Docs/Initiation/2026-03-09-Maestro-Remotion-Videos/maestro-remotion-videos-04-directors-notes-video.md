@@ -32,10 +32,11 @@ This phase produces the standalone Director's Notes feature video, centered on t
 	- Keep on-screen copy concise enough for a 30 to 60 second feature-education video
 	- Completed 2026-03-11: tightened the standalone composition around the storyboard arc with scene-progress-driven flow-strip fills, a bottom-rail `Next Beat` handoff card, spotlighted focus framing, and a compressed surface-progress ramp so each beat reads as one connected sequence instead of isolated slides; made `Unified History` filter/search motion feel interactive, kept the detail view grounded in the filtered RSS-focused context, showed `AI Overview` warming from modal open, and added an explicit evidence-to-synopsis handoff inside the ready scene while preserving the shipped labels and 30fps runtime; analyzed 2 checked-in Director's Notes reference screenshots while matching the motion emphasis; and passed `pnpm typecheck` plus the focused Director's Notes vitest suite including the real Remotion smoke render.
 
-- [ ] Write Director's Notes-specific tests and smoke checks:
+- [x] Write Director's Notes-specific tests and smoke checks:
 	- Add tests for spec validity, scene completeness, tab/state ordering, and any feature-specific data transforms or helper functions
 	- Add a composition smoke render or equivalent validation for the Director's Notes master
 	- Keep test coverage inside the video workspace
+	- Completed 2026-03-11: verified the existing in-workspace Director's Notes coverage already satisfies this phase with focused validation for spec/schema completeness, scene ordering, tab/state ordering, capture mapping, choreography helpers, surface variants, planning alignment, and standalone scene rendering; ran `pnpm exec vitest run tests/director-notes-standalone-validation.test.ts tests/director-notes-standalone-choreography.test.ts tests/director-notes-surface-showcase.test.ts tests/director-notes-standalone-scene.test.tsx tests/director-notes-capture-assets.test.ts tests/director-notes-planning-alignment.test.ts tests/director-notes-render-smoke.test.ts` with all 7 files / 22 tests passing, including the real Remotion still-render smoke check; analyzed 2 checked-in Director's Notes reference screenshots while confirming the tested states; and passed `pnpm typecheck` in `video-production/maestro-remotion`.
 
 - [ ] Run Director's Notes validation and render the 16:9 master:
 	- Execute the feature tests and render smoke checks, then fix broken assets, scene IDs, timing regressions, or layout issues until they pass

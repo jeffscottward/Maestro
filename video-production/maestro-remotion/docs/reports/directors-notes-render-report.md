@@ -1,7 +1,7 @@
 ---
 type: report
 title: Director's Notes Render Report
-created: 2026-03-10
+created: 2026-03-11
 tags:
   - remotion
   - maestro
@@ -18,9 +18,9 @@ related:
 
 ## Summary
 
-The `DirectorNotesStandalone` validation and 16:9 master render completed successfully on March 10, 2026 without requiring code repairs during this run.
+The `DirectorNotesStandalone` validation and 16:9 master render completed successfully on March 11, 2026 without requiring code repairs during this run.
 
-The final export was rendered to `renders/director-notes-standalone-16x9-master.mp4` from the isolated Remotion workspace, then spot-checked against the checked-in `Unified History` and `AI Overview` reference captures.
+The final export was rendered to `renders/director-notes-standalone-16x9-master.mp4` from the isolated Remotion workspace, then spot-checked against the checked-in `Unified History` and `AI Overview` reference captures plus two extracted master frames from this run.
 
 ## Validation Commands
 
@@ -45,8 +45,8 @@ The final export was rendered to `renders/director-notes-standalone-16x9-master.
 | Observed file duration | `40.042667s` |
 | Video codec | `h264` |
 | Audio codec | `aac` |
-| Output size | `22,627,848 bytes` (`22.6 MB`) |
-| Average bit rate | `4,520,747` |
+| Output size | `20,327,808 bytes` (`20.3 MB`) |
+| Average bit rate | `4,061,229` |
 
 ## Output Locations
 

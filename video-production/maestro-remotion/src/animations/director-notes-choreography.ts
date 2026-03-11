@@ -46,6 +46,29 @@ export type DirectorNotesCursorPose = {
 	hint: string;
 };
 
+export type DirectorNotesHistorySceneState = {
+	searchQuery: string;
+	autoActive: boolean;
+	userActive: boolean;
+	countLabel: string;
+	highlightedIndex: number;
+	statsMode: 'global' | 'filtered';
+	rowsMode: 'global' | 'filtered';
+	showResumeCue: boolean;
+};
+
+export type DirectorNotesAiReadySceneState = {
+	activeTab: 'history' | 'ai-overview';
+	tabSwitchProgress: number;
+	summaryProgress: number;
+};
+
+export type DirectorNotesHandoffState = {
+	nextStage: DirectorNotesFlowStage;
+	nextLabel: string;
+	nextCue: string;
+};
+
 type DirectorNotesStagePreset = {
 	translateX: readonly number[];
 	translateY: readonly number[];
@@ -267,6 +290,95 @@ const getCursorPreset = (sceneId: string): DirectorNotesCursorPreset | null => {
 		default:
 			return null;
 	}
+};
+
+export const getDirectorNotesHistorySceneState = (
+	progress: number
+): DirectorNotesHistorySceneState => {
+	const normalizedProgress = Math.max(0, Math.min(progress, 1));
+
+	if (normalizedProgress < 0.18) {
+		return {
+			searchQuery: '',
+			autoActive: true,
+			userActive: true,
+			countLabel: '100/357',
+			highlightedIndex: 2,
+			statsMode: 'global',
+			rowsMode: 'global',
+			showResumeCue: false,
+		};
+	}
+
+	if (normalizedProgress < 0.36) {
+		return {
+			searchQuery: 'r',
+			autoActive: true,
+			userActive: true,
+			countLabel: '23 matching entries',
+			highlightedIndex: 2,
+			statsMode: 'global',
+			rowsMode: 'global',
+			showResumeCue: false,
+		};
+	}
+
+	if (normalizedProgress < 0.58) {
+		return {
+			searchQuery: 'rs',
+			autoActive: false,
+			userActive: true,
+			countLabel: '11 matching entries',
+			highlightedIndex: 3,
+			statsMode: 'filtered',
+			rowsMode: 'filtered',
+			showResumeCue: true,
+		};
+	}
+
+	return {
+		searchQuery: 'rss',
+		autoActive: false,
+		userActive: true,
+		countLabel: '7 matching entries',
+		highlightedIndex: 4,
+		statsMode: 'filtered',
+		rowsMode: 'filtered',
+		showResumeCue: true,
+	};
+};
+
+export const getDirectorNotesAiReadySceneState = (
+	progress: number
+): DirectorNotesAiReadySceneState => {
+	const normalizedProgress = Math.max(0, Math.min(progress, 1));
+	const tabSwitchProgress = interpolate(normalizedProgress, [0.08, 0.28], [0, 1], clamp);
+	const activeTab = tabSwitchProgress >= 0.5 ? 'ai-overview' : 'history';
+	const summaryProgress = interpolate(normalizedProgress, [0.22, 1], [0, 1], clamp);
+
+	return {
+		activeTab,
+		tabSwitchProgress,
+		summaryProgress,
+	};
+};
+
+export const getDirectorNotesHandoffState = (
+	nextScene: {
+		id: string;
+		accentLabel: string;
+		storyboard?: { onScreenCopy?: string[] };
+	} | null
+): DirectorNotesHandoffState | null => {
+	if (!nextScene) {
+		return null;
+	}
+
+	return {
+		nextStage: getDirectorNotesFlowStage(nextScene.id),
+		nextLabel: nextScene.accentLabel,
+		nextCue: nextScene.storyboard?.onScreenCopy?.[0] ?? nextScene.accentLabel,
+	};
 };
 
 export const getDirectorNotesFlowStage = (sceneId: string): DirectorNotesFlowStage => {

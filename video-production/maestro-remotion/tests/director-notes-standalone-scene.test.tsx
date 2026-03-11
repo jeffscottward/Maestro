@@ -22,18 +22,23 @@ vi.mock('remotion', async () => {
 	};
 });
 
+const renderStandaloneScene = (sceneIndex: number) => {
+	const scene = directorNotesStandaloneSpec.scenes[sceneIndex];
+
+	return renderToStaticMarkup(
+		createElement(FeatureHeroScene, {
+			scene,
+			sceneIndex,
+			sceneCount: directorNotesStandaloneSpec.scenes.length,
+			spec: directorNotesStandaloneSpec,
+			captures: getCapturesForScene(directorNotesStandaloneSpec, scene),
+		})
+	);
+};
+
 describe("Director's Notes standalone scene shell", () => {
 	it("routes the standalone spec through the dedicated Director's Notes scene module", () => {
-		const scene = directorNotesStandaloneSpec.scenes[0];
-		const markup = renderToStaticMarkup(
-			createElement(FeatureHeroScene, {
-				scene,
-				sceneIndex: 0,
-				sceneCount: directorNotesStandaloneSpec.scenes.length,
-				spec: directorNotesStandaloneSpec,
-				captures: getCapturesForScene(directorNotesStandaloneSpec, scene),
-			})
-		);
+		const markup = renderStandaloneScene(0);
 
 		expect(markup).toContain('User Action');
 		expect(markup).toContain('System Response');
@@ -41,5 +46,19 @@ describe("Director's Notes standalone scene shell", () => {
 		expect(markup).toContain('Fragmentation');
 		expect(markup).toContain('Check-In');
 		expect(markup).toContain('Help / Unified History / AI Overview');
+	});
+
+	it('shows the next beat handoff for non-final scenes so the sequence reads like one video arc', () => {
+		const openingMarkup = renderStandaloneScene(0);
+
+		expect(openingMarkup).toContain('Next Beat');
+		expect(openingMarkup).toContain('Filters');
+		expect(openingMarkup).toContain('Unified History merges AUTO and USER work.');
+	});
+
+	it('does not render a next beat handoff on the closing scene', () => {
+		const closingMarkup = renderStandaloneScene(directorNotesStandaloneSpec.scenes.length - 1);
+
+		expect(closingMarkup).not.toContain('Next Beat');
 	});
 });

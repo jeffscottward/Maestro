@@ -76,6 +76,7 @@ describe("Director's Notes surface showcase", () => {
 		expect(filteredMarkup).toContain('Open session');
 
 		expect(detailMarkup).toContain('Evidence Detail');
+		expect(detailMarkup).toContain('rss');
 		expect(detailMarkup).toContain('Prev');
 		expect(detailMarkup).toContain('Next');
 		expect(detailMarkup).toContain('Resume Session');
@@ -83,6 +84,10 @@ describe("Director's Notes surface showcase", () => {
 	});
 
 	it('renders the warmup, ready, and closing bridge states with the shipped AI Overview labels', () => {
+		const openingMarkup = renderScene(
+			directorNotesStandaloneSpec,
+			'director-notes-standalone-open'
+		);
 		const loadingMarkup = renderScene(
 			directorNotesStandaloneSpec,
 			'director-notes-standalone-ai-loading'
@@ -96,6 +101,9 @@ describe("Director's Notes surface showcase", () => {
 			'director-notes-standalone-close'
 		);
 
+		expect(openingMarkup).toContain('generating...');
+		expect(openingMarkup).toContain('AI Overview is already warming in the background');
+
 		expect(loadingMarkup).toContain('generating...');
 		expect(loadingMarkup).toContain('Generating synopsis...');
 		expect(loadingMarkup).toContain('Preparing from current history files');
@@ -108,6 +116,10 @@ describe("Director's Notes surface showcase", () => {
 		expect(readyMarkup).toContain('Save');
 		expect(readyMarkup).toContain('Copy');
 		expect(readyMarkup).toContain('Accomplishments');
+		expect(readyMarkup).toContain('Grounded from Unified History');
+		expect(readyMarkup).toContain(
+			'7 filtered entries across 2 agents are ready to synthesize before the tab switch completes.'
+		);
 		expect(readyMarkup).toContain('capture/docs/director-notes/ai-overview-ready-reference.png');
 
 		expect(closingMarkup).toContain('history files');

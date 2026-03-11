@@ -8,6 +8,10 @@ import directorNotesHistoryDetailProofJson from '../../capture/derived/director-
 import { FeatureCaptureManifestSchema } from '../data/capture-schema';
 import type { CaptureManifestEntry, SceneData } from '../data/production-schema';
 import {
+	getDirectorNotesAiReadySceneState,
+	getDirectorNotesHistorySceneState,
+} from '../animations/director-notes-choreography';
+import {
 	createFallbackSlot,
 	type MaestroVisualTheme,
 	type VisualFallbackSlot,
@@ -219,12 +223,14 @@ const buildHistoryControls = ({
 	autoActive,
 	userActive,
 	countLabel,
+	highlightedIndex = 2,
 }: {
 	theme: MaestroVisualTheme;
 	searchQuery: string;
 	autoActive: boolean;
 	userActive: boolean;
 	countLabel: string;
+	highlightedIndex?: number;
 }) => {
 	return (
 		<DirectorPanel theme={theme} padding={16} gap={14}>
@@ -246,7 +252,7 @@ const buildHistoryControls = ({
 				startLabel="Jan 9"
 				endLabel="Now"
 				countLabel={countLabel}
-				highlightedIndex={2}
+				highlightedIndex={highlightedIndex}
 			/>
 		</DirectorPanel>
 	);
@@ -265,7 +271,8 @@ const HistoryDefaultSurface: React.FC<{
 	progress: number;
 	showCaptureNote: boolean;
 	fallbackSlots: VisualFallbackSlot[];
-}> = ({ theme, progress, showCaptureNote, fallbackSlots }) => {
+	showAiWarmup: boolean;
+}> = ({ theme, progress, showCaptureNote, fallbackSlots, showAiWarmup }) => {
 	const visibleRows = Math.max(
 		3,
 		Math.min(HISTORY_ROWS.length, Math.round(progress * HISTORY_ROWS.length))
@@ -273,11 +280,19 @@ const HistoryDefaultSurface: React.FC<{
 
 	return (
 		<DirectorNotesSurfaceShell
-			tabs={createTabs({ activeTab: 'history', aiEnabled: false, aiGenerating: false })}
+			tabs={createTabs({ activeTab: 'history', aiEnabled: false, aiGenerating: showAiWarmup })}
 			footer={
 				<>
-					<span>357 total entries across 27 agents</span>
-					<span>Enter opens detail view</span>
+					<span>
+						{showAiWarmup
+							? 'AI Overview is already warming in the background'
+							: '357 total entries across 27 agents'}
+					</span>
+					<span>
+						{showAiWarmup
+							? 'Unified History stays primary while it builds'
+							: 'Enter opens detail view'}
+					</span>
 				</>
 			}
 			theme={theme}
@@ -328,10 +343,31 @@ const HistoryFilteredSurface: React.FC<{
 	const filteredRows = HISTORY_ROWS.filter((row) =>
 		`${row.agent} ${row.session} ${row.summary}`.toLowerCase().includes('rss')
 	);
+	const historyState = getDirectorNotesHistorySceneState(progress);
+	const controlsShift = interpolate(progress, [0, 1], [34, 0], clamp);
+	const statsShift = interpolate(progress, [0, 1], [18, 0], clamp);
+	const rowsShift = interpolate(progress, [0, 1], [-22, 0], clamp);
+	const visibleRowsSource = historyState.rowsMode === 'filtered' ? filteredRows : HISTORY_ROWS;
 	const visibleRows = Math.max(
-		2,
-		Math.min(filteredRows.length, Math.round(progress * filteredRows.length))
+		historyState.rowsMode === 'filtered' ? 2 : 3,
+		Math.min(visibleRowsSource.length, Math.round(progress * visibleRowsSource.length))
 	);
+	const statsItems =
+		historyState.statsMode === 'filtered'
+			? [
+					{ label: 'Agents', value: '2', tone: 'accent' as const },
+					{ label: 'Sessions', value: '5', tone: 'neutral' as const },
+					{ label: 'User', value: '6', tone: 'accent' as const },
+					{ label: 'Auto', value: '1', tone: 'warning' as const },
+					{ label: 'Total', value: '7', tone: 'neutral' as const },
+				]
+			: [
+					{ label: 'Agents', value: '27', tone: 'accent' as const },
+					{ label: 'Sessions', value: '203', tone: 'neutral' as const },
+					{ label: 'User', value: '210', tone: 'accent' as const },
+					{ label: 'Auto', value: '147', tone: 'warning' as const },
+					{ label: 'Total', value: '357', tone: 'neutral' as const },
+				];
 
 	return (
 		<DirectorNotesSurfaceShell
@@ -344,30 +380,26 @@ const HistoryFilteredSurface: React.FC<{
 			}
 			theme={theme}
 		>
-			{buildHistoryControls({
-				theme,
-				searchQuery: 'rss',
-				autoActive: false,
-				userActive: true,
-				countLabel: '7 matching entries',
-			})}
-			{buildHistoryStats(
-				[
-					{ label: 'Agents', value: '2', tone: 'accent' },
-					{ label: 'Sessions', value: '5', tone: 'neutral' },
-					{ label: 'User', value: '6', tone: 'accent' },
-					{ label: 'Auto', value: '1', tone: 'warning' },
-					{ label: 'Total', value: '7', tone: 'neutral' },
-				],
-				theme
-			)}
-			<div style={{ display: 'grid', gap: 12 }}>
-				{filteredRows.slice(0, visibleRows).map((row, index) => (
+			<div style={{ transform: `translate3d(${controlsShift}px, 0, 0)` }}>
+				{buildHistoryControls({
+					theme,
+					searchQuery: historyState.searchQuery,
+					autoActive: historyState.autoActive,
+					userActive: historyState.userActive,
+					countLabel: historyState.countLabel,
+					highlightedIndex: historyState.highlightedIndex,
+				})}
+			</div>
+			<div style={{ transform: `translate3d(${statsShift}px, 0, 0)` }}>
+				{buildHistoryStats(statsItems, theme)}
+			</div>
+			<div style={{ display: 'grid', gap: 12, transform: `translate3d(${rowsShift}px, 0, 0)` }}>
+				{visibleRowsSource.slice(0, visibleRows).map((row, index) => (
 					<DirectorHistoryRow
 						key={`${row.agent}-${row.session}`}
 						row={row}
 						highlighted={index === 0}
-						showResumeCue={index === 0}
+						showResumeCue={historyState.showResumeCue && index === 0}
 						theme={theme}
 					/>
 				))}
@@ -382,6 +414,9 @@ const HistoryDetailSurface: React.FC<{
 	fallbackSlots: VisualFallbackSlot[];
 	progress: number;
 }> = ({ theme, fallbackSlots, progress }) => {
+	const filteredRows = HISTORY_ROWS.filter((row) =>
+		`${row.agent} ${row.session} ${row.summary}`.toLowerCase().includes('rss')
+	);
 	const detailSlot = fallbackSlots[fallbackSlots.length - 1];
 	const rowsOpacity = interpolate(progress, [0, 1], [0.72, 0.4], clamp);
 	const detailLift = interpolate(progress, [0, 1], [48, 0], clamp);
@@ -402,13 +437,14 @@ const HistoryDetailSurface: React.FC<{
 			{buildHistoryControls({
 				theme,
 				searchQuery: 'rss',
-				autoActive: true,
+				autoActive: false,
 				userActive: true,
 				countLabel: '7 matching entries',
+				highlightedIndex: 4,
 			})}
 			<div style={{ position: 'relative', minHeight: 500 }}>
 				<div style={{ display: 'grid', gap: 12, opacity: rowsOpacity }}>
-					{HISTORY_ROWS.slice(0, 3).map((row, index) => (
+					{filteredRows.slice(0, 3).map((row, index) => (
 						<DirectorHistoryRow
 							key={`${row.agent}-${row.session}`}
 							row={row}
@@ -431,7 +467,7 @@ const HistoryDetailSurface: React.FC<{
 						transformOrigin: 'center top',
 					}}
 				>
-					<DirectorDetailCard progress={progress} row={HISTORY_ROWS[0]} theme={theme} />
+					<DirectorDetailCard progress={progress} row={filteredRows[0]} theme={theme} />
 					<div style={{ opacity: detailOpacity }}>
 						{detailSlot ? <MaestroFallbackSlot slot={detailSlot} theme={theme} /> : null}
 					</div>
@@ -564,12 +600,20 @@ const AiReadySurface: React.FC<{
 	fallbackSlots: VisualFallbackSlot[];
 	progress: number;
 }> = ({ theme, showCaptureNote, fallbackSlots, progress }) => {
-	const summaryLift = interpolate(progress, [0, 1], [26, 0], clamp);
-	const summaryOpacity = interpolate(progress, [0, 1], [0.34, 1], clamp);
+	const readyState = getDirectorNotesAiReadySceneState(progress);
+	const historyCarryOpacity = interpolate(readyState.tabSwitchProgress, [0, 0.72], [1, 0], clamp);
+	const historyCarryLift = interpolate(readyState.tabSwitchProgress, [0, 1], [0, -22], clamp);
+	const overviewOpacity = interpolate(readyState.tabSwitchProgress, [0.1, 0.62], [0.12, 1], clamp);
+	const summaryLift = interpolate(readyState.summaryProgress, [0, 1], [26, 0], clamp);
+	const summaryOpacity = interpolate(readyState.summaryProgress, [0, 1], [0.18, 1], clamp);
 
 	return (
 		<DirectorNotesSurfaceShell
-			tabs={createTabs({ activeTab: 'ai-overview', aiEnabled: true, aiGenerating: false })}
+			tabs={createTabs({
+				activeTab: readyState.activeTab,
+				aiEnabled: true,
+				aiGenerating: false,
+			})}
 			footer={
 				<>
 					<span>Ready to review, save, or copy</span>
@@ -586,16 +630,36 @@ const AiReadySurface: React.FC<{
 			) : null}
 			<div
 				style={{
+					opacity: historyCarryOpacity,
+					transform: `translate3d(0, ${historyCarryLift}px, 0)`,
+				}}
+			>
+				<DirectorPanel theme={theme} padding={16} gap={10}>
+					<div style={{ fontSize: 15, color: theme.colors.textDim }}>
+						Grounded from Unified History
+					</div>
+					<div style={{ fontSize: 18, lineHeight: 1.45, color: theme.colors.textMain }}>
+						7 filtered entries across 2 agents are ready to synthesize before the tab switch
+						completes.
+					</div>
+					<div style={{ fontSize: 15, lineHeight: 1.42, color: theme.colors.textDim }}>
+						AI Overview is now ready. The next beat switches from evidence to synopsis without
+						losing the original history grounding.
+					</div>
+				</DirectorPanel>
+			</div>
+			<div
+				style={{
 					display: 'grid',
 					gap: 14,
-					opacity: summaryOpacity,
+					opacity: overviewOpacity * summaryOpacity,
 					transform: `translate3d(0, ${summaryLift}px, 0)`,
 				}}
 			>
 				<DirectorOverviewToolbar
 					generatedAt="Feb 10, 2026, 11:03 PM"
 					lookbackDays={7}
-					progress={progress}
+					progress={readyState.summaryProgress}
 					theme={theme}
 				/>
 				{buildHistoryStats(
@@ -607,7 +671,7 @@ const AiReadySurface: React.FC<{
 					theme
 				)}
 				<DirectorOverviewSections
-					progress={progress}
+					progress={readyState.summaryProgress}
 					sections={READY_OVERVIEW_SECTIONS}
 					theme={theme}
 				/>
@@ -757,6 +821,7 @@ export const DirectorNotesSurfaceShowcase: React.FC<DirectorNotesSurfaceShowcase
 				<HistoryDefaultSurface
 					fallbackSlots={fallbackSlots}
 					progress={motionProgress}
+					showAiWarmup={scene.id === 'director-notes-standalone-open'}
 					showCaptureNote={showCaptureNote}
 					theme={theme}
 				/>

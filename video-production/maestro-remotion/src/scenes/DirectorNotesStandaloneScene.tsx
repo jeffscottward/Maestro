@@ -13,6 +13,7 @@ import {
 	getDirectorNotesCursorPose,
 	getDirectorNotesFlowStage,
 	getDirectorNotesFocusFrame,
+	getDirectorNotesHandoffState,
 	getDirectorNotesStagePose,
 } from '../animations/director-notes-choreography';
 import { DirectorNotesSurfaceShowcase } from '../components/DirectorNotesSurfaceShowcase';
@@ -89,8 +90,14 @@ const StoryNote: React.FC<{
 const DirectorNotesFlowStrip: React.FC<{
 	activeStage: (typeof DIRECTOR_NOTES_FLOW_STAGES)[number];
 	frame: number;
+	sceneProgress: number;
 	theme: MaestroVisualTheme;
-}> = ({ activeStage, frame, theme }) => {
+	nextStage?: (typeof DIRECTOR_NOTES_FLOW_STAGES)[number];
+	handoffProgress: number;
+}> = ({ activeStage, frame, sceneProgress, theme, nextStage, handoffProgress }) => {
+	const activeIndex = DIRECTOR_NOTES_FLOW_STAGES.indexOf(activeStage);
+	const nextIndex = nextStage ? DIRECTOR_NOTES_FLOW_STAGES.indexOf(nextStage) : -1;
+
 	return (
 		<div
 			style={{
@@ -101,6 +108,28 @@ const DirectorNotesFlowStrip: React.FC<{
 		>
 			{DIRECTOR_NOTES_FLOW_STAGES.map((stage, index) => {
 				const isActive = stage === activeStage;
+				const isComplete = index < activeIndex;
+				const isIncoming = index === nextIndex;
+				const progressFill = isComplete
+					? 1
+					: isActive
+						? interpolate(sceneProgress, [0, 1], [0.24, 1], clamp)
+						: isIncoming
+							? interpolate(handoffProgress, [0, 1], [0.08, 0.72], clamp)
+							: 0.08;
+				const cardLift = isActive
+					? interpolate(sceneProgress, [0, 1], [10, 0], clamp)
+					: isIncoming
+						? interpolate(handoffProgress, [0, 1], [12, 0], clamp)
+						: 0;
+				const cardOpacity = isComplete
+					? 0.86
+					: isActive
+						? 1
+						: isIncoming
+							? interpolate(handoffProgress, [0, 1], [0.54, 0.84], clamp)
+							: 0.62;
+				const fillColor = isActive || isIncoming ? `${theme.colors.accent}bb` : theme.colors.border;
 
 				return (
 					<AnimatedReveal
@@ -118,8 +147,13 @@ const DirectorNotesFlowStrip: React.FC<{
 								gap: 8,
 								padding: '12px 14px',
 								borderRadius: 18,
-								border: `1px solid ${isActive ? `${theme.colors.accent}88` : theme.colors.border}`,
-								background: isActive ? theme.colors.accentDim : theme.colors.bgActivity,
+								border: `1px solid ${
+									isActive || isIncoming ? `${theme.colors.accent}88` : theme.colors.border
+								}`,
+								background:
+									isActive || isIncoming ? theme.colors.accentDim : theme.colors.bgActivity,
+								opacity: cardOpacity,
+								transform: `translateY(${cardLift}px)`,
 							}}
 						>
 							<div
@@ -144,13 +178,67 @@ const DirectorNotesFlowStrip: React.FC<{
 								style={{
 									height: 4,
 									borderRadius: 999,
-									background: isActive ? `${theme.colors.accent}88` : theme.colors.border,
+									background: theme.colors.border,
+									overflow: 'hidden',
 								}}
-							/>
+							>
+								<div
+									style={{
+										width: `${Math.round(progressFill * 100)}%`,
+										height: '100%',
+										borderRadius: 999,
+										background: fillColor,
+									}}
+								/>
+							</div>
 						</div>
 					</AnimatedReveal>
 				);
 			})}
+		</div>
+	);
+};
+
+const DirectorNotesHandoffCard: React.FC<{
+	opacity: number;
+	stage: (typeof DIRECTOR_NOTES_FLOW_STAGES)[number];
+	label: string;
+	cue: string;
+	theme: MaestroVisualTheme;
+}> = ({ opacity, stage, label, cue, theme }) => {
+	return (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				gap: 10,
+				padding: '14px 16px',
+				borderRadius: 22,
+				border: `1px solid ${theme.colors.border}`,
+				background: theme.colors.bgActivity,
+				opacity,
+				transform: `translateY(${interpolate(opacity, [0, 1], [18, 0], clamp)}px)`,
+			}}
+		>
+			<div
+				style={{
+					fontSize: 13,
+					letterSpacing: 1.1,
+					textTransform: 'uppercase',
+					color: theme.colors.textDim,
+				}}
+			>
+				Next Beat
+			</div>
+			<div
+				style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}
+			>
+				<div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+					<div style={{ fontSize: 22, color: theme.colors.textMain }}>{label}</div>
+					<div style={{ fontSize: 15, lineHeight: 1.42, color: theme.colors.textDim }}>{cue}</div>
+				</div>
+				<MetaBadge label={stage} tone="accent" theme={theme} />
+			</div>
 		</div>
 	);
 };
@@ -205,7 +293,8 @@ const DirectorNotesFocusOverlay: React.FC<{
 const FragmentedContextBackdrop: React.FC<{
 	theme: MaestroVisualTheme;
 	opacity: number;
-}> = ({ theme, opacity }) => {
+	progress: number;
+}> = ({ theme, opacity, progress }) => {
 	const ghostCards = [
 		{ title: 'PedTome RSSidian', detail: 'Recent history' },
 		{ title: 'Learned Hand', detail: 'Session log' },
@@ -226,16 +315,19 @@ const FragmentedContextBackdrop: React.FC<{
 					key={card.title}
 					style={{
 						position: 'absolute',
-						left: `${4 + index * 13}%`,
-						top: `${8 + index * 16}%`,
+						left: `${4 + index * 11 + progress * 7}%`,
+						top: `${8 + index * 16 - progress * 5}%`,
 						width: '42%',
 						padding: '18px 20px',
 						borderRadius: 22,
 						border: `1px solid ${theme.colors.border}`,
 						background: `${theme.colors.bgSidebar}c2`,
 						boxShadow: `0 22px 40px ${theme.colors.bgSidebar}`,
-						filter: 'blur(0.4px)',
-						transform: `scale(${1 - index * 0.04}) translateX(${-20 + index * 18}px)`,
+						filter: `blur(${interpolate(progress, [0, 1], [0.8, 0.2], clamp)}px)`,
+						opacity: interpolate(progress, [0, 1], [0.92, 0.34], clamp),
+						transform: `scale(${1 - index * 0.04 + progress * 0.02}) translate3d(${
+							-36 + index * 24 - progress * 22
+						}px, ${progress * 10}px, 0)`,
 					}}
 				>
 					<div style={{ fontSize: 16, color: theme.colors.textDim }}>{card.detail}</div>
@@ -243,6 +335,25 @@ const FragmentedContextBackdrop: React.FC<{
 				</div>
 			))}
 		</div>
+	);
+};
+
+const DirectorNotesStageSpotlight: React.FC<{
+	theme: MaestroVisualTheme;
+	x: number;
+	y: number;
+	opacity: number;
+}> = ({ theme, x, y, opacity }) => {
+	return (
+		<div
+			style={{
+				position: 'absolute',
+				inset: 0,
+				background: `radial-gradient(circle at ${x * 100}% ${y * 100}%, ${theme.colors.accent}3a 0%, transparent 28%), radial-gradient(circle at 82% 84%, ${theme.colors.warning}12 0%, transparent 32%)`,
+				opacity,
+				pointerEvents: 'none',
+			}}
+		/>
 	);
 };
 
@@ -268,20 +379,32 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 	const supportEntrance = getEntranceProgress(frame, fps, spec.motion, 12);
 	const sceneOpacity = getSceneOpacity(frame, scene.durationInFrames, spec.motion);
 	const sceneProgress = getProgressInRange(frame, 0, Math.max(scene.durationInFrames - 1, 1));
+	const surfaceProgress = interpolate(sceneProgress, [0, 0.14, 0.92], [0, 0.18, 1], clamp);
 	const stagePose = getDirectorNotesStagePose(scene.id, frame, scene.durationInFrames);
 	const cursorPose = getDirectorNotesCursorPose(scene.id, frame, scene.durationInFrames);
 	const focusFrame = getDirectorNotesFocusFrame(scene.id, frame, scene.durationInFrames);
 	const activeStage = getDirectorNotesFlowStage(scene.id);
+	const nextScene = spec.scenes[sceneIndex + 1] ?? null;
+	const handoffState = getDirectorNotesHandoffState(nextScene);
 	const title = formatNarrativeCopy(scene.title);
 	const body = formatNarrativeCopy(scene.body);
 	const currentBeat = formatNarrativeCopy(storyboard?.uiStateShown ?? scene.accentLabel);
 	const onScreenCopy = (storyboard?.onScreenCopy ?? []).map((line) => formatNarrativeCopy(line));
 	const userAction = formatNarrativeCopy(storyboard?.userAction ?? scene.accentLabel);
 	const systemResponse = formatNarrativeCopy(storyboard?.systemResponse ?? scene.body);
+	const handoffCue = handoffState ? formatNarrativeCopy(handoffState.nextCue) : null;
 	const titleLift = translateYFromProgress(titleEntrance, 56, 0);
 	const copyLift = translateYFromProgress(copyEntrance, 36, 0);
 	const surfaceSlide = layout.mode === 'split' ? translateXFromProgress(supportEntrance, 54, 0) : 0;
 	const backdropOpacity = interpolate(supportEntrance, [0, 1], [0, 0.78], clamp);
+	const bodyOpacity = interpolate(copyEntrance, [0, 1], [0.18, 1], clamp);
+	const stageSpotlightOpacity = interpolate(stagePose.focusOpacity, [0, 1], [0.1, 0.54], clamp);
+	const handoffProgress = handoffState
+		? interpolate(sceneProgress, [0.68, 0.96], [0, 1], clamp)
+		: 0;
+	const bottomRailColumns = handoffState && layout.mode === 'split' ? '1.2fr 0.8fr' : '1fr';
+	const spotlightX = cursorPose.visible ? cursorPose.x : focusFrame.x;
+	const spotlightY = cursorPose.visible ? cursorPose.y : focusFrame.y;
 
 	return (
 		<ProductionFrame theme={theme} composition={composition}>
@@ -342,6 +465,7 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 										margin: 0,
 										maxWidth: layout.bodyMaxWidth,
 										color: theme.colors.textDim,
+										opacity: bodyOpacity,
 									}}
 								>
 									{body}
@@ -476,6 +600,12 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 										background: `radial-gradient(circle at 16% 12%, ${theme.colors.accent}2a 0%, transparent 36%), radial-gradient(circle at 80% 82%, ${theme.colors.warning}16 0%, transparent 30%)`,
 									}}
 								/>
+								<DirectorNotesStageSpotlight
+									opacity={stageSpotlightOpacity}
+									theme={theme}
+									x={spotlightX}
+									y={spotlightY}
+								/>
 								<div
 									style={{
 										position: 'absolute',
@@ -485,7 +615,11 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 									}}
 								/>
 								{scene.id === 'director-notes-standalone-open' ? (
-									<FragmentedContextBackdrop opacity={backdropOpacity} theme={theme} />
+									<FragmentedContextBackdrop
+										opacity={backdropOpacity}
+										progress={surfaceProgress}
+										theme={theme}
+									/>
 								) : null}
 								<AnimatedReveal frame={frame} delayFrames={14} durationFrames={18}>
 									<div
@@ -499,9 +633,9 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 										<DirectorNotesSurfaceShowcase
 											scene={scene}
 											captures={captures}
-											progress={copyEntrance}
+											progress={surfaceProgress}
 											theme={theme}
-											timelineProgress={sceneProgress}
+											timelineProgress={surfaceProgress}
 										/>
 									</div>
 								</AnimatedReveal>
@@ -520,9 +654,35 @@ export const DirectorNotesStandaloneScene: React.FC<DirectorNotesStandaloneScene
 					</div>
 				</div>
 
-				<AnimatedReveal frame={frame} delayFrames={18} durationFrames={18}>
-					<DirectorNotesFlowStrip activeStage={activeStage} frame={frame} theme={theme} />
-				</AnimatedReveal>
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: bottomRailColumns,
+						gap: 14,
+					}}
+				>
+					<AnimatedReveal frame={frame} delayFrames={18} durationFrames={18}>
+						<DirectorNotesFlowStrip
+							activeStage={activeStage}
+							frame={frame}
+							handoffProgress={handoffProgress}
+							nextStage={handoffState?.nextStage}
+							sceneProgress={sceneProgress}
+							theme={theme}
+						/>
+					</AnimatedReveal>
+					{handoffState && handoffCue ? (
+						<AnimatedReveal frame={frame} delayFrames={24} durationFrames={16}>
+							<DirectorNotesHandoffCard
+								cue={handoffCue}
+								label={handoffState.nextLabel}
+								opacity={handoffProgress}
+								stage={handoffState.nextStage}
+								theme={theme}
+							/>
+						</AnimatedReveal>
+					) : null}
+				</div>
 			</div>
 		</ProductionFrame>
 	);

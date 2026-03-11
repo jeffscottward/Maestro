@@ -25,11 +25,12 @@ This phase produces the standalone Director's Notes feature video, centered on t
 	- Ensure the video includes meaningful state shifts such as loading, browsing, filtering, overview generation, and actionable summary
 	- Completed 2026-03-10: rewired `director-notes-standalone-spec.ts` and the checked-in Director's Notes capture manifest so scene assets now resolve to the approved doc-backed screenshots and derived reconstruction proofs instead of planned live `.mov` paths; added `history-detail-proof.json` and `ai-overview-loading-proof.json` under `capture/derived/director-notes/`; made `DirectorNotesSurfaceShowcase` consume manifest-backed fallback slots plus the derived evidence/loading/detail proof data for the detail, warmup, ready, and closing states; analyzed 2 checked-in Director's Notes screenshots while matching the capture-backed surfaces; and ran `pnpm validate` in `video-production/maestro-remotion` with all 25 test files / 62 tests passing.
 
-- [ ] Implement the full Director's Notes composition and motion system:
+- [x] Implement the full Director's Notes composition and motion system:
 	- Build the scene sequence with Remotion timing primitives only and keep the motion polished but information-dense
 	- Choose explicit FPS based on actual motion needs, especially if the composition uses cursor motion, list traversal, or scroll-based transitions
 	- Use motion to emphasize clarity: focus shifts, graph or list reveals, summary build-up, and rapid navigation back into an agent session
 	- Keep on-screen copy concise enough for a 30 to 60 second feature-education video
+	- Completed 2026-03-11: tightened the standalone composition around the storyboard arc with scene-progress-driven flow-strip fills, a bottom-rail `Next Beat` handoff card, spotlighted focus framing, and a compressed surface-progress ramp so each beat reads as one connected sequence instead of isolated slides; made `Unified History` filter/search motion feel interactive, kept the detail view grounded in the filtered RSS-focused context, showed `AI Overview` warming from modal open, and added an explicit evidence-to-synopsis handoff inside the ready scene while preserving the shipped labels and 30fps runtime; analyzed 2 checked-in Director's Notes reference screenshots while matching the motion emphasis; and passed `pnpm typecheck` plus the focused Director's Notes vitest suite including the real Remotion smoke render.
 
 - [ ] Write Director's Notes-specific tests and smoke checks:
 	- Add tests for spec validity, scene completeness, tab/state ordering, and any feature-specific data transforms or helper functions

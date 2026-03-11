@@ -2,9 +2,12 @@ import { describe, expect, it } from 'vitest';
 
 import { directorNotesStandaloneSpec } from '../src/data/specs';
 import {
+	getDirectorNotesAiReadySceneState,
 	getDirectorNotesCursorPose,
 	getDirectorNotesFlowStage,
 	getDirectorNotesFocusFrame,
+	getDirectorNotesHandoffState,
+	getDirectorNotesHistorySceneState,
 	getDirectorNotesStagePose,
 } from '../src/animations/director-notes-choreography';
 
@@ -63,5 +66,43 @@ describe("Director's Notes standalone choreography", () => {
 
 		expect(detailFocus.height).toBeGreaterThan(historyFocus.height);
 		expect(readyFocus.y).toBeGreaterThan(historyFocus.y);
+	});
+
+	it('tightens Unified History state over time so the filters feel interactive instead of static', () => {
+		const broadHistory = getDirectorNotesHistorySceneState(0.08);
+		const filteredHistory = getDirectorNotesHistorySceneState(0.76);
+
+		expect(broadHistory.searchQuery).toBe('');
+		expect(broadHistory.autoActive).toBe(true);
+		expect(broadHistory.rowsMode).toBe('global');
+
+		expect(filteredHistory.searchQuery).toBe('rss');
+		expect(filteredHistory.autoActive).toBe(false);
+		expect(filteredHistory.rowsMode).toBe('filtered');
+		expect(filteredHistory.showResumeCue).toBe(true);
+		expect(filteredHistory.highlightedIndex).toBeGreaterThan(broadHistory.highlightedIndex);
+	});
+
+	it('holds on history briefly before switching into the ready synopsis build', () => {
+		const earlyReady = getDirectorNotesAiReadySceneState(0.12);
+		const lateReady = getDirectorNotesAiReadySceneState(0.82);
+
+		expect(earlyReady.activeTab).toBe('history');
+		expect(earlyReady.summaryProgress).toBeLessThan(0.1);
+		expect(lateReady.activeTab).toBe('ai-overview');
+		expect(lateReady.summaryProgress).toBeGreaterThan(0.7);
+		expect(lateReady.tabSwitchProgress).toBeGreaterThan(earlyReady.tabSwitchProgress);
+	});
+
+	it('derives a handoff cue from the next storyboard beat when one exists', () => {
+		const nextScene = directorNotesStandaloneSpec.scenes[1];
+		const handoff = getDirectorNotesHandoffState(nextScene);
+
+		expect(handoff).toEqual({
+			nextStage: 'Visibility',
+			nextLabel: 'Filters',
+			nextCue: '`Unified History` merges `AUTO` and `USER` work.',
+		});
+		expect(getDirectorNotesHandoffState(null)).toBeNull();
 	});
 });

@@ -24,6 +24,7 @@ const requiredPaths = [
 	'src/assets',
 	'src/lib',
 	'src/lib/capture-pipeline.ts',
+	'src/lib/final-delivery-qa.ts',
 	'src/lib/render-orchestration.ts',
 	'src/compositions/MaestroWorkspaceBootstrapComposition.tsx',
 	'src/scenes/FeatureHeroScene.tsx',
@@ -39,6 +40,7 @@ const requiredPaths = [
 	'src/ui/MaestroPrimitives.tsx',
 	'src/components/FeatureSurfaceShowcase.tsx',
 	'scripts/export-capture-manifests.mjs',
+	'scripts/validate-delivery-qa.mjs',
 	'scripts/render-delivery-matrix.mjs',
 	'scripts/validate-capture-pipeline.mjs',
 	'capture/live',
@@ -50,6 +52,7 @@ const requiredPaths = [
 	'docs/research/project-sources.md',
 	'docs/research/feature-capture-plan.md',
 	'docs/reports/phase-02-capture-readiness.md',
+	'docs/reports/qa',
 ];
 
 const requiredSourceReferences = [
@@ -111,6 +114,10 @@ export const validateWorkspace = () => {
 
 	if (!packageJson.scripts?.['validate:capture']) {
 		fail('Workspace must expose a validate:capture script for capture pipeline validation.');
+	}
+
+	if (!packageJson.scripts?.['validate:qa']) {
+		fail('Workspace must expose a validate:qa script for final delivery QA validation.');
 	}
 
 	if (!packageJson.scripts?.['render:matrix:plan']) {

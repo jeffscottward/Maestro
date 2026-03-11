@@ -13,8 +13,9 @@
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run",
 		"validate:capture": "tsx scripts/validate-capture-pipeline.mjs",
+		"validate:qa": "tsx scripts/validate-delivery-qa.mjs",
 		"validate:workspace": "tsx scripts/validate-workspace.mjs",
-		"validate": "pnpm validate:capture && pnpm validate:workspace && pnpm typecheck && pnpm test"
+		"validate": "pnpm validate:capture && pnpm validate:qa && pnpm validate:workspace && pnpm typecheck && pnpm test"
 	},
 	"dependencies": {
 		"react": "^19.2.4",

@@ -18,6 +18,7 @@ describe('workspace validation script', () => {
 		).toBeDefined();
 		expect(packageJson.dependencies?.tsx ?? packageJson.devDependencies?.tsx).toBeDefined();
 		expect(packageJson.packageManager).toMatch(/^pnpm@/);
+		expect(packageJson.scripts?.['validate:qa']).toBeDefined();
 		expect(packageJson.scripts?.['render:matrix:plan']).toBeDefined();
 		expect(packageJson.scripts?.['render:matrix']).toBeDefined();
 	});

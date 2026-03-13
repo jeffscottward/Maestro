@@ -103,13 +103,28 @@ export class LocalCommandRunner {
 					PATH: env.PATH?.substring(0, 100),
 				});
 
-				const ptyProcess = pty.spawn(shellPath, ptyArgs, {
-					name: 'xterm-256color',
-					cols: 120,
-					rows: 40,
-					cwd,
-					env: env as Record<string, string>,
-				});
+				let ptyProcess: pty.IPty;
+				try {
+					ptyProcess = pty.spawn(shellPath, ptyArgs, {
+						name: 'xterm-256color',
+						cols: 120,
+						rows: 40,
+						cwd,
+						env: env as Record<string, string>,
+					});
+				} catch (error) {
+					const message = error instanceof Error ? error.message : String(error);
+					logger.error('[ProcessManager] runCommand PTY spawn error', 'ProcessManager', {
+						sessionId,
+						error: message,
+						shell: shellToUse,
+						shellPath,
+					});
+					this.emitter.emit('stderr', sessionId, `Error: ${message}`);
+					this.emitter.emit('command-exit', sessionId, 1);
+					resolve({ exitCode: 1 });
+					return;
+				}
 
 				ptyProcess.onData((data) => {
 					const output = stripControlSequences(data, command, true);

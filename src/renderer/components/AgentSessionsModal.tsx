@@ -70,7 +70,7 @@ export function AgentSessionsModal({
 	const nextCursorRef = useRef<string | null>(null);
 
 	const inputRef = useRef<HTMLInputElement>(null);
-	const selectedItemRef = useRef<HTMLButtonElement>(null);
+	const selectedItemRef = useRef<HTMLDivElement>(null);
 	const messagesContainerRef = useRef<HTMLDivElement>(null);
 	const sessionsContainerRef = useRef<HTMLDivElement>(null);
 	const layerIdRef = useRef<string>();
@@ -246,7 +246,7 @@ export function AgentSessionsModal({
 
 	// Toggle star status for a session
 	const toggleStar = useCallback(
-		async (sessionId: string, e: React.MouseEvent) => {
+		async (sessionId: string, e: React.MouseEvent<HTMLButtonElement>) => {
 			e.stopPropagation(); // Don't trigger session view
 
 			const newStarred = new Set(starredSessions);
@@ -604,10 +604,9 @@ export function AgentSessionsModal({
 								{filteredSessions.map((session, i) => {
 									const isStarred = starredSessions.has(session.sessionId);
 									return (
-										<button
+										<div
 											key={session.sessionId}
 											ref={i === selectedIndex ? selectedItemRef : null}
-											onClick={() => handleViewSession(session)}
 											className="w-full text-left px-4 py-3 flex items-start gap-3 hover:bg-opacity-10 transition-colors group"
 											style={{
 												backgroundColor: i === selectedIndex ? theme.colors.accent : 'transparent',
@@ -616,7 +615,9 @@ export function AgentSessionsModal({
 										>
 											{/* Star button */}
 											<button
-												onClick={(e) => toggleStar(session.sessionId, e)}
+												type="button"
+												aria-pressed={isStarred}
+												onClick={(e) => void toggleStar(session.sessionId, e)}
 												className="p-1 -ml-1 rounded hover:bg-white/10 transition-colors shrink-0"
 												title={isStarred ? 'Remove from favorites' : 'Add to favorites'}
 											>
@@ -628,7 +629,16 @@ export function AgentSessionsModal({
 													}}
 												/>
 											</button>
-											<div className="flex-1 min-w-0">
+											<button
+												type="button"
+												onClick={() => handleViewSession(session)}
+												className="flex-1 min-w-0 text-left bg-transparent border-0 p-0 m-0 appearance-none"
+												style={{
+													backgroundColor:
+														i === selectedIndex ? theme.colors.accent : 'transparent',
+													color: 'inherit',
+												}}
+											>
 												<div className="font-medium truncate text-sm">
 													{session.sessionName ||
 														session.firstMessage ||
@@ -651,8 +661,8 @@ export function AgentSessionsModal({
 														{formatSize(session.sizeBytes)}
 													</span>
 												</div>
-											</div>
-										</button>
+											</button>
+										</div>
 									);
 								})}
 								{/* Pagination indicator */}

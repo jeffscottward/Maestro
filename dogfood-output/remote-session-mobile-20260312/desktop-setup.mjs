@@ -140,7 +140,10 @@ async function enableRemoteControl(page) {
 
 async function readUrls(page) {
 	const localUrl = await page.evaluate(() => window.maestro.live.getDashboardUrl());
-	const remoteUrl = await page.locator('[title*="trycloudflare.com"]').first().getAttribute('title');
+	const remoteUrl = await page
+		.locator('[title*="trycloudflare.com"]')
+		.first()
+		.getAttribute('title');
 	return { localUrl, remoteUrl };
 }
 

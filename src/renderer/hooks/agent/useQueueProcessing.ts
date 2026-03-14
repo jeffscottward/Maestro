@@ -80,20 +80,13 @@ export function useQueueProcessing(deps: UseQueueProcessingDeps): UseQueueProces
 	// Process a queued item - delegates to agentStore action
 	const processQueuedItem = useCallback(
 		async (sessionId: string, item: QueuedItem) => {
-			const queueDeps = {
+			await useAgentStore.getState().processQueuedItem(sessionId, item, {
 				conductorProfile,
 				customAICommands: customAICommandsRef.current ?? [],
 				speckitCommands: speckitCommandsRef.current ?? [],
 				openspecCommands: openspecCommandsRef.current ?? [],
-			};
-
-			if (bmadCommandsRef) {
-				Object.assign(queueDeps, {
-					bmadCommands: bmadCommandsRef.current ?? [],
-				});
-			}
-
-			await useAgentStore.getState().processQueuedItem(sessionId, item, queueDeps);
+				bmadCommands: bmadCommandsRef?.current ?? [],
+			});
 		},
 		[conductorProfile, bmadCommandsRef]
 	);

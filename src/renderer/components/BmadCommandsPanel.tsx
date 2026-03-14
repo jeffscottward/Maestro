@@ -41,7 +41,7 @@ export function BmadCommandsPanel({ theme }: BmadCommandsPanelProps) {
 	} = useTemplateAutocomplete({
 		textareaRef: editCommandTextareaRef,
 		value: editingCommand?.prompt ?? '',
-		onValueChange: (value) => {
+		onChange: (value: string) => {
 			if (editingCommand) {
 				setEditingCommand({ ...editingCommand, prompt: value });
 			}
@@ -370,7 +370,7 @@ export function BmadCommandsPanel({ theme }: BmadCommandsPanelProps) {
 										<pre
 											className="text-xs whitespace-pre-wrap font-mono max-h-[400px] overflow-y-auto scrollbar-thin p-3 rounded"
 											style={{
-												backgroundColor: theme.colors.bgPanel,
+												backgroundColor: theme.colors.bgActivity,
 												color: theme.colors.textMain,
 											}}
 										>

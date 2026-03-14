@@ -290,8 +290,7 @@ async function getLatestVersion(): Promise<string> {
 export async function refreshBmadPrompts(): Promise<BmadMetadata> {
 	logger.info('Refreshing BMAD prompts from GitHub...', LOG_CONTEXT);
 
-	const userPromptsDir = getUserPromptsPath();
-	await fs.mkdir(userPromptsDir, { recursive: true });
+	const downloadedPrompts: Array<{ id: string; prompt: string }> = [];
 
 	for (const cmd of BMAD_COMMANDS) {
 		const response = await fetch(
@@ -302,8 +301,19 @@ export async function refreshBmadPrompts(): Promise<BmadMetadata> {
 		}
 
 		const prompt = await response.text();
-		await fs.writeFile(path.join(userPromptsDir, `bmad.${cmd.id}.md`), prompt, 'utf-8');
-		logger.info(`Updated: bmad.${cmd.id}.md`, LOG_CONTEXT);
+		downloadedPrompts.push({ id: cmd.id, prompt });
+	}
+
+	const userPromptsDir = getUserPromptsPath();
+	await fs.mkdir(userPromptsDir, { recursive: true });
+
+	for (const downloadedPrompt of downloadedPrompts) {
+		await fs.writeFile(
+			path.join(userPromptsDir, `bmad.${downloadedPrompt.id}.md`),
+			downloadedPrompt.prompt,
+			'utf-8'
+		);
+		logger.info(`Updated: bmad.${downloadedPrompt.id}.md`, LOG_CONTEXT);
 	}
 
 	const [commitSha, sourceVersion] = await Promise.all([getLatestCommitSha(), getLatestVersion()]);
